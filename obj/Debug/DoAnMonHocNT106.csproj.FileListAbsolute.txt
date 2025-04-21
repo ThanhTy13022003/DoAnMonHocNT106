@@ -1,0 +1,10 @@
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\bin\Debug\DoAnMonHocNT106.exe.config
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\bin\Debug\DoAnMonHocNT106.exe
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\bin\Debug\DoAnMonHocNT106.pdb
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.csproj.AssemblyReference.cache
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.Form1.resources
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.Properties.Resources.resources
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.csproj.GenerateResource.cache
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.csproj.CoreCompileInputs.cache
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.exe
+C:\Users\tyn93\DoAnMonHocNT106\DoAnMonHocNT106\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.pdb
