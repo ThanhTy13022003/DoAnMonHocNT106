@@ -1,6 +1,9 @@
-﻿namespace DoAnMonHocNT106
+﻿using System.Windows.Forms;
+using System;
+
+namespace DoAnMonHocNT106
 {
-    partial class Form1
+    public partial class Form1 : Form
     {
         /// <summary>
         /// Required designer variable.
