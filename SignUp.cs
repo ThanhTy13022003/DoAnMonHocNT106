@@ -74,8 +74,8 @@ namespace DoAnMonHocNT106
         {
             try
             {
-                string clientId = "150464310449-sbdgtn4a2vo3n1dbq51cc1o9ept5tokl.apps.googleusercontent.com";
-                string clientSecret = "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";
+                string clientId = "ggID";
+                string clientSecret = "ggSC";
                 string firebaseApiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong";
                 string firebaseDbUrl = "https://nt106-7c9fe-default-rtdb.firebaseio.com/";
 
