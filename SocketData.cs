@@ -10,7 +10,6 @@ namespace DoAnMonHocNT106
     [Serializable]
     public class SocketData
     {
-
         private int command;
 
         public int Command
@@ -42,6 +41,7 @@ namespace DoAnMonHocNT106
             this.Message = message;
         }
     }
+
     public enum SocketCommand
     {
         SEND_POINT,
@@ -50,7 +50,8 @@ namespace DoAnMonHocNT106
         UNDO,
         END_GAME,
         TIME_OUT,
-        QUIT
+        QUIT,
+        READY,
+        CHAT // Thêm lệnh CHAT
     }
-
 }

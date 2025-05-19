@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DoAnMonHocNT106
 {
@@ -38,18 +39,28 @@ namespace DoAnMonHocNT106
         Socket server;
         public void CreateServer()
         {
-            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(IP), PORT);
-            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            server.Bind(iep);
-            server.Listen(10);
-
-            Thread acceptClient = new Thread(() =>
+            try
             {
-                client = server.Accept();
-            });
-            acceptClient.IsBackground = true;
-            acceptClient.Start();
+                IPEndPoint iep = new IPEndPoint(IPAddress.Parse(IP), PORT);
+                server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                server.Bind(iep);
+                server.Listen(10);
+
+                Thread acceptClient = new Thread(() =>
+                {
+                    client = server.Accept();
+                });
+                acceptClient.IsBackground = true;
+                acceptClient.Start();
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode == SocketError.AddressAlreadyInUse)
+                {
+                    MessageBox.Show($"Port {PORT} đang được sử dụng. Vui lòng thử lại sau.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                throw;
+            }
         }
         #endregion
 
@@ -76,13 +87,21 @@ namespace DoAnMonHocNT106
 
         private bool SendData(Socket target, byte[] data)
         {
-            return target.Send(data) == 1 ? true : false;
+            if (target == null || !target.Connected)
+            {
+                return false;
+            }
+            return target.Send(data) > 0;
         }
 
 
         private bool ReceiveData(Socket target, byte[] data)
         {
-            return target.Receive(data) == 1 ? true : false;
+            if (target == null || !target.Connected)
+            {
+                return false;
+            }
+            return target.Receive(data) > 0;
         }
         /// <summary>
         /// Nén đối tượng thành mảng byte[]
