@@ -107,7 +107,7 @@ namespace DoAnMonHocNT106
                 var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
                 var auth = await authProvider.SignInWithEmailAndPasswordAsync(email, Password);
 
-                Form1 mainForm = new Form1();
+                Menu mainForm = new Menu();
                 mainForm.Show();
                 this.Hide();
             }
