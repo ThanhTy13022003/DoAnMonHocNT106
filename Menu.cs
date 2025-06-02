@@ -17,13 +17,6 @@ namespace DoAnMonHocNT106
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Form1 Form = new Form1();
-            Form.Show();
-            this.Hide();
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
             PvE Form = new PvE();
