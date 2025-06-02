@@ -14,7 +14,7 @@ namespace DoAnMonHocNT106
 {
     public partial class Login : Form
     {
-        private string apiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong\r\n"; 
+        private string apiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong"; 
 
         public Login()
         {
