@@ -1,106 +1,112 @@
-﻿using System;
+﻿// FormLobby.cs
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Firebase.Database;
+using Firebase.Database.Query;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace DoAnMonHocNT106
 {
     public partial class FormLobby : Form
     {
+        private FirebaseClient firebaseClient;
+        private string firebaseUrl = "https://nt106-7c9fe-default-rtdb.firebaseio.com/";
         private string currentUser;
-        private List<User> onlineUsers;
-        private SocketManager socketManager;
+        private string tenUser;
 
-        public FormLobby(string username)
+        public FormLobby(string userName)
         {
             InitializeComponent();
-            currentUser = username;
-            socketManager = new SocketManager();
-            socketManager.OnMessageReceived += SocketManager_OnMessageReceived;
-
-            Load += FormLobby_Load;
+            currentUser = userName;
+            firebaseClient = new FirebaseClient(firebaseUrl);
+            tenUser = Properties.Settings.Default["UserId"]?.ToString() ?? "Khách";
         }
 
-        private async void FormLobby_Load(object sender, EventArgs e)
+        private async void Lobby_Load(object sender, EventArgs e)
         {
-            await FirebaseHelper.SetUserOnlineStatus(currentUser, true);
-            await LoadOnlineUsers();
-
-            // Cập nhật lại danh sách mỗi 10s
-            var timer = new Timer { Interval = 10000 };
-            timer.Tick += async (s, ex) => await LoadOnlineUsers();
-            timer.Start();
+            await CapNhatTrangThaiOnline(true);
+            TaiDanhSachUser();
+            LangNgheTinNhan();
         }
 
-        private async Task LoadOnlineUsers()
+        private async Task CapNhatTrangThaiOnline(bool online)
         {
-            onlineUsers = await FirebaseHelper.GetOnlineUsers();
-            listViewUsers.Items.Clear();
+            await firebaseClient
+                .Child("Users")
+                .Child(currentUser)
+                .Child("IsOnline")
+                .PutAsync(online);
+        }
 
-            foreach (var user in onlineUsers)
+        private async void TaiDanhSachUser()
+        {
+            var users = await firebaseClient.Child("Users").OnceAsync<Dictionary<string, object>>();
+            lstUser.Items.Clear();
+            foreach (var user in users)
             {
-                if (user.Username == currentUser) continue;
+                string ten = user.Key;
+                bool online = false;
 
-                var lvi = new ListViewItem(user.Username);
-                lvi.SubItems.Add(user.IsOnline ? "Online" : "Offline");
-                listViewUsers.Items.Add(lvi);
+                if (user.Object != null && user.Object.ContainsKey("IsOnline"))
+                {
+                    bool.TryParse(user.Object["IsOnline"]?.ToString(), out online);
+                }
+
+                ListViewItem item = new ListViewItem(ten);
+                item.SubItems.Add(online ? "Online" : "Offline");
+                item.ForeColor = online ? Color.Green : Color.Gray;
+                lstUser.Items.Add(item);
             }
         }
 
-        // Double click user mở chat riêng
-        private async void listViewUsers_DoubleClick(object sender, EventArgs e)
+        private void LangNgheTinNhan()
         {
-            if (listViewUsers.SelectedItems.Count == 0) return;
-
-            string targetUser = listViewUsers.SelectedItems[0].Text;
-            var chatForm = new FormChat(currentUser, targetUser);
-            chatForm.Show();
+            firebaseClient
+                .Child("PublicChat")
+                .AsObservable<ChatMessage>()
+                .Subscribe(d =>
+                {
+                    if (d.Object != null)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            txtChat.AppendText($"{d.Object.FromUser}: {d.Object.Message}\r\n");
+                        }));
+                    }
+                });
         }
 
-        // Tạo phòng PvP (host)
-        private async void btnHost_Click(object sender, EventArgs e)
+        private async void btnGui_Click(object sender, EventArgs e)
         {
-            int port = 9000;
-            try
+            string msg = txtNhap.Text.Trim();
+            if (!string.IsNullOrEmpty(msg))
             {
-                await socketManager.StartServer(port);
-                MessageBox.Show("Đã tạo phòng, đang chờ đối thủ kết nối...");
+                var message = new ChatMessage
+                {
+                    FromUser = currentUser,
+                    ToUser = "all",
+                    Message = msg,
+                    Time = DateTime.Now
+                };
 
-                var gameForm = new FormGamePvP(currentUser, socketManager, true);
-                gameForm.Show();
-                this.Hide();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi tạo phòng: " + ex.Message);
-            }
-        }
-
-        // Tham gia phòng PvP (join)
-        private async void btnJoin_Click(object sender, EventArgs e)
-        {
-            string ip = txtIP.Text.Trim();
-            int port = 9000;
-            try
-            {
-                await socketManager.ConnectToServer(ip, port);
-                MessageBox.Show("Đã kết nối đến phòng!");
-
-                var gameForm = new FormGamePvP(currentUser, socketManager, false);
-                gameForm.Show();
-                this.Hide();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi kết nối phòng: " + ex.Message);
+                await firebaseClient.Child("PublicChat").PostAsync(message);
+                txtNhap.Clear();
             }
         }
 
-        private void SocketManager_OnMessageReceived(string msg)
+        private async void Lobby_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Xử lý tin nhắn nhận trong lobby (nếu có)
-            Console.WriteLine("Received: " + msg);
+            await CapNhatTrangThaiOnline(false);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Form1 Form = new Form1();
+            Form.Show();
+            this.Hide();
         }
     }
 }

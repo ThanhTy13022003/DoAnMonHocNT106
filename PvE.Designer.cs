@@ -7,6 +7,7 @@
         private System.Windows.Forms.Button btnRestart;
         private System.Windows.Forms.Label lblTimer;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.Label lblPlayerName;
 
         protected override void Dispose(bool disposing)
         {
@@ -69,6 +70,16 @@
             this.button1.Text = "Thoát";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            //
+            // lblPlayerName
+            //
+            this.lblPlayerName = new System.Windows.Forms.Label();
+            this.lblPlayerName.AutoSize = true;
+            this.lblPlayerName.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.lblPlayerName.Location = new System.Drawing.Point(20, 20);
+            this.lblPlayerName.Name = "lblPlayerName";
+            this.lblPlayerName.Size = new System.Drawing.Size(0, 21);
+            this.Controls.Add(this.lblPlayerName);
             // 
             // PvE
             // 

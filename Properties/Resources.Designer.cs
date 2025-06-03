@@ -83,6 +83,16 @@ namespace DoAnMonHocNT106.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _251451_200 {
+            get {
+                object obj = ResourceManager.GetObject("251451-200", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap _4768220eda2bdf16308f85bc566d46f7 {
             get {
                 object obj = ResourceManager.GetObject("4768220eda2bdf16308f85bc566d46f7", resourceCulture);
@@ -173,9 +183,29 @@ namespace DoAnMonHocNT106.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap images__1_ {
+            get {
+                object obj = ResourceManager.GetObject("images (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap images1 {
             get {
                 object obj = ResourceManager.GetObject("images1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pointer_to_left_side_glossy_ui_button_vector_44575073 {
+            get {
+                object obj = ResourceManager.GetObject("pointer-to-left-side-glossy-ui-button-vector-44575073", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

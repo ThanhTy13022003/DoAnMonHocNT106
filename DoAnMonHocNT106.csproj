@@ -267,17 +267,11 @@
     <Compile Include="Changepassword.Designer.cs">
       <DependentUpon>Changepassword.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormGamePvP.cs">
+    <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormGamePvP.Designer.cs">
-      <DependentUpon>FormGamePvP.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FormChat.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormChat.Designer.cs">
-      <DependentUpon>FormChat.cs</DependentUpon>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="FormLobby.cs">
       <SubType>Form</SubType>
@@ -285,14 +279,7 @@
     <Compile Include="FormLobby.Designer.cs">
       <DependentUpon>FormLobby.cs</DependentUpon>
     </Compile>
-    <Compile Include="SocketManager.cs" />
     <Compile Include="FirebaseHelper.cs" />
-    <Compile Include="Menu.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Menu.Designer.cs">
-      <DependentUpon>Menu.cs</DependentUpon>
-    </Compile>
     <Compile Include="Informationgame.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -336,6 +323,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SignUp.Designer.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormLobby.resx">
       <DependentUpon>FormLobby.cs</DependentUpon>
     </EmbeddedResource>
@@ -345,9 +335,6 @@
     <EmbeddedResource Include="Login.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Login1.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Menu.resx">
-      <DependentUpon>Menu.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -393,7 +380,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\images %281%29.png" />
+    <None Include="Resources\pointer-to-left-side-glossy-ui-button-vector-44575073.jpg" />
     <None Include="Resources\4768220eda2bdf16308f85bc566d46f71.jpg" />
+    <None Include="Resources\251451-200.png" />
     <Content Include="Resources\icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

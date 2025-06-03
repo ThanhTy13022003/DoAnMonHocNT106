@@ -1,12 +1,17 @@
-﻿using System;
+﻿// ... các using giữ nguyên ...
+
 using System.Drawing;
-using System.Windows.Forms;
 using System.Media;
+using System.Windows.Forms;
+using System;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace DoAnMonHocNT106
 {
     public partial class PvE : Form
     {
+        private string currentUser;
+
         private const int Rows = 20;
         private const int Cols = 17;
         private Button[,] board = new Button[Rows, Cols];
@@ -20,12 +25,13 @@ namespace DoAnMonHocNT106
         private int[] AttackPoint = { 0, 1, 10, 100, 1000, 100000 };
         private int[] DefensePoint = { 0, 2, 20, 200, 2000, 200000 };
 
-        public PvE()
+        public PvE(string user)
         {
             InitializeComponent();
+            currentUser = user;
             InitializeTimer();
             InitializeBoard();
-        }
+        }    
 
         private void InitializeBoard()
         {
@@ -37,11 +43,14 @@ namespace DoAnMonHocNT106
             {
                 for (int j = 0; j < Cols; j++)
                 {
-                    Button btn = new Button();
-                    btn.Width = btn.Height = size;
-                    btn.Location = new Point(j * size, i * size);
-                    btn.Font = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold);
-                    btn.Tag = new Point(i, j);
+                    Button btn = new Button
+                    {
+                        Width = size,
+                        Height = size,
+                        Location = new Point(j * size, i * size),
+                        Font = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold),
+                        Tag = new Point(i, j)
+                    };
                     btn.Click += PlayerMove;
                     board[i, j] = btn;
                     panelBoard.Controls.Add(btn);
@@ -55,8 +64,7 @@ namespace DoAnMonHocNT106
 
         private void InitializeTimer()
         {
-            countdownTimer = new Timer();
-            countdownTimer.Interval = 1000;
+            countdownTimer = new Timer { Interval = 1000 };
             countdownTimer.Tick += CountdownTick;
         }
 
@@ -104,25 +112,22 @@ namespace DoAnMonHocNT106
                 gameOver = true;
                 HighlightWinningLine(point.X, point.Y, "X");
                 PlaySound("win.wav");
-                await FirebaseHelper.SaveGameResult(playerName, "Win"); // lưu lịch sử vào firebase
+                await FirebaseHelper.SaveGameResult(playerName, "Win");
                 MessageBox.Show($"{playerName} thắng!");
-                var history = await FirebaseHelper.GetGameHistory(playerName);
-                foreach (var game in history)
-                {
-                    Console.WriteLine($"{game.Time}: {game.Result}");
-                }
-                var stats = await FirebaseHelper.GetStats(playerName);
                 return;
             }
+
+            isPlayerTurn = false;
             BotMove();
         }
 
         private async void BotMove()
         {
             Point move = GetSmartBotMove();
-            Button btn = board[move.X, move.Y];
-            btn.Text = "O";
-            btn.ForeColor = Color.Red;
+            if (board[move.X, move.Y].Text != "") return; // tránh lỗi nếu trùng
+
+            board[move.X, move.Y].Text = "O";
+            board[move.X, move.Y].ForeColor = Color.Red;
 
             if (CheckWin(move.X, move.Y, "O"))
             {
@@ -133,6 +138,8 @@ namespace DoAnMonHocNT106
                 MessageBox.Show("Bot thắng!");
                 return;
             }
+
+            isPlayerTurn = true;
             StartCountdown();
         }
 
@@ -172,37 +179,26 @@ namespace DoAnMonHocNT106
 
         private int EvaluateDirection(int x, int y, int dx, int dy, string player)
         {
-            int count = 0;
-            int block = 0;
+            int count = 0, block = 0;
 
             for (int i = 1; i <= 4; i++)
             {
                 int nx = x + dx * i;
                 int ny = y + dy * i;
-                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols)
-                {
-                    block++;
-                    break;
-                }
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols) { block++; break; }
                 string cell = board[nx, ny].Text;
                 if (cell == player) count++;
-                else if (cell != "") { block++; break; }
-                else break;
+                else if (cell != "") { block++; break; } else break;
             }
 
             for (int i = 1; i <= 4; i++)
             {
                 int nx = x - dx * i;
                 int ny = y - dy * i;
-                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols)
-                {
-                    block++;
-                    break;
-                }
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols) { block++; break; }
                 string cell = board[nx, ny].Text;
                 if (cell == player) count++;
-                else if (cell != "") { block++; break; }
-                else break;
+                else if (cell != "") { block++; break; } else break;
             }
 
             return player == "O" ? (block == 2 ? 0 : AttackPoint[count]) : (block == 2 ? 0 : DefensePoint[count]);
@@ -219,70 +215,52 @@ namespace DoAnMonHocNT106
         private bool CheckDirection(int x, int y, int dx, int dy, string player)
         {
             int count = 1;
-
             for (int i = 1; i < 5; i++)
             {
-                int nx = x + dx * i;
-                int ny = y + dy * i;
-                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols) break;
-                if (board[nx, ny].Text == player) count++;
-                else break;
+                int nx = x + dx * i, ny = y + dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != player) break;
+                count++;
             }
-
             for (int i = 1; i < 5; i++)
             {
-                int nx = x - dx * i;
-                int ny = y - dy * i;
-                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols) break;
-                if (board[nx, ny].Text == player) count++;
-                else break;
+                int nx = x - dx * i, ny = y - dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != player) break;
+                count++;
             }
-
             return count >= 5;
         }
 
         private void HighlightWinningLine(int x, int y, string player)
         {
-            HighlightLine(x, y, 1, 0, player);
-            HighlightLine(x, y, 0, 1, player);
-            HighlightLine(x, y, 1, 1, player);
-            HighlightLine(x, y, 1, -1, player);
+            if (CheckDirection(x, y, 1, 0, player)) HighlightWinningLine(x, y, 1, 0, player);
+            else if (CheckDirection(x, y, 0, 1, player)) HighlightWinningLine(x, y, 0, 1, player);
+            else if (CheckDirection(x, y, 1, 1, player)) HighlightWinningLine(x, y, 1, 1, player);
+            else if (CheckDirection(x, y, 1, -1, player)) HighlightWinningLine(x, y, 1, -1, player);
         }
 
-        private void HighlightLine(int x, int y, int dx, int dy, string player)
+        private void HighlightWinningLine(int x, int y, int dx, int dy, string player)
         {
             int count = 1;
             board[x, y].BackColor = Color.Orange;
 
             for (int i = 1; i < 5; i++)
             {
-                int nx = x + dx * i;
-                int ny = y + dy * i;
-                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols) break;
-                if (board[nx, ny].Text == player)
-                {
-                    board[nx, ny].BackColor = Color.Orange;
-                    count++;
-                }
-                else break;
+                int nx = x + dx * i, ny = y + dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != player) break;
+                board[nx, ny].BackColor = Color.Orange;
+                count++;
             }
 
             for (int i = 1; i < 5; i++)
             {
-                int nx = x - dx * i;
-                int ny = y - dy * i;
-                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols) break;
-                if (board[nx, ny].Text == player)
-                {
-                    board[nx, ny].BackColor = Color.Orange;
-                    count++;
-                }
-                else break;
+                int nx = x - dx * i, ny = y - dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != player) break;
+                board[nx, ny].BackColor = Color.Orange;
+                count++;
             }
 
             if (count < 5)
             {
-                // Không phải 5 ô thì bỏ tô màu
                 for (int i = 0; i < Rows; i++)
                     for (int j = 0; j < Cols; j++)
                         if (board[i, j].BackColor == Color.Orange)
@@ -297,15 +275,12 @@ namespace DoAnMonHocNT106
                 SoundPlayer player = new SoundPlayer(fileName);
                 player.Play();
             }
-            catch
-            {
-                // File âm thanh không tồn tại, bỏ qua
-            }
+            catch { }
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            Menu Form = new Menu();
-            Form.Show();
+            new Form1().Show();
             this.Hide();
         }
 

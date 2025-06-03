@@ -16,10 +16,12 @@ namespace DoAnMonHocNT106
     public partial class SignUp : Form
     {
         private string apiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong";
+        private FirebaseAuthProvider auth;
 
         public SignUp()
         {
             InitializeComponent();
+            auth = new FirebaseAuthProvider(new FirebaseConfig("AIzaSy..."));
         }
         private async void button1_Click(object sender, EventArgs e)
         {
