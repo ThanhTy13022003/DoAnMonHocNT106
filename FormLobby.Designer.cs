@@ -3,115 +3,119 @@
     partial class FormLobby
     {
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.ListView listViewUsers;
-        private System.Windows.Forms.ColumnHeader colUsername;
+        private System.Windows.Forms.ListView lstUser;
+        private System.Windows.Forms.ColumnHeader colUser;
         private System.Windows.Forms.ColumnHeader colStatus;
-        private System.Windows.Forms.Button btnHost;
-        private System.Windows.Forms.Button btnJoin;
-        private System.Windows.Forms.TextBox txtIP;
-        private System.Windows.Forms.Label lblIP;
+        private System.Windows.Forms.TextBox txtChat;
+        private System.Windows.Forms.TextBox txtNhap;
+        private System.Windows.Forms.Button btnGui;
 
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
         private void InitializeComponent()
         {
-            this.listViewUsers = new System.Windows.Forms.ListView();
-            this.colUsername = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.components = new System.ComponentModel.Container();
+            this.lstUser = new System.Windows.Forms.ListView();
+            this.colUser = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btnHost = new System.Windows.Forms.Button();
-            this.btnJoin = new System.Windows.Forms.Button();
-            this.txtIP = new System.Windows.Forms.TextBox();
-            this.lblIP = new System.Windows.Forms.Label();
+            this.txtChat = new System.Windows.Forms.TextBox();
+            this.txtNhap = new System.Windows.Forms.TextBox();
+            this.btnGui = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // listViewUsers
+            // lstUser
             // 
-            this.listViewUsers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colUsername,
+            this.lstUser.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colUser,
             this.colStatus});
-            this.listViewUsers.FullRowSelect = true;
-            this.listViewUsers.GridLines = true;
-            this.listViewUsers.HideSelection = false;
-            this.listViewUsers.Location = new System.Drawing.Point(12, 12);
-            this.listViewUsers.MultiSelect = false;
-            this.listViewUsers.Name = "listViewUsers";
-            this.listViewUsers.Size = new System.Drawing.Size(300, 400);
-            this.listViewUsers.TabIndex = 0;
-            this.listViewUsers.UseCompatibleStateImageBehavior = false;
-            this.listViewUsers.View = System.Windows.Forms.View.Details;
-            this.listViewUsers.DoubleClick += new System.EventHandler(this.listViewUsers_DoubleClick);
+            this.lstUser.FullRowSelect = true;
+            this.lstUser.GridLines = true;
+            this.lstUser.HideSelection = false;
+            this.lstUser.Location = new System.Drawing.Point(12, 36);
+            this.lstUser.Name = "lstUser";
+            this.lstUser.Size = new System.Drawing.Size(250, 358);
+            this.lstUser.TabIndex = 0;
+            this.lstUser.UseCompatibleStateImageBehavior = false;
+            this.lstUser.View = System.Windows.Forms.View.Details;
             // 
-            // colUsername
+            // colUser
             // 
-            this.colUsername.Text = "Username";
-            this.colUsername.Width = 150;
+            this.colUser.Text = "Tên người dùng";
+            this.colUser.Width = 140;
             // 
             // colStatus
             // 
-            this.colStatus.Text = "Status";
+            this.colStatus.Text = "Trạng thái";
             this.colStatus.Width = 100;
             // 
-            // btnHost
+            // txtChat
             // 
-            this.btnHost.Location = new System.Drawing.Point(350, 50);
-            this.btnHost.Name = "btnHost";
-            this.btnHost.Size = new System.Drawing.Size(120, 40);
-            this.btnHost.TabIndex = 1;
-            this.btnHost.Text = "Tạo phòng";
-            this.btnHost.UseVisualStyleBackColor = true;
-            this.btnHost.Click += new System.EventHandler(this.btnHost_Click);
+            this.txtChat.Location = new System.Drawing.Point(270, 36);
+            this.txtChat.Multiline = true;
+            this.txtChat.Name = "txtChat";
+            this.txtChat.ReadOnly = true;
+            this.txtChat.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtChat.Size = new System.Drawing.Size(400, 320);
+            this.txtChat.TabIndex = 1;
             // 
-            // btnJoin
+            // txtNhap
             // 
-            this.btnJoin.Location = new System.Drawing.Point(350, 150);
-            this.btnJoin.Name = "btnJoin";
-            this.btnJoin.Size = new System.Drawing.Size(120, 40);
-            this.btnJoin.TabIndex = 2;
-            this.btnJoin.Text = "Tham gia phòng";
-            this.btnJoin.UseVisualStyleBackColor = true;
-            this.btnJoin.Click += new System.EventHandler(this.btnJoin_Click);
+            this.txtNhap.Location = new System.Drawing.Point(270, 374);
+            this.txtNhap.Name = "txtNhap";
+            this.txtNhap.Size = new System.Drawing.Size(300, 20);
+            this.txtNhap.TabIndex = 2;
             // 
-            // txtIP
+            // btnGui
             // 
-            this.txtIP.Location = new System.Drawing.Point(350, 120);
-            this.txtIP.Name = "txtIP";
-            this.txtIP.Size = new System.Drawing.Size(120, 22);
-            this.txtIP.TabIndex = 3;
-            this.txtIP.Text = "127.0.0.1";
+            this.btnGui.Location = new System.Drawing.Point(580, 371);
+            this.btnGui.Name = "btnGui";
+            this.btnGui.Size = new System.Drawing.Size(90, 23);
+            this.btnGui.TabIndex = 3;
+            this.btnGui.Text = "Gửi";
+            this.btnGui.UseVisualStyleBackColor = true;
+            this.btnGui.Click += new System.EventHandler(this.btnGui_Click);
             // 
-            // lblIP
+            // contextMenuStrip1
             // 
-            this.lblIP.AutoSize = true;
-            this.lblIP.Location = new System.Drawing.Point(350, 100);
-            this.lblIP.Name = "lblIP";
-            this.lblIP.Size = new System.Drawing.Size(55, 16);
-            this.lblIP.TabIndex = 4;
-            this.lblIP.Text = "Nhập IP";
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
+            // button1
+            // 
+            this.button1.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._251451_200;
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button1.Location = new System.Drawing.Point(12, 1);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(38, 29);
+            this.button1.TabIndex = 4;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // FormLobby
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(500, 430);
-            this.Controls.Add(this.lblIP);
-            this.Controls.Add(this.txtIP);
-            this.Controls.Add(this.btnJoin);
-            this.Controls.Add(this.btnHost);
-            this.Controls.Add(this.listViewUsers);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.ClientSize = new System.Drawing.Size(684, 421);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnGui);
+            this.Controls.Add(this.txtNhap);
+            this.Controls.Add(this.txtChat);
+            this.Controls.Add(this.lstUser);
             this.Name = "FormLobby";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Lobby - Caro Game";
+            this.Text = "Sảnh chờ người chơi";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Lobby_FormClosing);
+            this.Load += new System.EventHandler(this.Lobby_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
+
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.Button button1;
     }
 }

@@ -14,11 +14,13 @@ namespace DoAnMonHocNT106
 {
     public partial class Login : Form
     {
-        private string apiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong"; 
+        private string apiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong";
+        private FirebaseAuthProvider auth;
 
         public Login()
         {
             InitializeComponent();
+            auth = new FirebaseAuthProvider(new FirebaseConfig("AIzaSy..."));
         }
         private void Password_Placeholder(object sender, EventArgs e)
         {
@@ -89,11 +91,11 @@ namespace DoAnMonHocNT106
         private async void signin_Click(object sender, EventArgs e)
         {
             string input = username.Text; // Người dùng nhập username hoặc email
-            string Password = this.password.Text; // Đảm bảo textbox đúng tên
+            string Password = this.password.Text;
 
             // Kiểm tra nếu nhập username thì lấy email tương ứng từ Firebase
             string email = input;
-            if (!input.Contains("@")) // Kiểm tra nếu input không phải email
+            if (!input.Contains("@"))
             {
                 email = await FirebaseHelper.GetEmailByUsername(input);
                 if (email == null)
@@ -102,12 +104,20 @@ namespace DoAnMonHocNT106
                     return;
                 }
             }
+
             try
             {
                 var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
                 var auth = await authProvider.SignInWithEmailAndPasswordAsync(email, Password);
 
-                Menu mainForm = new Menu();
+                string userName = input.Contains("@") ? email.Split('@')[0] : input;
+
+                Properties.Settings.Default["UserId"] = userName;
+                Properties.Settings.Default.Save();
+
+                await FirebaseHelper.SetUserOnlineStatus(userName, true);
+
+                Form1 mainForm = new Form1();
                 mainForm.Show();
                 this.Hide();
             }

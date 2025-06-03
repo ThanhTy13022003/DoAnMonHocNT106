@@ -1,5 +1,6 @@
 ﻿using Firebase.Database;
 using Firebase.Database.Query;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,6 @@ namespace DoAnMonHocNT106
     {
         private static readonly string FirebaseURL = "https://nt106-7c9fe-default-rtdb.firebaseio.com/";
         private static FirebaseClient firebase = new FirebaseClient(FirebaseURL);
-
-        // ===== USER ACCOUNT =====
 
         public static async Task AddUser(string username, string password, string email)
         {
@@ -33,14 +32,12 @@ namespace DoAnMonHocNT106
         {
             try
             {
-                var user = await firebase
+                return await firebase
                     .Child("Users")
                     .Child(username)
                     .OnceSingleAsync<User>();
-
-                return user;
             }
-            catch (Exception)
+            catch
             {
                 return null;
             }
@@ -52,7 +49,6 @@ namespace DoAnMonHocNT106
             return user?.Email;
         }
 
-        // Cập nhật trạng thái online/offline
         public static async Task SetUserOnlineStatus(string username, bool isOnline)
         {
             var user = await GetUserByUsername(username);
@@ -64,51 +60,41 @@ namespace DoAnMonHocNT106
             }
         }
 
-        // Lấy danh sách user online
         public static async Task<List<User>> GetOnlineUsers()
         {
             var allUsers = await firebase.Child("Users").OnceAsync<User>();
-            return allUsers
-                .Where(u => u.Object.IsOnline)
-                .Select(u => u.Object)
-                .ToList();
+            return allUsers.Where(u => u.Object.IsOnline).Select(u => u.Object).ToList();
         }
 
-
-        // ===== CHAT =====
-
-        // Lưu message chat riêng giữa 2 user (chatId = user1_user2 hoặc user2_user1 để tránh duplicate)
-        public static async Task SaveChatMessage(string user1, string user2, ChatMessage message)
+        public static async Task<List<User>> GetAllUsers()
         {
-            string chatId = GenerateChatId(user1, user2);
-            await firebase
-                .Child("Chats")
-                .Child(chatId)
-                .PostAsync(message);
+            var allUsers = await firebase.Child("Users").OnceAsync<User>();
+            return allUsers.Select(x => x.Object).ToList();
         }
 
-        // Lấy lịch sử chat giữa 2 user
-        public static async Task<List<ChatMessage>> GetChatHistory(string user1, string user2)
+        public static async Task<string> GetLoggedInUsername()
         {
-            string chatId = GenerateChatId(user1, user2);
-            var messages = await firebase
-                .Child("Chats")
-                .Child(chatId)
-                .OrderBy("Time")
-                .OnceAsync<ChatMessage>();
-
-            return messages.Select(m => m.Object).OrderBy(m => m.Time).ToList();
+            return await Task.FromResult("Guest"); 
         }
 
-        private static string GenerateChatId(string user1, string user2)
+        public static async Task SendChatMessage(string username, string message)
         {
-            var arr = new[] { user1.ToLower(), user2.ToLower() };
-            Array.Sort(arr);
-            return $"{arr[0]}_{arr[1]}";
+            var chatMsg = new ChatMessage
+            {
+                FromUser = username,
+                ToUser = "all",
+                Message = message,
+                Time = DateTime.UtcNow
+            };
+
+            await firebase.Child("PublicChat").PostAsync(chatMsg);
         }
 
-
-        // ===== GAME RESULT =====
+        public static async Task<List<ChatMessage>> GetPublicChatMessages()
+        {
+            var msgs = await firebase.Child("PublicChat").OrderByKey().OnceAsync<ChatMessage>();
+            return msgs.Select(m => m.Object).ToList();
+        }
 
         public static async Task SaveGameResult(string playerName, string result)
         {
@@ -148,12 +134,10 @@ namespace DoAnMonHocNT106
         }
     }
 
-    // ===== MODEL =====
-
     public class User
     {
         public string Username { get; set; }
-        public string Password { get; set; }  
+        public string Password { get; set; }
         public string Email { get; set; }
         public bool IsOnline { get; set; }
         public DateTime LastOnline { get; set; }
@@ -170,7 +154,7 @@ namespace DoAnMonHocNT106
     public class GameResult
     {
         public string PlayerName { get; set; }
-        public string Result { get; set; } // "Win", "Lose", "Timeout"
+        public string Result { get; set; }
         public DateTime Time { get; set; }
     }
 }
