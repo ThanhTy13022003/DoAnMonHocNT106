@@ -32,6 +32,7 @@ namespace DoAnMonHocNT106
             this.roomId = roomId;
             firebase = FirebaseHelper.GetFirebaseClient();
             InitializeBoard();
+            this.FormClosing += FormPvP_FormClosing;
         }
 
         private void InitializeBoard()
@@ -105,6 +106,7 @@ namespace DoAnMonHocNT106
 
         private async void CountdownTick(object sender, EventArgs e)
         {
+            if (gameOver) return;
             countdown--;
             lblCountdown.Text = $"Thời gian: {countdown}s";
             if (countdown <= 0)
@@ -258,10 +260,17 @@ namespace DoAnMonHocNT106
                 if (isMyTurn) StartCountdown(); else StopCountdown();
             }
         }
-
         private void btnBack_Click(object sender, EventArgs e)
         {
+            gameOver = true;
+            StopCountdown();
             this.Close();
+        }
+
+        private void FormPvP_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            gameOver = true;
+            StopCountdown();
         }
     }
 }

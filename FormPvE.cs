@@ -77,11 +77,13 @@ namespace DoAnMonHocNT106
         {
             countdownTimer.Stop();
         }
-
         private async void CountdownTick(object sender, EventArgs e)
         {
+            if (gameOver) return;
+
             countdown--;
             lblTimer.Text = $"Thời gian: {countdown}s";
+
             if (countdown <= 0)
             {
                 StopCountdown();
@@ -94,7 +96,6 @@ namespace DoAnMonHocNT106
                 }
             }
         }
-
         private async void PlayerMove(object sender, EventArgs e)
         {
             if (gameOver || !isPlayerTurn) return;
@@ -278,16 +279,21 @@ namespace DoAnMonHocNT106
             }
             catch { }
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
+            gameOver = true;
+            StopCountdown();
             new Form1().Show();
-            this.Hide();
+            this.Close(); 
         }
-
         private void btnRestart_Click(object sender, EventArgs e)
         {
             InitializeBoard();
+        }
+        private void FormPvE_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            gameOver = true;
+            StopCountdown();
         }
     }
 }

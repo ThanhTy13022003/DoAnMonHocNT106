@@ -122,7 +122,7 @@
             this.Text = "Caro - PvE (Chơi với Máy)";
             this.ResumeLayout(false);
             this.PerformLayout();
-
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPvE_FormClosing);
         }
     }
 }
