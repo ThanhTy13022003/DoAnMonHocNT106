@@ -20,7 +20,7 @@ namespace DoAnMonHocNT106
         public Login()
         {
             InitializeComponent();
-            auth = new FirebaseAuthProvider(new FirebaseConfig("AIzaSy..."));
+            auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
         }
         private void Password_Placeholder(object sender, EventArgs e)
         {
@@ -116,6 +116,7 @@ namespace DoAnMonHocNT106
                 Properties.Settings.Default.Save();
 
                 await FirebaseHelper.SetUserOnlineStatus(userName, true);
+                FirebaseHelper.CurrentUsername = userName;
 
                 Form1 mainForm = new Form1();
                 mainForm.Show();

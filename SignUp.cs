@@ -71,13 +71,12 @@ namespace DoAnMonHocNT106
             pw.UseSystemPasswordChar = !show.Checked;
             repw.UseSystemPasswordChar = !show.Checked;
         }
-
         private async void gm_Click(object sender, EventArgs e)
         {
             try
             {
-                string clientId = "ggID";
-                string clientSecret = "ggSC";
+                string clientId = "150464310449-sbdgtn4a2vo3n1dbq51cc1o9ept5tokl.apps.googleusercontent.com";
+                string clientSecret = "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"; 
                 string firebaseApiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong";
                 string firebaseDbUrl = "https://nt106-7c9fe-default-rtdb.firebaseio.com/";
 
@@ -96,6 +95,7 @@ namespace DoAnMonHocNT106
                     new FileDataStore("GoogleTokenStore")
                 );
 
+                // Kiểm tra ID token
                 string idToken = credential.Token.IdToken;
                 if (string.IsNullOrEmpty(idToken))
                 {
@@ -111,32 +111,46 @@ namespace DoAnMonHocNT106
                     var content = new
                     {
                         postBody = $"id_token={idToken}&providerId=google.com",
-                        requestUri = "http://127.0.0.1",
+                        requestUri = "http://localhost", // Đảm bảo domain này có trong Firebase Auth > Sign-in method > Authorized domains
                         returnIdpCredential = true,
                         returnSecureToken = true
                     };
 
                     var response = await client.PostAsJsonAsync(requestUri, content);
-                    response.EnsureSuccessStatusCode();
-
                     var responseBody = await response.Content.ReadAsStringAsync();
-                    var json = JObject.Parse(responseBody);
 
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Lỗi Firebase: " + responseBody);
+                        return;
+                    }
+
+                    var json = JObject.Parse(responseBody);
                     string firebaseIdToken = json["idToken"]?.ToString();
                     string email = json["email"]?.ToString();
                     string displayName = json["displayName"]?.ToString();
                     string localId = json["localId"]?.ToString();
 
-                    // Step 3: Check user existence
+                    if (string.IsNullOrEmpty(firebaseIdToken) || string.IsNullOrEmpty(localId))
+                    {
+                        MessageBox.Show("Thông tin người dùng từ Firebase không đầy đủ.");
+                        return;
+                    }
+
+                    // Step 3: Check if user exists in Realtime Database
                     bool userExists = await CheckIfUserExists(firebaseDbUrl, localId, firebaseIdToken);
 
                     if (!userExists)
                     {
-                        await CreateUserInDatabase(firebaseDbUrl, localId, firebaseIdToken, displayName, email);               
+                        await CreateUserInDatabase(firebaseDbUrl, localId, firebaseIdToken, displayName, email);
                     }
 
-                    MessageBox.Show($"Đăng nhập thành công!\n");
-                    // TODO: Navigate to main form
+                    MessageBox.Show($"Đăng nhập Google thành công!\nChào {displayName ?? "bạn"}.");
+
+                    // Mở Lobby
+                    FormLobby lobby = new FormLobby(displayName);
+                    lobby.Show();
+                    this.Hide();
                 }
             }
             catch (Exception ex)
@@ -144,7 +158,6 @@ namespace DoAnMonHocNT106
                 MessageBox.Show($"Lỗi: {ex.Message}");
             }
         }
-
         private async Task<bool> CheckIfUserExists(string firebaseDbUrl, string userId, string idToken)
         {
             using (var client = new HttpClient())
