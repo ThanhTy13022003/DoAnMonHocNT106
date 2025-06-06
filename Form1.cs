@@ -10,9 +10,9 @@ namespace DoAnMonHocNT106
         public Form1()
         {
             InitializeComponent();
-
             // Lấy tên người dùng từ Settings
             tênUser = Properties.Settings.Default.UserId;
+            FirebaseHelper.CurrentUsername = tênUser; 
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -23,7 +23,7 @@ namespace DoAnMonHocNT106
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-            PvE Form = new PvE(tênUser); // Truyền tên người dùng vào PvE
+            FormPvE Form = new FormPvE(tênUser); // Truyền tên người dùng vào PvE
             Form.Show();
             this.Hide();
         }

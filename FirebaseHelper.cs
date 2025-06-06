@@ -11,7 +11,7 @@ namespace DoAnMonHocNT106
     public class FirebaseHelper
     {
         private static readonly string FirebaseURL = "https://nt106-7c9fe-default-rtdb.firebaseio.com/";
-        private static FirebaseClient firebase = new FirebaseClient(FirebaseURL);
+        public static FirebaseClient firebase = new FirebaseClient(FirebaseURL);
 
         public static async Task AddUser(string username, string password, string email)
         {
@@ -74,7 +74,7 @@ namespace DoAnMonHocNT106
 
         public static async Task<string> GetLoggedInUsername()
         {
-            return await Task.FromResult("Guest"); 
+            return await Task.FromResult(CurrentUsername);
         }
 
         public static async Task SendChatMessage(string username, string message)
@@ -123,6 +123,23 @@ namespace DoAnMonHocNT106
                 .OrderByDescending(gr => gr.Time)
                 .ToList();
         }
+        public static async Task SavePvPGameResult(string roomId, string playerX, string playerO, string result)
+        {
+            var match = new
+            {
+                roomId = roomId,
+                playerX = playerX,
+                playerO = playerO,
+                result = result,
+                time = DateTime.UtcNow.ToString("o")
+            };
+
+            await firebase.Child("MatchHistory").PostAsync(match);
+        }
+        public static FirebaseClient GetFirebaseClient()
+        {
+            return firebase;
+        }
 
         public static async Task<(int Wins, int Losses, int Timeouts)> GetStats(string playerName)
         {
@@ -132,6 +149,8 @@ namespace DoAnMonHocNT106
             int timeouts = history.Count(r => r.Result == "Timeout");
             return (wins, losses, timeouts);
         }
+        public static string CurrentUsername { get; set; } = "Guest";
+
     }
 
     public class User
@@ -156,5 +175,25 @@ namespace DoAnMonHocNT106
         public string PlayerName { get; set; }
         public string Result { get; set; }
         public DateTime Time { get; set; }
+    }
+    public class Invite
+    {
+        public string from { get; set; }
+        public string to { get; set; }
+        public string roomId { get; set; }
+        public string timestamp { get; set; }
+    }
+    public class UserInfo
+    {
+        public string Email { get; set; }
+        public string DisplayName { get; set; }
+    }
+    public class Move
+    {
+        public int row { get; set; }
+        public int col { get; set; }
+        public string user { get; set; }
+        public string symbol { get; set; }
+        public string timestamp { get; set; }
     }
 }

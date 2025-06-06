@@ -73,6 +73,16 @@ namespace DoAnMonHocNT106.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _11830 {
+            get {
+                object obj = ResourceManager.GetObject("11830", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap _1200x630wa {
             get {
                 object obj = ResourceManager.GetObject("1200x630wa", resourceCulture);
@@ -143,6 +153,16 @@ namespace DoAnMonHocNT106.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icon1 {
+            get {
+                object obj = ResourceManager.GetObject("icon1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_circle_48 {
             get {
                 object obj = ResourceManager.GetObject("icons8-circle-48", resourceCulture);
@@ -203,6 +223,27 @@ namespace DoAnMonHocNT106.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap pngtree_a_neon_joystick_or_game_controller_for_a_gaming_console_set_against_a_blue_backdrop_vector_png_image_37786992 {
+            get {
+                object obj = ResourceManager.GetObject("pngtree-a-neon-joystick-or-game-controller-for-a-gaming-console-set-against-a-blu" +
+                        "e-backdrop-vector-png-image_37786992", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pngtree_retro_futuristic_gaming_desk_scene_image_16555312 {
+            get {
+                object obj = ResourceManager.GetObject("pngtree-retro-futuristic-gaming-desk-scene-image_16555312", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap pointer_to_left_side_glossy_ui_button_vector_44575073 {
             get {
                 object obj = ResourceManager.GetObject("pointer-to-left-side-glossy-ui-button-vector-44575073", resourceCulture);
@@ -216,6 +257,16 @@ namespace DoAnMonHocNT106.Properties {
         internal static System.Drawing.Bitmap register_form_01 {
             get {
                 object obj = ResourceManager.GetObject("register_form_01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap setting {
+            get {
+                object obj = ResourceManager.GetObject("setting", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
