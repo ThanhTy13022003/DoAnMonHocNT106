@@ -223,6 +223,16 @@ namespace DoAnMonHocNT106.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap istockphoto_1446315929_612x612 {
+            get {
+                object obj = ResourceManager.GetObject("istockphoto-1446315929-612x612", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap pngtree_a_neon_joystick_or_game_controller_for_a_gaming_console_set_against_a_blue_backdrop_vector_png_image_37786992 {
             get {
                 object obj = ResourceManager.GetObject("pngtree-a-neon-joystick-or-game-controller-for-a-gaming-console-set-against-a-blu" +

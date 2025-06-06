@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -32,11 +31,11 @@ namespace DoAnMonHocNT106
             LangNgheNguoiDungThayDoi();
             LangNgheChat();
         }
+
         private async Task LoadUsers()
         {
             var users = await FirebaseHelper.GetAllUsers();
 
-            // Tạo dictionary hiện tại để kiểm tra nhanh
             var existingItems = lstUsers.Items.Cast<ListViewItem>()
                                     .ToDictionary(item => item.Text, item => item);
 
@@ -46,7 +45,6 @@ namespace DoAnMonHocNT106
 
                 if (existingItems.ContainsKey(user.Username))
                 {
-                    // Cập nhật trạng thái nếu thay đổi
                     var item = existingItems[user.Username];
                     string newStatus = user.IsOnline ? "Online" : "Offline";
                     if (item.SubItems[1].Text != newStatus)
@@ -57,7 +55,6 @@ namespace DoAnMonHocNT106
                 }
                 else
                 {
-                    // Thêm mới nếu chưa có
                     var item = new ListViewItem(user.Username);
                     item.SubItems.Add(user.IsOnline ? "Online" : "Offline");
                     item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
@@ -65,7 +62,7 @@ namespace DoAnMonHocNT106
                 }
             }
 
-            // Xóa những user không còn tồn tại
+            // Xóa user không còn tồn tại
             foreach (var item in existingItems)
             {
                 if (!users.Any(u => u.Username == item.Key))
@@ -74,6 +71,7 @@ namespace DoAnMonHocNT106
                 }
             }
         }
+
         private async Task LoadChatMessages()
         {
             lstChat.Items.Clear();
@@ -87,6 +85,7 @@ namespace DoAnMonHocNT106
             if (lstChat.Items.Count > 0)
                 lstChat.EnsureVisible(lstChat.Items.Count - 1);
         }
+
         private void LangNgheNguoiDungThayDoi()
         {
             firebase.Child("Users")
@@ -95,16 +94,16 @@ namespace DoAnMonHocNT106
                 {
                     if (ev.Object != null && !string.IsNullOrEmpty(ev.Key))
                     {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
                         await this.InvokeAsync(() =>
                         {
-                            // Tìm item tương ứng trong danh sách
                             var existingItem = lstUsers.Items
                                 .Cast<ListViewItem>()
                                 .FirstOrDefault(item => item.Text == ev.Object.Username);
 
                             if (existingItem != null)
                             {
-                                // Cập nhật trạng thái nếu thay đổi
                                 string newStatus = ev.Object.IsOnline ? "Online" : "Offline";
                                 if (existingItem.SubItems[1].Text != newStatus)
                                 {
@@ -114,7 +113,6 @@ namespace DoAnMonHocNT106
                             }
                             else if (ev.Object.Username != currentUser)
                             {
-                                // Thêm mới nếu chưa có
                                 var item = new ListViewItem(ev.Object.Username);
                                 item.SubItems.Add(ev.Object.IsOnline ? "Online" : "Offline");
                                 item.ForeColor = ev.Object.IsOnline ? Color.Green : Color.Gray;
@@ -124,6 +122,7 @@ namespace DoAnMonHocNT106
                     }
                 });
         }
+
         private void LangNgheChat()
         {
             firebase.Child("PublicChat")
@@ -133,14 +132,15 @@ namespace DoAnMonHocNT106
                     if (ev.Object != null && ev.Key != null && !processedChatKeys.Contains(ev.Key))
                     {
                         processedChatKeys.Add(ev.Key);
+
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
                         await this.InvokeAsync(() =>
                         {
                             var msg = ev.Object;
                             var text = $"{msg.Time:T} - {msg.FromUser}: {msg.Message}";
 
-                            // Kiểm tra tin nhắn đã tồn tại trong lstChat chưa
-                            bool exists = lstChat.Items.Cast<ListViewItem>()
-                                .Any(i => i.Text == text);
+                            bool exists = lstChat.Items.Cast<ListViewItem>().Any(i => i.Text == text);
 
                             if (!exists)
                             {
@@ -153,32 +153,45 @@ namespace DoAnMonHocNT106
                     }
                 });
         }
+
         private void LangNgheLoiMoi()
         {
             firebase.Child("Invites")
                 .AsObservable<Invite>()
                 .Subscribe(async ev =>
                 {
-                    if (ev.Object != null && ev.Object.to == currentUser && !processedInviteKeys.Contains(ev.Key))
+                    if (ev.Object != null &&
+                        ev.Object.to == currentUser &&
+                        !processedInviteKeys.Contains(ev.Key))
                     {
-                        processedInviteKeys.Add(ev.Key);
-
-                        await this.InvokeAsync(async () =>
+                        if (DateTime.TryParse(ev.Object.timestamp, out DateTime inviteTime))
                         {
-                            var result = MessageBox.Show($"{ev.Object.from} mời bạn chơi PvP. Chấp nhận?",
-                                "Lời mời chơi", MessageBoxButtons.YesNo);
-
-                            if (result == DialogResult.Yes)
+                            var now = DateTime.UtcNow;
+                            if ((now - inviteTime).TotalSeconds <= 30)
                             {
-                                await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
-                                var form = new FormPvP(currentUser, ev.Object.from, ev.Object.roomId);
-                                form.Show();
+                                processedInviteKeys.Add(ev.Key);
+
+                                if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                                await this.InvokeAsync(async () =>
+                                {
+                                    var result = MessageBox.Show($"{ev.Object.from} mời bạn chơi PvP. Chấp nhận?",
+                                        "Lời mời chơi", MessageBoxButtons.YesNo);
+
+                                    await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
+
+                                    if (result == DialogResult.Yes)
+                                    {
+                                        var form = new FormPvP(currentUser, ev.Object.from, ev.Object.roomId);
+                                        form.Show();
+                                    }
+                                });
                             }
                             else
                             {
                                 await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
                             }
-                        });
+                        }
                     }
                 });
         }
@@ -213,7 +226,6 @@ namespace DoAnMonHocNT106
 
                     await firebase.Child("Invites").PostAsync(invite);
 
-                    // Mở trước FormPvP cho người mời
                     var formPvp = new FormPvP(currentUser, targetUser, roomId);
                     formPvp.Show();
                 }
@@ -235,7 +247,8 @@ namespace DoAnMonHocNT106
         public static Task InvokeAsync(this Control control, Action action)
         {
             var tcs = new TaskCompletionSource<object>();
-            control.BeginInvoke(new MethodInvoker(() =>
+
+            if (control == null || control.IsDisposed || !control.IsHandleCreated)
             {
                 try
                 {
@@ -246,7 +259,23 @@ namespace DoAnMonHocNT106
                 {
                     tcs.SetException(ex);
                 }
-            }));
+            }
+            else
+            {
+                control.BeginInvoke(new MethodInvoker(() =>
+                {
+                    try
+                    {
+                        action();
+                        tcs.SetResult(null);
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.SetException(ex);
+                    }
+                }));
+            }
+
             return tcs.Task;
         }
     }
