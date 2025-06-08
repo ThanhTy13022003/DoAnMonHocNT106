@@ -39,6 +39,9 @@
     </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dropbox.Api, Version=7.0.0.0, Culture=neutral, PublicKeyToken=310f0e82fbb45d01, processorArchitecture=MSIL">
+      <HintPath>packages\Dropbox.Api.7.0.0\lib\netstandard2.0\Dropbox.Api.dll</HintPath>
+    </Reference>
     <Reference Include="Firebase.Auth, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\FirebaseAuthentication.net.3.3.0\lib\netstandard1.1\Firebase.Auth.dll</HintPath>
     </Reference>
@@ -315,6 +318,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileBackgroundAppCloser.cs" />
+    <Compile Include="FormLeaderboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLeaderboard.Designer.cs">
+      <DependentUpon>FormLeaderboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormPlayerInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormPlayerInfo.Designer.cs">
+      <DependentUpon>FormPlayerInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form_Introduce.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_Introduce.Designer.cs">
+      <DependentUpon>Form_Introduce.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form_Login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -366,6 +387,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="FormLeaderboard.resx">
+      <DependentUpon>FormLeaderboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormPlayerInfo.resx">
+      <DependentUpon>FormPlayerInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form_Introduce.resx">
+      <DependentUpon>Form_Introduce.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form_Menu.resx">
       <DependentUpon>Form_Menu.cs</DependentUpon>
     </EmbeddedResource>
