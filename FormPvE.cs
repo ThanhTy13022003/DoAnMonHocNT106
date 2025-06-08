@@ -281,6 +281,7 @@ namespace DoAnMonHocNT106
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            MusicPlayer.PlayClickSound();
             gameOver = true;
             StopCountdown();
             new Form1().Show();
@@ -288,6 +289,7 @@ namespace DoAnMonHocNT106
         }
         private void btnRestart_Click(object sender, EventArgs e)
         {
+            MusicPlayer.PlayClickSound();
             InitializeBoard();
         }
         private void FormPvE_FormClosing(object sender, FormClosingEventArgs e)
