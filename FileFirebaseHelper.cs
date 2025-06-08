@@ -24,8 +24,27 @@ namespace DoAnMonHocNT106
                     Password = password,
                     Email = email,
                     IsOnline = false,
-                    LastOnline = DateTime.MinValue
+                    LastOnline = DateTime.MinValue,
+                    Wins = 0, // Khởi tạo Wins
+                    Losses = 0, // Khởi tạo Losses
+                    Draws = 0 // Khởi tạo Draws
                 });
+        }
+
+        public static async Task UpdateUserStats(string username, string result)
+        {
+            var user = await GetUserByUsername(username);
+            if (user != null)
+            {
+                if (result == "Win")
+                    user.Wins++;
+                else if (result == "Lose")
+                    user.Losses++;
+                else if (result == "Draw")
+                    user.Draws++;
+
+                await firebase.Child("Users").Child(username).PutAsync(user);
+            }
         }
 
         public static async Task<User> GetUserByUsername(string username)
@@ -108,6 +127,9 @@ namespace DoAnMonHocNT106
             await firebase
                 .Child("GameResults")
                 .PostAsync(gameResult);
+
+            // Cập nhật thống kê người dùng
+            await UpdateUserStats(playerName, result);
         }
 
         public static async Task<List<GameResult>> GetGameHistory(string playerName)
@@ -123,6 +145,22 @@ namespace DoAnMonHocNT106
                 .OrderByDescending(gr => gr.Time)
                 .ToList();
         }
+
+        public static async Task EnsureUserStatsFields()
+        {
+            var users = await GetAllUsers();
+            foreach (var user in users)
+            {
+                if (user.Wins == 0 && user.Losses == 0 && user.Draws == 0) // Kiểm tra nếu các trường chưa được khởi tạo
+                {
+                    user.Wins = 0;
+                    user.Losses = 0;
+                    user.Draws = 0;
+                    await firebase.Child("Users").Child(user.Username).PutAsync(user);
+                }
+            }
+        }
+
         public static async Task SavePvPGameResult(string roomId, string playerX, string playerO, string result)
         {
             var match = new
@@ -135,10 +173,23 @@ namespace DoAnMonHocNT106
             };
 
             await firebase.Child("MatchHistory").PostAsync(match);
-        }
-        public static FirebaseClient GetFirebaseClient()
-        {
-            return firebase;
+
+            // Cập nhật thống kê người dùng
+            if (result == "X_Win")
+            {
+                await UpdateUserStats(playerX, "Win");
+                await UpdateUserStats(playerO, "Lose");
+            }
+            else if (result == "O_Win")
+            {
+                await UpdateUserStats(playerX, "Lose");
+                await UpdateUserStats(playerO, "Win");
+            }
+            else if (result == "Draw")
+            {
+                await UpdateUserStats(playerX, "Draw");
+                await UpdateUserStats(playerO, "Draw");
+            }
         }
 
         public static async Task<(int Wins, int Losses, int Timeouts)> GetStats(string playerName)
@@ -151,15 +202,37 @@ namespace DoAnMonHocNT106
         }
         public static string CurrentUsername { get; set; } = "Guest";
 
-    }
+        public static async Task<List<(string Username, double WinRate, int TotalGames, int Wins, int Losses, int Draws)>> GetLeaderboard()
+        {
+            var allUsers = await GetAllUsers();
+            var leaderboard = new List<(string Username, double WinRate, int TotalGames, int Wins, int Losses, int Draws)>();
 
-    public class User
+            foreach (var user in allUsers)
+            {
+                int totalGames = user.Wins + user.Losses + user.Draws;
+                double winRate = totalGames > 0 ? Math.Round((double)user.Wins / totalGames * 100, 2) : 0.0;
+
+                leaderboard.Add((user.Username, winRate, totalGames, user.Wins, user.Losses, user.Draws));
+            }
+
+            // Sắp xếp theo tỉ lệ thắng giảm dần, nếu tỉ lệ thắng bằng nhau thì ưu tiên người chơi nhiều trận hơn
+            return leaderboard
+                .OrderByDescending(x => x.WinRate)
+                .ThenByDescending(x => x.TotalGames)
+                .Take(50) // Giới hạn top 50 người chơi
+                .ToList();
+        }
+    }
+        public class User
     {
         public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
         public bool IsOnline { get; set; }
         public DateTime LastOnline { get; set; }
+        public int Wins { get; set; } // Thêm trường Wins
+        public int Losses { get; set; } // Thêm trường Losses
+        public int Draws { get; set; } // Thêm trường Draws
     }
 
     public class ChatMessage
@@ -196,4 +269,6 @@ namespace DoAnMonHocNT106
         public string symbol { get; set; }
         public string timestamp { get; set; }
     }
+
+
 }

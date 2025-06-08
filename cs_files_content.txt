@@ -1,0 +1,4055 @@
+Tên file: FileBackgroundAppCloser.cs
+Và đây là đoạn code:
+using System;
+using System.Diagnostics;
+using System.Threading;
+
+namespace DoAnMonHocNT106
+{
+    public class BackgroundAppCloser
+    {
+        private static Thread backgroundThread;
+        private static CancellationTokenSource cancellationTokenSource;
+
+        public static void StartBackgroundMonitor()
+        {
+            cancellationTokenSource = new CancellationTokenSource();
+            var token = cancellationTokenSource.Token;
+
+            backgroundThread = new Thread(() =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    Thread.Sleep(1000);
+                    if (token.IsCancellationRequested) break;
+
+                    if (ShouldCloseApp())
+                    {
+                        CloseMainApplication();
+                        break;
+                    }
+                }
+            })
+            {
+                IsBackground = true
+            };
+            backgroundThread.Start();
+        }
+
+        public static void StopBackgroundMonitor()
+        {
+            cancellationTokenSource?.Cancel();
+            backgroundThread?.Join(1000); // Chờ thread kết thúc trong 1s
+        }
+
+        private static bool ShouldCloseApp()
+        {
+            // Thêm logic để quyết định khi nào đóng ứng dụng
+            // Ví dụ: kiểm tra file, thời gian, hoặc tín hiệu từ Firebase
+            return false; // Thay bằng điều kiện thực tế
+        }
+
+        private static void CloseMainApplication()
+        {
+            // Tìm và đóng process của ứng dụng chính
+            foreach (var process in Process.GetProcessesByName("DoAnMonHocNT106"))
+            {
+                process.Kill();
+                process.WaitForExit();
+            }
+        }
+    }
+}
+Tên file: FileFirebaseHelper.cs
+Và đây là đoạn code:
+﻿using Firebase.Database;
+using Firebase.Database.Query;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace DoAnMonHocNT106
+{
+    public class FirebaseHelper
+    {
+        private static readonly string FirebaseURL = "https://nt106-7c9fe-default-rtdb.firebaseio.com/";
+        public static FirebaseClient firebase = new FirebaseClient(FirebaseURL);
+
+        public static async Task AddUser(string username, string password, string email)
+        {
+            await firebase
+                .Child("Users")
+                .Child(username)
+                .PutAsync(new User
+                {
+                    Username = username,
+                    Password = password,
+                    Email = email,
+                    IsOnline = false,
+                    LastOnline = DateTime.MinValue
+                });
+        }
+
+        public static async Task<User> GetUserByUsername(string username)
+        {
+            try
+            {
+                return await firebase
+                    .Child("Users")
+                    .Child(username)
+                    .OnceSingleAsync<User>();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static async Task<string> GetEmailByUsername(string username)
+        {
+            var user = await GetUserByUsername(username);
+            return user?.Email;
+        }
+
+        public static async Task SetUserOnlineStatus(string username, bool isOnline)
+        {
+            var user = await GetUserByUsername(username);
+            if (user != null)
+            {
+                user.IsOnline = isOnline;
+                user.LastOnline = DateTime.Now;
+                await firebase.Child("Users").Child(username).PutAsync(user);
+            }
+        }
+
+        public static async Task<List<User>> GetOnlineUsers()
+        {
+            var allUsers = await firebase.Child("Users").OnceAsync<User>();
+            return allUsers.Where(u => u.Object.IsOnline).Select(u => u.Object).ToList();
+        }
+
+        public static async Task<List<User>> GetAllUsers()
+        {
+            var allUsers = await firebase.Child("Users").OnceAsync<User>();
+            return allUsers.Select(x => x.Object).ToList();
+        }
+
+        public static async Task<string> GetLoggedInUsername()
+        {
+            return await Task.FromResult(CurrentUsername);
+        }
+
+        public static async Task SendChatMessage(string username, string message)
+        {
+            var chatMsg = new ChatMessage
+            {
+                FromUser = username,
+                ToUser = "all",
+                Message = message,
+                Time = DateTime.UtcNow
+            };
+
+            await firebase.Child("PublicChat").PostAsync(chatMsg);
+        }
+
+        public static async Task<List<ChatMessage>> GetPublicChatMessages()
+        {
+            var msgs = await firebase.Child("PublicChat").OrderByKey().OnceAsync<ChatMessage>();
+            return msgs.Select(m => m.Object).ToList();
+        }
+
+        public static async Task SaveGameResult(string playerName, string result)
+        {
+            var gameResult = new GameResult
+            {
+                PlayerName = playerName,
+                Result = result,
+                Time = DateTime.Now
+            };
+
+            await firebase
+                .Child("GameResults")
+                .PostAsync(gameResult);
+        }
+
+        public static async Task<List<GameResult>> GetGameHistory(string playerName)
+        {
+            var allResults = await firebase
+                .Child("GameResults")
+                .OrderBy("Time")
+                .OnceAsync<GameResult>();
+
+            return allResults
+                .Select(item => item.Object)
+                .Where(gr => gr.PlayerName == playerName)
+                .OrderByDescending(gr => gr.Time)
+                .ToList();
+        }
+        public static async Task SavePvPGameResult(string roomId, string playerX, string playerO, string result)
+        {
+            var match = new
+            {
+                roomId = roomId,
+                playerX = playerX,
+                playerO = playerO,
+                result = result,
+                time = DateTime.UtcNow.ToString("o")
+            };
+
+            await firebase.Child("MatchHistory").PostAsync(match);
+        }
+        public static FirebaseClient GetFirebaseClient()
+        {
+            return firebase;
+        }
+
+        public static async Task<(int Wins, int Losses, int Timeouts)> GetStats(string playerName)
+        {
+            var history = await GetGameHistory(playerName);
+            int wins = history.Count(r => r.Result == "Win");
+            int losses = history.Count(r => r.Result == "Lose");
+            int timeouts = history.Count(r => r.Result == "Timeout");
+            return (wins, losses, timeouts);
+        }
+        public static string CurrentUsername { get; set; } = "Guest";
+
+    }
+
+    public class User
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Email { get; set; }
+        public bool IsOnline { get; set; }
+        public DateTime LastOnline { get; set; }
+    }
+
+    public class ChatMessage
+    {
+        public string FromUser { get; set; }
+        public string ToUser { get; set; }
+        public string Message { get; set; }
+        public DateTime Time { get; set; }
+    }
+
+    public class GameResult
+    {
+        public string PlayerName { get; set; }
+        public string Result { get; set; }
+        public DateTime Time { get; set; }
+    }
+    public class Invite
+    {
+        public string from { get; set; }
+        public string to { get; set; }
+        public string roomId { get; set; }
+        public string timestamp { get; set; }
+    }
+    public class UserInfo
+    {
+        public string Email { get; set; }
+        public string DisplayName { get; set; }
+    }
+    public class Move
+    {
+        public int row { get; set; }
+        public int col { get; set; }
+        public string user { get; set; }
+        public string symbol { get; set; }
+        public string timestamp { get; set; }
+    }
+}
+
+Tên file: FileMusicPlayer.cs
+Và đây là đoạn code:
+﻿using NAudio.Wave;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace DoAnMonHocNT106
+{
+    public static class MusicPlayer
+    {
+        private static IWavePlayer waveOutDevice;
+        private static AudioFileReader audioFileReader;
+        private static List<string> playlist = new List<string>();
+        private static int currentIndex = 0;
+        private static bool isPlaying = false;
+        private static bool isSoundEnabled = true; // Biến để bật/tắt âm thanh game
+        private static float soundVolume = 0.15f; // Âm lượng âm thanh game
+
+        public static void SetSoundEnabled(bool enabled)
+        {
+            isSoundEnabled = enabled;
+        }
+
+        public static bool IsSoundEnabled()
+        {
+            return isSoundEnabled;
+        }
+
+        public static void SetSoundVolume(float volume)
+        {
+            soundVolume = volume;
+        }
+
+        public static float GetSoundVolume()
+        {
+            return soundVolume;
+        }
+
+        public static void StartBackgroundMusic()
+        {
+            try
+            {
+                if (isPlaying) return;
+
+                LoadPlaylist();
+
+                if (playlist.Count == 0)
+                {
+                    MessageBox.Show("Không tìm thấy file nhạc trong thư mục Music.");
+                    return;
+                }
+
+                PlayCurrent();
+                isPlaying = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi phát nhạc: " + ex.Message);
+            }
+        }
+        public static bool IsMusicPlaying()
+        {
+            return isPlaying;
+        }
+
+        private static void LoadPlaylist()
+        {
+            string musicDir = AppDomain.CurrentDomain.BaseDirectory;
+            string musicFile = Path.Combine(musicDir, "BunnyGirl-VA-12414588.wav");
+
+            if (File.Exists(musicFile))
+            {
+                playlist = new List<string> { musicFile };
+                currentIndex = 0;
+            }
+            else
+            {
+                MessageBox.Show("Không tìm thấy file nhạc 'BunnyGirl-VA-12414588.wav' trong thư mục.");
+            }
+        }
+
+        public static void DisposeAll()
+        {
+            StopCurrent();
+            playlist.Clear();
+            isPlaying = false;
+        }
+
+        private static void PlayCurrent()
+        {
+            if (currentIndex < 0 || currentIndex >= playlist.Count) return;
+
+            StopCurrent();
+
+            audioFileReader = new AudioFileReader(playlist[currentIndex]);
+            waveOutDevice = new DirectSoundOut();
+            waveOutDevice.Init(audioFileReader);
+            waveOutDevice.PlaybackStopped += OnPlaybackStopped;
+            waveOutDevice.Play();
+        }
+
+        private static void OnPlaybackStopped(object sender, StoppedEventArgs e)
+        {
+            if (!isPlaying) return;
+
+            currentIndex = (currentIndex + 1) % playlist.Count; // chuyển bài
+            PlayCurrent();
+        }
+
+        private static void StopCurrent()
+        {
+            waveOutDevice?.Stop();
+            waveOutDevice?.Dispose();
+            waveOutDevice = null;
+
+            audioFileReader?.Dispose();
+            audioFileReader = null;
+        }
+
+        public static void StopBackgroundMusic()
+        {
+            try
+            {
+                if (waveOutDevice != null && isPlaying)
+                {
+                    waveOutDevice.Stop();
+                    waveOutDevice.Dispose();
+                    waveOutDevice = null;
+                }
+
+                if (audioFileReader != null)
+                {
+                    audioFileReader.Dispose();
+                    audioFileReader = null;
+                }
+
+                isPlaying = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi dừng nhạc nền: " + ex.Message);
+            }
+        }
+
+        public static void ToggleMusic()
+        {
+            if (isPlaying)
+                StopBackgroundMusic();
+            else
+                StartBackgroundMusic();
+        }
+
+        public static float GetVolume()
+        {
+            return audioFileReader != null ? audioFileReader.Volume : 1.0f;
+        }
+
+        public static void NextTrack()
+        {
+            if (!isPlaying || playlist.Count == 0) return;
+
+            currentIndex = (currentIndex + 1) % playlist.Count;
+            PlayCurrent();
+        }
+
+        public static void PreviousTrack()
+        {
+            if (!isPlaying || playlist.Count == 0) return;
+
+            currentIndex = (currentIndex - 1 + playlist.Count) % playlist.Count;
+            PlayCurrent();
+        }
+
+        public static void SetVolume(float volume) 
+        {
+            if (audioFileReader != null)
+                audioFileReader.Volume = volume;
+        }
+
+        public static void PlayClickSound()
+        {
+            if (!isSoundEnabled) return;
+            try
+            {
+                string soundDir = AppDomain.CurrentDomain.BaseDirectory;
+                string soundFile = Path.Combine(soundDir, "click-button-140881.wav");
+
+                if (File.Exists(soundFile))
+                {
+                    var audioFile = new AudioFileReader(soundFile);
+                    var outputDevice = new WaveOutEvent();
+                    audioFile.Volume = soundVolume;
+                    outputDevice.Init(audioFile);
+                    outputDevice.PlaybackStopped += (s, e) =>
+                    {
+                        audioFile.Dispose();
+                        outputDevice.Dispose();
+                    };
+                    outputDevice.Play();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi phát âm thanh click: " + ex.Message);
+            }
+        }
+    }
+}
+
+Tên file: FileProgram.cs
+Và đây là đoạn code:
+﻿using System;
+using System.Windows.Forms;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+
+namespace DoAnMonHocNT106
+{
+    static class Program
+    {
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            // Đăng ký sự kiện ApplicationExit
+            Application.ApplicationExit += (sender, e) =>
+            {
+                BackgroundAppCloser.StopBackgroundMonitor();
+                MusicPlayer.DisposeAll();
+            };
+
+            BackgroundAppCloser.StartBackgroundMonitor();
+            Application.Run(new Login());
+        }
+    }
+}
+Tên file: FormLobby.cs
+Và đây là đoạn code:
+﻿using Firebase.Database;
+using Firebase.Database.Query;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DoAnMonHocNT106
+{
+    public partial class FormLobby : Form
+    {
+        private string currentUser;
+        private FirebaseClient firebase = new FirebaseClient("https://nt106-7c9fe-default-rtdb.firebaseio.com/");
+        private HashSet<string> processedInviteKeys = new HashSet<string>();
+        private HashSet<string> processedChatKeys = new HashSet<string>();
+
+        public FormLobby(string username)
+        {
+            InitializeComponent();
+            currentUser = username;
+        }
+
+        private async void FormLobby_Load(object sender, EventArgs e)
+        {
+            await FirebaseHelper.SetUserOnlineStatus(currentUser, true);
+            await LoadUsers();
+            await LoadChatMessages();
+            LangNgheLoiMoi();
+            LangNgheNguoiDungThayDoi();
+            LangNgheChat();
+        }
+
+        private async Task LoadUsers()
+        {
+            var users = await FirebaseHelper.GetAllUsers();
+
+            var existingItems = lstUsers.Items.Cast<ListViewItem>()
+                                    .ToDictionary(item => item.Text, item => item);
+
+            foreach (var user in users)
+            {
+                if (user.Username == currentUser) continue;
+
+                if (existingItems.ContainsKey(user.Username))
+                {
+                    var item = existingItems[user.Username];
+                    string newStatus = user.IsOnline ? "Online" : "Offline";
+                    if (item.SubItems[1].Text != newStatus)
+                    {
+                        item.SubItems[1].Text = newStatus;
+                        item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
+                    }
+                }
+                else
+                {
+                    var item = new ListViewItem(user.Username);
+                    item.SubItems.Add(user.IsOnline ? "Online" : "Offline");
+                    item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
+                    lstUsers.Items.Add(item);
+                }
+            }
+
+            // Xóa user không còn tồn tại
+            foreach (var item in existingItems)
+            {
+                if (!users.Any(u => u.Username == item.Key))
+                {
+                    lstUsers.Items.Remove(item.Value);
+                }
+            }
+        }
+
+        private async Task LoadChatMessages()
+        {
+            lstChat.Items.Clear();
+            var msgs = await FirebaseHelper.GetPublicChatMessages();
+            foreach (var msg in msgs)
+            {
+                var item = new ListViewItem($"{msg.Time:T} - {msg.FromUser}: {msg.Message}");
+                item.ForeColor = msg.FromUser == currentUser ? Color.Blue : Color.Black;
+                lstChat.Items.Add(item);
+            }
+            if (lstChat.Items.Count > 0)
+                lstChat.EnsureVisible(lstChat.Items.Count - 1);
+        }
+
+        private void LangNgheNguoiDungThayDoi()
+        {
+            firebase.Child("Users")
+                .AsObservable<User>()
+                .Subscribe(async ev =>
+                {
+                    if (ev.Object != null && !string.IsNullOrEmpty(ev.Key))
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        await this.InvokeAsync(() =>
+                        {
+                            var existingItem = lstUsers.Items
+                                .Cast<ListViewItem>()
+                                .FirstOrDefault(item => item.Text == ev.Object.Username);
+
+                            if (existingItem != null)
+                            {
+                                string newStatus = ev.Object.IsOnline ? "Online" : "Offline";
+                                if (existingItem.SubItems[1].Text != newStatus)
+                                {
+                                    existingItem.SubItems[1].Text = newStatus;
+                                    existingItem.ForeColor = ev.Object.IsOnline ? Color.Green : Color.Gray;
+                                }
+                            }
+                            else if (ev.Object.Username != currentUser)
+                            {
+                                var item = new ListViewItem(ev.Object.Username);
+                                item.SubItems.Add(ev.Object.IsOnline ? "Online" : "Offline");
+                                item.ForeColor = ev.Object.IsOnline ? Color.Green : Color.Gray;
+                                lstUsers.Items.Add(item);
+                            }
+                        });
+                    }
+                });
+        }
+
+        private void LangNgheChat()
+        {
+            firebase.Child("PublicChat")
+                .AsObservable<ChatMessage>()
+                .Subscribe(async ev =>
+                {
+                    if (ev.Object != null && ev.Key != null && !processedChatKeys.Contains(ev.Key))
+                    {
+                        processedChatKeys.Add(ev.Key);
+
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        await this.InvokeAsync(() =>
+                        {
+                            var msg = ev.Object;
+                            var text = $"{msg.Time:T} - {msg.FromUser}: {msg.Message}";
+
+                            bool exists = lstChat.Items.Cast<ListViewItem>().Any(i => i.Text == text);
+
+                            if (!exists)
+                            {
+                                var item = new ListViewItem(text);
+                                item.ForeColor = msg.FromUser == currentUser ? Color.Blue : Color.Black;
+                                lstChat.Items.Add(item);
+                                lstChat.EnsureVisible(lstChat.Items.Count - 1);
+                            }
+                        });
+                    }
+                });
+        }
+
+        private void LangNgheLoiMoi()
+        {
+            firebase.Child("Invites")
+                .AsObservable<Invite>()
+                .Subscribe(async ev =>
+                {
+                    if (ev.Object != null &&
+                        ev.Object.to == currentUser &&
+                        !processedInviteKeys.Contains(ev.Key))
+                    {
+                        if (DateTime.TryParse(ev.Object.timestamp, out DateTime inviteTime))
+                        {
+                            var now = DateTime.UtcNow;
+                            if ((now - inviteTime).TotalSeconds <= 30)
+                            {
+                                processedInviteKeys.Add(ev.Key);
+
+                                if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                                await this.InvokeAsync(async () =>
+                                {
+                                    var result = MessageBox.Show($"{ev.Object.from} mời bạn chơi PvP. Chấp nhận?",
+                                        "Lời mời chơi", MessageBoxButtons.YesNo);
+
+                                    await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
+
+                                    if (result == DialogResult.Yes)
+                                    {
+                                        var form = new FormPvP(currentUser, ev.Object.from, ev.Object.roomId);
+                                        form.Show();
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
+                            }
+                        }
+                    }
+                });
+        }
+
+        private async void btnSend_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            string msg = txtMessage.Text.Trim();
+            if (!string.IsNullOrEmpty(msg))
+            {
+                await FirebaseHelper.SendChatMessage(currentUser, msg);
+                txtMessage.Clear();
+            }
+        }
+
+        private async void lstUsers_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (lstUsers.SelectedItems.Count > 0)
+            {
+                var selectedUser = lstUsers.SelectedItems[0];
+                if (selectedUser.SubItems[1].Text == "Online")
+                {
+                    string targetUser = selectedUser.Text;
+                    string roomId = Guid.NewGuid().ToString();
+
+                    var invite = new Invite
+                    {
+                        from = currentUser,
+                        to = targetUser,
+                        roomId = roomId,
+                        timestamp = DateTime.UtcNow.ToString("o")
+                    };
+
+                    await firebase.Child("Invites").PostAsync(invite);
+
+                    var formPvp = new FormPvP(currentUser, targetUser, roomId);
+                    formPvp.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Người chơi này hiện đang offline.");
+                }
+            }
+        }
+
+        private async void FormLobby_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+        }
+    }
+
+    public static class ControlExtensions
+    {
+        public static Task InvokeAsync(this Control control, Action action)
+        {
+            var tcs = new TaskCompletionSource<object>();
+
+            if (control == null || control.IsDisposed || !control.IsHandleCreated)
+            {
+                try
+                {
+                    action();
+                    tcs.SetResult(null);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            }
+            else
+            {
+                control.BeginInvoke(new MethodInvoker(() =>
+                {
+                    try
+                    {
+                        action();
+                        tcs.SetResult(null);
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.SetException(ex);
+                    }
+                }));
+            }
+
+            return tcs.Task;
+        }
+    }
+}
+
+Tên file: FormLobby.Designer.cs
+Và đây là đoạn code:
+﻿namespace DoAnMonHocNT106
+{
+    partial class FormLobby
+    {
+        private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.ListView lstUsers;
+        private System.Windows.Forms.ColumnHeader colUsername;
+        private System.Windows.Forms.ColumnHeader colStatus;
+        private System.Windows.Forms.ListView lstChat;
+        private System.Windows.Forms.TextBox txtMessage;
+        private System.Windows.Forms.Button btnSend;
+        private System.Windows.Forms.Label lblUsers;
+        private System.Windows.Forms.Label lblChat;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null)) components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.lstUsers = new System.Windows.Forms.ListView();
+            this.colUsername = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lstChat = new System.Windows.Forms.ListView();
+            this.txtMessage = new System.Windows.Forms.TextBox();
+            this.btnSend = new System.Windows.Forms.Button();
+            this.lblUsers = new System.Windows.Forms.Label();
+            this.lblChat = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // lstUsers
+            // 
+            this.lstUsers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colUsername,
+            this.colStatus});
+            this.lstUsers.FullRowSelect = true;
+            this.lstUsers.GridLines = true;
+            this.lstUsers.HideSelection = false;
+            this.lstUsers.Location = new System.Drawing.Point(10, 35);
+            this.lstUsers.MultiSelect = false;
+            this.lstUsers.Name = "lstUsers";
+            this.lstUsers.Size = new System.Drawing.Size(189, 347);
+            this.lstUsers.TabIndex = 0;
+            this.lstUsers.UseCompatibleStateImageBehavior = false;
+            this.lstUsers.View = System.Windows.Forms.View.Details;
+            this.lstUsers.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstUsers_MouseDoubleClick);
+            // 
+            // colUsername
+            // 
+            this.colUsername.Text = "Tên người dùng";
+            this.colUsername.Width = 120;
+            // 
+            // colStatus
+            // 
+            this.colStatus.Text = "Trạng thái";
+            this.colStatus.Width = 80;
+            // 
+            // lstChat
+            // 
+            this.lstChat.HideSelection = false;
+            this.lstChat.Location = new System.Drawing.Point(214, 35);
+            this.lstChat.Name = "lstChat";
+            this.lstChat.Size = new System.Drawing.Size(361, 319);
+            this.lstChat.TabIndex = 1;
+            this.lstChat.UseCompatibleStateImageBehavior = false;
+            this.lstChat.View = System.Windows.Forms.View.List;
+            // 
+            // txtMessage
+            // 
+            this.txtMessage.Location = new System.Drawing.Point(214, 362);
+            this.txtMessage.Name = "txtMessage";
+            this.txtMessage.Size = new System.Drawing.Size(292, 20);
+            this.txtMessage.TabIndex = 2;
+            // 
+            // btnSend
+            // 
+            this.btnSend.BackColor = System.Drawing.Color.Silver;
+            this.btnSend.Location = new System.Drawing.Point(514, 360);
+            this.btnSend.Name = "btnSend";
+            this.btnSend.Size = new System.Drawing.Size(60, 22);
+            this.btnSend.TabIndex = 3;
+            this.btnSend.Text = "Gửi";
+            this.btnSend.UseVisualStyleBackColor = false;
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
+            // 
+            // lblUsers
+            // 
+            this.lblUsers.AutoSize = true;
+            this.lblUsers.BackColor = System.Drawing.Color.Silver;
+            this.lblUsers.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblUsers.Location = new System.Drawing.Point(10, 13);
+            this.lblUsers.Name = "lblUsers";
+            this.lblUsers.Size = new System.Drawing.Size(116, 19);
+            this.lblUsers.TabIndex = 4;
+            this.lblUsers.Text = "Danh sách Users";
+            // 
+            // lblChat
+            // 
+            this.lblChat.AutoSize = true;
+            this.lblChat.BackColor = System.Drawing.Color.Silver;
+            this.lblChat.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblChat.Location = new System.Drawing.Point(214, 13);
+            this.lblChat.Name = "lblChat";
+            this.lblChat.Size = new System.Drawing.Size(108, 19);
+            this.lblChat.TabIndex = 5;
+            this.lblChat.Text = "Chat công khai";
+            // 
+            // FormLobby
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.sign_up;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(586, 400);
+            this.Controls.Add(this.lblChat);
+            this.Controls.Add(this.lblUsers);
+            this.Controls.Add(this.btnSend);
+            this.Controls.Add(this.txtMessage);
+            this.Controls.Add(this.lstChat);
+            this.Controls.Add(this.lstUsers);
+            this.Name = "FormLobby";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Sảnh chờ - PvP Lobby";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormLobby_FormClosing);
+            this.Load += new System.EventHandler(this.FormLobby_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+    }
+}
+Tên file: FormPlayerInfo.cs
+Và đây là đoạn code:
+﻿using System;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using Dropbox.Api;
+using Dropbox.Api.Files;
+using Firebase.Database;
+using Firebase.Database.Query;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Dropbox.Api.Sharing;
+using System.Collections.Generic;
+using System.Media;
+
+namespace GameCaro_SettingInforPlayer
+{
+    public partial class Form1 : Form
+    {
+        // Replace these with your actual app key, app secret, and refresh token
+        private const string AppKey = "youjg0q1oiqp7mg";
+        private const string AppSecret = "fuvb1xb9wjbmp2b";
+        private const string RefreshToken = "IXLCHAQQ4h0AAAAAAAAAAZ5IKZbHn4pQG4CjbuCwcgtvO_zZ5ryZLsPvLJctXaL8";
+
+        private const string FirebaseDatabaseUrl = "https://nt106-7c9fe-default-rtdb.firebaseio.com/";
+        private FirebaseClient firebaseClient;
+        private bool isEditing = false;
+        private System.Timers.Timer processCheckTimer;
+
+        private static readonly HttpClient httpClient = new HttpClient();
+
+        public Form1()
+        {
+            InitializeComponent();
+            this.btnChangeAvatar.Click += new System.EventHandler(this.btnChangeAvatar_Click);
+            this.btnUpdateInfo.Click += new System.EventHandler(this.btnUpdateInfo_Click);
+            this.btnChangePassword.Click += new System.EventHandler(this.btnChangePassword_Click);
+            InitializeFirebase();
+
+            // Lấy username từ tham số dòng lệnh
+            string[] args = Environment.GetCommandLineArgs();
+            string username = args.Length > 1 && !string.IsNullOrWhiteSpace(args[1]) ? args[1] : "baongdqu";
+
+            // Tải dữ liệu người chơi với username
+            LoadPlayerData(username);
+
+            // Khởi tạo timer kiểm tra tiến trình
+            processCheckTimer = new System.Timers.Timer(1000); // Kiểm tra mỗi 1 giây
+            processCheckTimer.Elapsed += ProcessCheckTimer_Elapsed;
+            processCheckTimer.AutoReset = true;
+            processCheckTimer.Start();
+        }
+
+        private void ProcessCheckTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            try
+            {
+                var processes = System.Diagnostics.Process.GetProcessesByName("GameCaro_Menu");
+                System.Diagnostics.Debug.WriteLine($"Found {processes.Length} process(es) named 'GameCaro_Menu'");
+                if (processes.Length == 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("No GameCaro_Menu process found. Stopping timer and closing form.");
+                    processCheckTimer.Stop();
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        this.Close();
+                    });
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("GameCaro_Menu process is running.");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error checking process: {ex.Message}");
+            }
+        }
+
+        private void InitializeFirebase()
+        {
+            try
+            {
+                firebaseClient = new FirebaseClient(FirebaseDatabaseUrl);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error initializing Firebase: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task<bool> CheckUsernameExists(string username, string currentPlayerId)
+        {
+            try
+            {
+                var users = await firebaseClient
+                    .Child("Users")
+                    .OnceAsync<Player>();
+
+                foreach (var user in users)
+                {
+                    // Skip checking the current player's username
+                    if (user.Key != currentPlayerId && user.Object.Username == username)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error checking username: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return true; // Return true to prevent update in case of error
+            }
+        }
+
+        private async void LoadPlayerData(string playerId)
+        {
+            try
+            {
+                var playerData = await firebaseClient
+                    .Child("Users")
+                    .Child(playerId)
+                    .OnceSingleAsync<Player>();
+
+                if (playerData != null)
+                {
+                    int draws = playerData.GamesPlayed - playerData.Wins - playerData.Losses;
+                    string winRate = playerData.GamesPlayed > 0
+                        ? $"{(playerData.Wins / (double)playerData.GamesPlayed * 100):0.00}%"
+                        : "0%";
+
+                    txtPlayerName.Text = playerData.Username ?? "Người chơi";
+                    txtWins.Text = playerData.Wins.ToString() ?? "0";
+                    txtLosses.Text = playerData.Losses.ToString() ?? "0";
+                    txtDraws.Text = draws.ToString();
+                    txtWinRate.Text = winRate;
+                    txtStatus.Text = playerData.Status ?? "Hoạt động";
+                    txtEmail.Text = playerData.Email ?? "player@example.com";
+                    txtBirthDate.Text = playerData.DateOfBirth?.Replace("/", "") ?? "01012000";
+                    cmbNationality.SelectedItem = playerData.Country ?? "Việt Nam";
+
+                    if (!string.IsNullOrEmpty(playerData.AvatarLink))
+                    {
+                        await LoadAvatarImage(playerData.AvatarLink);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Player {playerId} not found in the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading player data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task LoadAvatarImage(string avatarUrl)
+        {
+            try
+            {
+                string decodedUrl = Uri.UnescapeDataString(avatarUrl);
+
+                if (!Uri.TryCreate(decodedUrl, UriKind.Absolute, out Uri uriResult) ||
+                    (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
+                {
+                    MessageBox.Show("The avatar URL is invalid or not an absolute URL.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+                    var response = await httpClient.GetAsync(decodedUrl);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        using (var stream = await response.Content.ReadAsStreamAsync())
+                        {
+                            pictureBoxAvatar.Image?.Dispose();
+                            pictureBoxAvatar.Image = Image.FromStream(stream);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Failed to load avatar image. Status Code: {response.StatusCode}. The URL might have expired or is inaccessible.",
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading avatar image: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnChangeAvatar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SoundPlayer player = new SoundPlayer("click-button-140881.wav");
+                player.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi phát âm thanh: " + ex.Message);
+            }
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
+                openFileDialog.Title = "Select an Avatar Image";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        using (var stream = File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read))
+                        {
+                            Image selectedImage = new Bitmap(stream);
+                            using (ImageEditForm editForm = new ImageEditForm(selectedImage))
+                            {
+                                if (editForm.ShowDialog() == DialogResult.OK)
+                                {
+                                    pictureBoxAvatar.Image?.Dispose();
+                                    pictureBoxAvatar.Image = editForm.CroppedImage;
+
+                                    string tempFilePath = Path.Combine(Path.GetTempPath(), "cropped_avatar.png");
+                                    editForm.CroppedImage.Save(tempFilePath, System.Drawing.Imaging.ImageFormat.Png);
+
+                                    string avatarUrl = await UploadToDropbox(tempFilePath);
+                                    if (!string.IsNullOrEmpty(avatarUrl))
+                                    {
+                                        await SaveAvatarUrlToFirebase("baongdqu", avatarUrl);
+                                        MessageBox.Show("Avatar uploaded to Dropbox and URL saved to Firebase successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
+
+                                    File.Delete(tempFilePath);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error uploading avatar: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private async Task<DropboxClient> GetDropboxClient()
+        {
+            try
+            {
+                var config = new DropboxClientConfig("GameCaro_SettingInforPlayer")
+                {
+                    HttpClient = httpClient
+                };
+
+                // Prepare the request to exchange the refresh token for an access token
+                var content = new FormUrlEncodedContent(new[]
+                {
+            new KeyValuePair<string, string>("grant_type", "refresh_token"),
+            new KeyValuePair<string, string>("refresh_token", RefreshToken),
+            new KeyValuePair<string, string>("client_id", AppKey),
+            new KeyValuePair<string, string>("client_secret", AppSecret)
+        });
+
+                var response = await httpClient.PostAsync("https://api.dropboxapi.com/oauth2/token", content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Failed to exchange refresh token: {response.StatusCode}, {errorContent}");
+                }
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var tokenData = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(jsonResponse);
+                string accessToken = tokenData.AccessToken;
+
+                // Initialize DropboxClient with the access token
+                return new DropboxClient(accessToken, config);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error initializing Dropbox client: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+
+        private async Task<string> UploadToDropbox(string filePath)
+        {
+            try
+            {
+                using (var dbx = await GetDropboxClient())
+                {
+                    if (dbx == null)
+                    {
+                        return null; // Error already shown in GetDropboxClient
+                    }
+
+                    using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(filePath);
+                        string fileExtension = Path.GetExtension(filePath);
+                        string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                        string uniqueFileName = $"{fileName}_{timestamp}{fileExtension}";
+                        string dropboxPath = $"/Avatars/{uniqueFileName}";
+
+                        var uploadResult = await dbx.Files.UploadAsync(
+                            dropboxPath,
+                            WriteMode.Overwrite.Instance,
+                            body: fileStream
+                        );
+
+                        var sharedLinkSettings = new SharedLinkSettings();
+                        var sharedLink = await dbx.Sharing.CreateSharedLinkWithSettingsAsync(dropboxPath, sharedLinkSettings);
+
+                        string permanentLink = sharedLink.Url.Replace("www.dropbox.com", "dl.dropboxusercontent.com");
+                        return permanentLink;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error uploading avatar: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+
+        private async Task SaveAvatarUrlToFirebase(string playerId, string avatarUrl)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(avatarUrl))
+                {
+                    MessageBox.Show("Avatar URL is empty or null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                string encodedUrl = Uri.EscapeDataString(avatarUrl);
+
+                await firebaseClient
+                    .Child("Users")
+                    .Child(playerId)
+                    .PatchAsync(new { AvatarLink = encodedUrl });
+
+                MessageBox.Show("Avatar URL saved to Firebase successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving avatar URL to Firebase: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnUpdateInfo_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SoundPlayer player = new SoundPlayer("click-button-140881.wav");
+                player.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi phát âm thanh: " + ex.Message);
+            }
+
+            if (!isEditing)
+            {
+                // Enable editing
+                txtPlayerName.ReadOnly = false;
+                txtBirthDate.ReadOnly = false;
+                cmbNationality.Enabled = true;
+                btnUpdateInfo.Text = "Lưu thông tin";
+                isEditing = true;
+            }
+            else
+            {
+                // Validate inputs
+                if (string.IsNullOrWhiteSpace(txtPlayerName.Text) ||
+                    string.IsNullOrWhiteSpace(txtBirthDate.Text) ||
+                    cmbNationality.SelectedItem == null)
+                {
+                    MessageBox.Show("Vui lòng điền đầy đủ thông tin!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Validate username
+                string newUsername = txtPlayerName.Text.Trim();
+                string playerId = "baongdqu";
+                if (await CheckUsernameExists(newUsername, playerId))
+                {
+                    MessageBox.Show("Tên người dùng đã tồn tại! Vui lòng chọn tên khác.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Validate DateOfBirth
+                if (!DateTime.TryParseExact(txtBirthDate.Text, "dd/MM/yyyy",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out DateTime birthDate))
+                {
+                    MessageBox.Show("Ngày sinh không hợp lệ! Vui lòng nhập theo định dạng DD/MM/YYYY.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Kiểm tra ngày sinh hợp lệ (không được là ngày trong tương lai)
+                if (birthDate > DateTime.Now)
+                {
+                    MessageBox.Show("Ngày sinh không được là ngày trong tương lai!",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Save to Firebase
+                try
+                {
+                    var updatedData = new
+                    {
+                        Username = newUsername,
+                        DateOfBirth = txtBirthDate.Text,
+                        Country = cmbNationality.SelectedItem.ToString()
+                    };
+
+                    // Update Firebase
+                    await firebaseClient
+                        .Child("Users")
+                        .Child(playerId)
+                        .PatchAsync(updatedData);
+
+                    // Disable editing
+                    txtPlayerName.ReadOnly = true;
+                    txtBirthDate.ReadOnly = true;
+                    cmbNationality.Enabled = false;
+                    btnUpdateInfo.Text = "Sửa đổi thông tin";
+                    isEditing = false;
+
+                    MessageBox.Show("Thông tin đã được cập nhật thành công!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error updating player info: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btnChangePassword_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SoundPlayer player = new SoundPlayer("click-button-140881.wav");
+                player.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi phát âm thanh: " + ex.Message);
+            }
+
+            using (ChangePasswordForm changePasswordForm = new ChangePasswordForm("baongdqu", firebaseClient))
+            {
+                if (changePasswordForm.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Mật khẩu đã được thay đổi thành công!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+
+    }
+
+    public class Player
+    {
+        public string Username { get; set; }
+        public int Wins { get; set; }
+        public int Losses { get; set; }
+        public int GamesPlayed { get; set; }
+        public double WinRate { get; set; }
+        public string Status { get; set; }
+        public string Email { get; set; }
+        public string DateOfBirth { get; set; }
+        public string Country { get; set; }
+        public string AvatarLink { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class TokenResponse
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("access_token")]
+        public string AccessToken { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("token_type")]
+        public string TokenType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("expires_in")]
+        public int ExpiresIn { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("refresh_token")]
+        public string RefreshToken { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("scope")]
+        public string Scope { get; set; }
+    }
+}
+Tên file: FormPlayerInfo.Designer.cs
+Và đây là đoạn code:
+﻿using System.Windows.Forms;
+using System;
+using System.Drawing;
+
+namespace DoAnMonHocNT106
+{
+    partial class FormPlayerInfo
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        // Khai báo các controls
+        private System.Windows.Forms.PictureBox pictureBoxAvatar;
+        private System.Windows.Forms.Button btnChangeAvatar;
+        private System.Windows.Forms.Label lblPlayerName;
+        private System.Windows.Forms.TextBox txtPlayerName;
+        private System.Windows.Forms.Label lblWins;
+        private System.Windows.Forms.TextBox txtWins;
+        private System.Windows.Forms.Label lblLosses;
+        private System.Windows.Forms.TextBox txtLosses;
+        private System.Windows.Forms.Label lblDraws;
+        private System.Windows.Forms.TextBox txtDraws;
+        private System.Windows.Forms.Label lblWinRate;
+        private System.Windows.Forms.TextBox txtWinRate;
+        private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.TextBox txtStatus;
+        private System.Windows.Forms.Label lblEmail;
+        private System.Windows.Forms.TextBox txtEmail;
+        private System.Windows.Forms.Label lblBirthDate;
+        private System.Windows.Forms.MaskedTextBox txtBirthDate; // Sử dụng MaskedTextBox
+        private System.Windows.Forms.Label lblNationality;
+        private System.Windows.Forms.ComboBox cmbNationality; // Sử dụng ComboBox thay vì TextBox
+        private System.Windows.Forms.Button btnUpdateInfo;
+        private System.Windows.Forms.Button btnChangePassword;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.btnChangeAvatar = new System.Windows.Forms.Button();
+            this.lblPlayerName = new System.Windows.Forms.Label();
+            this.txtPlayerName = new System.Windows.Forms.TextBox();
+            this.lblWins = new System.Windows.Forms.Label();
+            this.txtWins = new System.Windows.Forms.TextBox();
+            this.lblLosses = new System.Windows.Forms.Label();
+            this.txtLosses = new System.Windows.Forms.TextBox();
+            this.lblDraws = new System.Windows.Forms.Label();
+            this.txtDraws = new System.Windows.Forms.TextBox();
+            this.lblWinRate = new System.Windows.Forms.Label();
+            this.txtWinRate = new System.Windows.Forms.TextBox();
+            this.lblStatus = new System.Windows.Forms.Label();
+            this.txtStatus = new System.Windows.Forms.TextBox();
+            this.lblEmail = new System.Windows.Forms.Label();
+            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.lblBirthDate = new System.Windows.Forms.Label();
+            this.txtBirthDate = new System.Windows.Forms.MaskedTextBox();
+            this.lblNationality = new System.Windows.Forms.Label();
+            this.cmbNationality = new System.Windows.Forms.ComboBox();
+            this.btnUpdateInfo = new System.Windows.Forms.Button();
+            this.btnChangePassword = new System.Windows.Forms.Button();
+            this.pictureBoxAvatar = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAvatar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // btnChangeAvatar
+            // 
+            this.btnChangeAvatar.Location = new System.Drawing.Point(47, 158);
+            this.btnChangeAvatar.Name = "btnChangeAvatar";
+            this.btnChangeAvatar.Size = new System.Drawing.Size(133, 31);
+            this.btnChangeAvatar.TabIndex = 1;
+            this.btnChangeAvatar.Text = "Change Avartar";
+            // 
+            // lblPlayerName
+            // 
+            this.lblPlayerName.Location = new System.Drawing.Point(220, 20);
+            this.lblPlayerName.Name = "lblPlayerName";
+            this.lblPlayerName.Size = new System.Drawing.Size(114, 24);
+            this.lblPlayerName.TabIndex = 2;
+            this.lblPlayerName.Text = "Tên người chơi:";
+            // 
+            // txtPlayerName
+            // 
+            this.txtPlayerName.Location = new System.Drawing.Point(330, 20);
+            this.txtPlayerName.Name = "txtPlayerName";
+            this.txtPlayerName.ReadOnly = true;
+            this.txtPlayerName.Size = new System.Drawing.Size(214, 22);
+            this.txtPlayerName.TabIndex = 3;
+            this.txtPlayerName.Text = "Người chơi";
+            // 
+            // lblWins
+            // 
+            this.lblWins.Location = new System.Drawing.Point(220, 50);
+            this.lblWins.Name = "lblWins";
+            this.lblWins.Size = new System.Drawing.Size(114, 24);
+            this.lblWins.TabIndex = 4;
+            this.lblWins.Text = "Số trận đã chơi:";
+            // 
+            // txtWins
+            // 
+            this.txtWins.Location = new System.Drawing.Point(330, 50);
+            this.txtWins.Name = "txtWins";
+            this.txtWins.ReadOnly = true;
+            this.txtWins.Size = new System.Drawing.Size(214, 22);
+            this.txtWins.TabIndex = 5;
+            this.txtWins.Text = "0";
+            // 
+            // lblLosses
+            // 
+            this.lblLosses.Location = new System.Drawing.Point(220, 80);
+            this.lblLosses.Name = "lblLosses";
+            this.lblLosses.Size = new System.Drawing.Size(114, 24);
+            this.lblLosses.TabIndex = 6;
+            this.lblLosses.Text = "Số trận thắng:";
+            // 
+            // txtLosses
+            // 
+            this.txtLosses.Location = new System.Drawing.Point(330, 80);
+            this.txtLosses.Name = "txtLosses";
+            this.txtLosses.ReadOnly = true;
+            this.txtLosses.Size = new System.Drawing.Size(214, 22);
+            this.txtLosses.TabIndex = 7;
+            this.txtLosses.Text = "0";
+            // 
+            // lblDraws
+            // 
+            this.lblDraws.Location = new System.Drawing.Point(220, 110);
+            this.lblDraws.Name = "lblDraws";
+            this.lblDraws.Size = new System.Drawing.Size(114, 24);
+            this.lblDraws.TabIndex = 8;
+            this.lblDraws.Text = "Số trận thua:";
+            // 
+            // txtDraws
+            // 
+            this.txtDraws.Location = new System.Drawing.Point(330, 110);
+            this.txtDraws.Name = "txtDraws";
+            this.txtDraws.ReadOnly = true;
+            this.txtDraws.Size = new System.Drawing.Size(214, 22);
+            this.txtDraws.TabIndex = 9;
+            this.txtDraws.Text = "0";
+            // 
+            // lblWinRate
+            // 
+            this.lblWinRate.Location = new System.Drawing.Point(220, 140);
+            this.lblWinRate.Name = "lblWinRate";
+            this.lblWinRate.Size = new System.Drawing.Size(114, 24);
+            this.lblWinRate.TabIndex = 10;
+            this.lblWinRate.Text = "Tỉ lệ thắng:";
+            // 
+            // txtWinRate
+            // 
+            this.txtWinRate.Location = new System.Drawing.Point(330, 140);
+            this.txtWinRate.Name = "txtWinRate";
+            this.txtWinRate.ReadOnly = true;
+            this.txtWinRate.Size = new System.Drawing.Size(214, 22);
+            this.txtWinRate.TabIndex = 11;
+            this.txtWinRate.Text = "0%";
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.Location = new System.Drawing.Point(220, 170);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(114, 24);
+            this.lblStatus.TabIndex = 12;
+            this.lblStatus.Text = "Trạng thái:";
+            // 
+            // txtStatus
+            // 
+            this.txtStatus.Location = new System.Drawing.Point(330, 170);
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.ReadOnly = true;
+            this.txtStatus.Size = new System.Drawing.Size(214, 22);
+            this.txtStatus.TabIndex = 13;
+            this.txtStatus.Text = "Hoạt động";
+            // 
+            // lblEmail
+            // 
+            this.lblEmail.Location = new System.Drawing.Point(220, 200);
+            this.lblEmail.Name = "lblEmail";
+            this.lblEmail.Size = new System.Drawing.Size(114, 24);
+            this.lblEmail.TabIndex = 14;
+            this.lblEmail.Text = "Email:";
+            // 
+            // txtEmail
+            // 
+            this.txtEmail.Location = new System.Drawing.Point(330, 200);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.ReadOnly = true;
+            this.txtEmail.Size = new System.Drawing.Size(214, 22);
+            this.txtEmail.TabIndex = 15;
+            this.txtEmail.Text = "player@example.com";
+            // 
+            // lblBirthDate
+            // 
+            this.lblBirthDate.Location = new System.Drawing.Point(220, 230);
+            this.lblBirthDate.Name = "lblBirthDate";
+            this.lblBirthDate.Size = new System.Drawing.Size(114, 24);
+            this.lblBirthDate.TabIndex = 16;
+            this.lblBirthDate.Text = "Ngày sinh:";
+            // 
+            // txtBirthDate
+            // 
+            this.txtBirthDate.Location = new System.Drawing.Point(330, 230);
+            this.txtBirthDate.Mask = "00/00/0000";
+            this.txtBirthDate.Name = "txtBirthDate";
+            this.txtBirthDate.ReadOnly = true;
+            this.txtBirthDate.Size = new System.Drawing.Size(214, 22);
+            this.txtBirthDate.TabIndex = 17;
+            this.txtBirthDate.Text = "01012000";
+            this.txtBirthDate.ValidatingType = typeof(System.DateTime);
+            // 
+            // lblNationality
+            // 
+            this.lblNationality.Location = new System.Drawing.Point(220, 260);
+            this.lblNationality.Name = "lblNationality";
+            this.lblNationality.Size = new System.Drawing.Size(114, 24);
+            this.lblNationality.TabIndex = 18;
+            this.lblNationality.Text = "Quốc gia:";
+            // 
+            // cmbNationality
+            // 
+            this.cmbNationality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNationality.Enabled = false;
+            this.cmbNationality.ForeColor = System.Drawing.Color.Black;
+            this.cmbNationality.Items.AddRange(new object[] {
+            "Việt Nam",
+            "United States",
+            "Japan",
+            "China",
+            "United Kingdom",
+            "France",
+            "Germany",
+            "South Korea",
+            "Australia",
+            "Canada"});
+            this.cmbNationality.Location = new System.Drawing.Point(330, 260);
+            this.cmbNationality.Name = "cmbNationality";
+            this.cmbNationality.Size = new System.Drawing.Size(214, 24);
+            this.cmbNationality.TabIndex = 19;
+            this.cmbNationality.DrawMode = DrawMode.OwnerDrawFixed;
+            this.cmbNationality.DrawItem += new DrawItemEventHandler(cmbNationality_DrawItem);
+            // 
+            // btnUpdateInfo
+            // 
+            this.btnUpdateInfo.Location = new System.Drawing.Point(388, 334);
+            this.btnUpdateInfo.Name = "btnUpdateInfo";
+            this.btnUpdateInfo.Size = new System.Drawing.Size(156, 34);
+            this.btnUpdateInfo.TabIndex = 20;
+            this.btnUpdateInfo.Text = "Change Information";
+            // 
+            // btnChangePassword
+            // 
+            this.btnChangePassword.Location = new System.Drawing.Point(223, 334);
+            this.btnChangePassword.Name = "btnChangePassword";
+            this.btnChangePassword.Size = new System.Drawing.Size(146, 34);
+            this.btnChangePassword.TabIndex = 21;
+            this.btnChangePassword.Text = "Change Password";
+            // 
+            // pictureBoxAvatar
+            // 
+            this.pictureBoxAvatar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxAvatar.Location = new System.Drawing.Point(47, 27);
+            this.pictureBoxAvatar.Name = "pictureBoxAvatar";
+            this.pictureBoxAvatar.Size = new System.Drawing.Size(133, 116);
+            this.pictureBoxAvatar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxAvatar.TabIndex = 0;
+            this.pictureBoxAvatar.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackgroundImage = global::GameCaro_SettingInforPlayer.Properties.Resources.download2;
+            this.pictureBox1.Image = global::GameCaro_SettingInforPlayer.Properties.Resources.download___Copy;
+            this.pictureBox1.Location = new System.Drawing.Point(12, 214);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(232, 168);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 22;
+            this.pictureBox1.TabStop = false;
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(566, 394);
+            this.Controls.Add(this.pictureBoxAvatar);
+            this.Controls.Add(this.btnChangeAvatar);
+            this.Controls.Add(this.lblPlayerName);
+            this.Controls.Add(this.txtPlayerName);
+            this.Controls.Add(this.lblWins);
+            this.Controls.Add(this.txtWins);
+            this.Controls.Add(this.lblLosses);
+            this.Controls.Add(this.txtLosses);
+            this.Controls.Add(this.lblDraws);
+            this.Controls.Add(this.txtDraws);
+            this.Controls.Add(this.lblWinRate);
+            this.Controls.Add(this.txtWinRate);
+            this.Controls.Add(this.lblStatus);
+            this.Controls.Add(this.txtStatus);
+            this.Controls.Add(this.lblEmail);
+            this.Controls.Add(this.txtEmail);
+            this.Controls.Add(this.lblBirthDate);
+            this.Controls.Add(this.txtBirthDate);
+            this.Controls.Add(this.lblNationality);
+            this.Controls.Add(this.cmbNationality);
+            this.Controls.Add(this.btnUpdateInfo);
+            this.Controls.Add(this.btnChangePassword);
+            this.Controls.Add(this.pictureBox1);
+            this.Name = "Form1";
+            this.Text = "Player Information";
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAvatar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        private void cmbNationality_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            // Lấy đối tượng ComboBox
+            ComboBox combo = sender as ComboBox;
+
+            // Thiết lập màu chữ
+            Color textColor = combo.Enabled ? Color.Black : Color.Black; // Luôn là màu đen
+
+            // Vẽ nền (giữ màu nền mặc định của hệ thống, sẽ là màu xám khi vô hiệu hóa)
+            e.DrawBackground();
+
+            // Vẽ chữ với màu tùy chỉnh
+            using (SolidBrush textBrush = new SolidBrush(textColor))
+            {
+                e.Graphics.DrawString(combo.Items[e.Index].ToString(), e.Font, textBrush, e.Bounds);
+            }
+
+            // Vẽ viền khi item được chọn (chỉ khi ComboBox được bật)
+            if (combo.Enabled)
+            {
+                e.DrawFocusRectangle();
+            }
+        }
+
+        private PictureBox pictureBox1;
+    }
+}
+Tên file: FormPvE.cs
+Và đây là đoạn code:
+﻿using System.Drawing;
+using System.Media;
+using System.Windows.Forms;
+using System;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+
+namespace DoAnMonHocNT106
+{
+    public partial class FormPvE : Form
+    {
+        private string currentUser;
+
+        private const int Rows = 20;
+        private const int Cols = 17;
+        private Button[,] board = new Button[Rows, Cols];
+        private bool isPlayerTurn = true;
+        private bool gameOver = false;
+
+        private string playerName = "Người chơi";
+        private Timer countdownTimer;
+        private int countdown = 10;
+
+        private int[] AttackPoint = { 0, 1, 10, 100, 1000, 100000 };
+        private int[] DefensePoint = { 0, 2, 20, 200, 2000, 200000 };
+
+        public FormPvE(string user)
+        {
+            InitializeComponent();
+            currentUser = user;
+            InitializeTimer();
+            InitializeBoard();
+        }
+
+        private void InitializeBoard()
+        {
+            panelBoard.Controls.Clear();
+            board = new Button[Rows, Cols];
+            int size = 30;
+
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Cols; j++)
+                {
+                    Button btn = new Button
+                    {
+                        Width = size,
+                        Height = size,
+                        Location = new Point(j * size, i * size),
+                        Font = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold),
+                        Tag = new Point(i, j)
+                    };
+                    btn.Click += PlayerMove;
+                    board[i, j] = btn;
+                    panelBoard.Controls.Add(btn);
+                }
+            }
+
+            isPlayerTurn = true;
+            gameOver = false;
+            StartCountdown();
+        }
+
+        private void InitializeTimer()
+        {
+            countdownTimer = new Timer { Interval = 1000 };
+            countdownTimer.Tick += CountdownTick;
+        }
+
+        private void StartCountdown()
+        {
+            countdown = 10;
+            lblTimer.Text = $"Thời gian: {countdown}s";
+            countdownTimer.Start();
+        }
+
+        private void StopCountdown()
+        {
+            countdownTimer.Stop();
+        }
+        private async void CountdownTick(object sender, EventArgs e)
+        {
+            if (gameOver) return;
+
+            countdown--;
+            lblTimer.Text = $"Thời gian: {countdown}s";
+
+            if (countdown <= 0)
+            {
+                StopCountdown();
+                if (!gameOver)
+                {
+                    gameOver = true;
+                    await FirebaseHelper.SaveGameResult(playerName, "Timeout");
+                    MessageBox.Show($"{playerName} đã hết thời gian! Bạn thua.");
+                    PlaySound("lose.wav");
+                }
+            }
+        }
+        private async void PlayerMove(object sender, EventArgs e)
+        {
+            if (gameOver || !isPlayerTurn) return;
+
+            Button btn = sender as Button;
+            if (btn.Text != "") return;
+
+            btn.Text = "X";
+            btn.ForeColor = Color.Blue;
+            Point point = (Point)btn.Tag;
+
+            StopCountdown();
+
+            if (CheckWin(point.X, point.Y, "X"))
+            {
+                gameOver = true;
+                HighlightWinningLine(point.X, point.Y, "X");
+                PlaySound("win.wav");
+                await FirebaseHelper.SaveGameResult(playerName, "Win");
+                MessageBox.Show($"{playerName} thắng!");
+                return;
+            }
+
+            isPlayerTurn = false;
+            BotMove();
+        }
+
+        private async void BotMove()
+        {
+            Point move = GetSmartBotMove();
+            if (board[move.X, move.Y].Text != "") return; // tránh lỗi nếu trùng
+
+            board[move.X, move.Y].Text = "O";
+            board[move.X, move.Y].ForeColor = Color.Red;
+
+            if (CheckWin(move.X, move.Y, "O"))
+            {
+                gameOver = true;
+                HighlightWinningLine(move.X, move.Y, "O");
+                PlaySound("lose.wav");
+                await FirebaseHelper.SaveGameResult(playerName, "Lose");
+                MessageBox.Show("Bot thắng!");
+                return;
+            }
+
+            isPlayerTurn = true;
+            StartCountdown();
+        }
+
+        private Point GetSmartBotMove()
+        {
+            int maxScore = -1;
+            Point bestMove = new Point(0, 0);
+
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Cols; j++)
+                {
+                    if (board[i, j].Text != "") continue;
+
+                    int attack = EvaluatePoint(i, j, "O");
+                    int defense = EvaluatePoint(i, j, "X");
+                    int total = attack + defense;
+
+                    if (total > maxScore)
+                    {
+                        maxScore = total;
+                        bestMove = new Point(i, j);
+                    }
+                }
+            }
+
+            return bestMove;
+        }
+
+        private int EvaluatePoint(int x, int y, string player)
+        {
+            return EvaluateDirection(x, y, 1, 0, player) +
+                   EvaluateDirection(x, y, 0, 1, player) +
+                   EvaluateDirection(x, y, 1, 1, player) +
+                   EvaluateDirection(x, y, 1, -1, player);
+        }
+
+        private int EvaluateDirection(int x, int y, int dx, int dy, string player)
+        {
+            int count = 0, block = 0;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                int nx = x + dx * i;
+                int ny = y + dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols) { block++; break; }
+                string cell = board[nx, ny].Text;
+                if (cell == player) count++;
+                else if (cell != "") { block++; break; } else break;
+            }
+
+            for (int i = 1; i <= 4; i++)
+            {
+                int nx = x - dx * i;
+                int ny = y - dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols) { block++; break; }
+                string cell = board[nx, ny].Text;
+                if (cell == player) count++;
+                else if (cell != "") { block++; break; } else break;
+            }
+
+            return player == "O" ? (block == 2 ? 0 : AttackPoint[count]) : (block == 2 ? 0 : DefensePoint[count]);
+        }
+
+        private bool CheckWin(int x, int y, string player)
+        {
+            return CheckDirection(x, y, 1, 0, player) ||
+                   CheckDirection(x, y, 0, 1, player) ||
+                   CheckDirection(x, y, 1, 1, player) ||
+                   CheckDirection(x, y, 1, -1, player);
+        }
+
+        private bool CheckDirection(int x, int y, int dx, int dy, string player)
+        {
+            int count = 1;
+            for (int i = 1; i < 5; i++)
+            {
+                int nx = x + dx * i, ny = y + dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != player) break;
+                count++;
+            }
+            for (int i = 1; i < 5; i++)
+            {
+                int nx = x - dx * i, ny = y - dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != player) break;
+                count++;
+            }
+            return count >= 5;
+        }
+
+        private void HighlightWinningLine(int x, int y, string player)
+        {
+            if (CheckDirection(x, y, 1, 0, player)) HighlightWinningLine(x, y, 1, 0, player);
+            else if (CheckDirection(x, y, 0, 1, player)) HighlightWinningLine(x, y, 0, 1, player);
+            else if (CheckDirection(x, y, 1, 1, player)) HighlightWinningLine(x, y, 1, 1, player);
+            else if (CheckDirection(x, y, 1, -1, player)) HighlightWinningLine(x, y, 1, -1, player);
+        }
+
+        private void HighlightWinningLine(int x, int y, int dx, int dy, string player)
+        {
+            int count = 1;
+            board[x, y].BackColor = Color.Orange;
+
+            for (int i = 1; i < 5; i++)
+            {
+                int nx = x + dx * i, ny = y + dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != player) break;
+                board[nx, ny].BackColor = Color.Orange;
+                count++;
+            }
+
+            for (int i = 1; i < 5; i++)
+            {
+                int nx = x - dx * i, ny = y - dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != player) break;
+                board[nx, ny].BackColor = Color.Orange;
+                count++;
+            }
+
+            if (count < 5)
+            {
+                for (int i = 0; i < Rows; i++)
+                    for (int j = 0; j < Cols; j++)
+                        if (board[i, j].BackColor == Color.Orange)
+                            board[i, j].BackColor = SystemColors.Control;
+            }
+        }
+
+        private void PlaySound(string fileName)
+        {
+            try
+            {
+                SoundPlayer player = new SoundPlayer(fileName);
+                player.Play();
+            }
+            catch { }
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            gameOver = true;
+            StopCountdown();
+            new Form1().Show();
+            this.Close(); 
+        }
+        private void btnRestart_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            InitializeBoard();
+        }
+        private void FormPvE_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            gameOver = true;
+            StopCountdown();
+        }
+    }
+}
+
+Tên file: FormPvE.Designer.cs
+Và đây là đoạn code:
+﻿namespace DoAnMonHocNT106
+{
+    partial class FormPvE
+    {
+        private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Panel panelBoard;
+        private System.Windows.Forms.Button btnRestart;
+        private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Label lblTimer;
+        private System.Windows.Forms.Label lblPlayerName;
+        private System.Windows.Forms.Label lblTurn;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null)) components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.panelBoard = new System.Windows.Forms.Panel();
+            this.btnRestart = new System.Windows.Forms.Button();
+            this.btnBack = new System.Windows.Forms.Button();
+            this.lblTimer = new System.Windows.Forms.Label();
+            this.lblPlayerName = new System.Windows.Forms.Label();
+            this.lblTurn = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // panelBoard
+            // 
+            this.panelBoard.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panelBoard.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelBoard.Location = new System.Drawing.Point(20, 20);
+            this.panelBoard.Name = "panelBoard";
+            this.panelBoard.Size = new System.Drawing.Size(600, 600);
+            this.panelBoard.TabIndex = 0;
+            // 
+            // btnRestart
+            // 
+            this.btnRestart.BackColor = System.Drawing.Color.SteelBlue;
+            this.btnRestart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRestart.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnRestart.ForeColor = System.Drawing.Color.White;
+            this.btnRestart.Location = new System.Drawing.Point(650, 180);
+            this.btnRestart.Name = "btnRestart";
+            this.btnRestart.Size = new System.Drawing.Size(160, 45);
+            this.btnRestart.TabIndex = 1;
+            this.btnRestart.Text = "🔁 Chơi lại";
+            this.btnRestart.UseVisualStyleBackColor = false;
+            this.btnRestart.Click += new System.EventHandler(this.btnRestart_Click);
+            // 
+            // btnBack
+            // 
+            this.btnBack.BackColor = System.Drawing.Color.IndianRed;
+            this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBack.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnBack.ForeColor = System.Drawing.Color.White;
+            this.btnBack.Location = new System.Drawing.Point(650, 240);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(160, 45);
+            this.btnBack.TabIndex = 2;
+            this.btnBack.Text = "⬅ Thoát";
+            this.btnBack.UseVisualStyleBackColor = false;
+            this.btnBack.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // lblTimer
+            // 
+            this.lblTimer.AutoSize = true;
+            this.lblTimer.BackColor = System.Drawing.Color.Silver;
+            this.lblTimer.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTimer.ForeColor = System.Drawing.Color.Black;
+            this.lblTimer.Location = new System.Drawing.Point(650, 80);
+            this.lblTimer.Name = "lblTimer";
+            this.lblTimer.Size = new System.Drawing.Size(160, 25);
+            this.lblTimer.TabIndex = 3;
+            this.lblTimer.Text = "⏱ Thời gian: 10s";
+            // 
+            // lblPlayerName
+            // 
+            this.lblPlayerName.AutoSize = true;
+            this.lblPlayerName.BackColor = System.Drawing.Color.Silver;
+            this.lblPlayerName.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.lblPlayerName.ForeColor = System.Drawing.Color.Black;
+            this.lblPlayerName.Location = new System.Drawing.Point(650, 30);
+            this.lblPlayerName.Name = "lblPlayerName";
+            this.lblPlayerName.Size = new System.Drawing.Size(159, 25);
+            this.lblPlayerName.TabIndex = 4;
+            this.lblPlayerName.Text = "👤 Người chơi: ...";
+            // 
+            // lblTurn
+            // 
+            this.lblTurn.AutoSize = true;
+            this.lblTurn.BackColor = System.Drawing.Color.Silver;
+            this.lblTurn.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.lblTurn.ForeColor = System.Drawing.Color.DarkGreen;
+            this.lblTurn.Location = new System.Drawing.Point(650, 130);
+            this.lblTurn.Name = "lblTurn";
+            this.lblTurn.Size = new System.Drawing.Size(155, 25);
+            this.lblTurn.TabIndex = 5;
+            this.lblTurn.Text = "Lượt: Người chơi";
+            // 
+            // FormPvE
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Gainsboro;
+            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.pngtree_retro_futuristic_gaming_desk_scene_image_16555312;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(840, 650);
+            this.Controls.Add(this.lblTurn);
+            this.Controls.Add(this.lblPlayerName);
+            this.Controls.Add(this.lblTimer);
+            this.Controls.Add(this.btnBack);
+            this.Controls.Add(this.btnRestart);
+            this.Controls.Add(this.panelBoard);
+            this.DoubleBuffered = true;
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.Name = "FormPvE";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Caro - PvE (Chơi với Máy)";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPvE_FormClosing);
+        }
+    }
+}
+
+Tên file: FormPvP.cs
+Và đây là đoạn code:
+﻿using Firebase.Database;
+using Firebase.Database.Query;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DoAnMonHocNT106
+{
+    public partial class FormPvP : Form
+    {
+        private string currentUser, opponentUser, roomId;
+        private FirebaseClient firebase;
+        private Button[,] board;
+        private const int Rows = 20, Cols = 17;
+        private string mySymbol, opponentSymbol;
+        private bool isMyTurn = false;
+        private bool gameOver = false;
+        private HashSet<string> processedKeys = new HashSet<string>();
+
+        private Timer countdownTimer;
+        private int countdown = 20;
+
+        public FormPvP(string currentUser, string opponentUser, string roomId)
+        {
+            InitializeComponent();
+            this.currentUser = currentUser;
+            this.opponentUser = opponentUser;
+            this.roomId = roomId;
+            firebase = FirebaseHelper.GetFirebaseClient();
+            InitializeBoard();
+            this.FormClosing += FormPvP_FormClosing;
+        }
+
+        private void InitializeBoard()
+        {
+            panelBoard.Controls.Clear();
+            board = new Button[Rows, Cols];
+            int size = 30;
+
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Cols; j++)
+                {
+                    Button btn = new Button
+                    {
+                        Width = size,
+                        Height = size,
+                        Location = new Point(j * size, i * size),
+                        Font = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold),
+                        Tag = new Point(i, j)
+                    };
+                    btn.Click += PlayerMove;
+                    board[i, j] = btn;
+                    panelBoard.Controls.Add(btn);
+                }
+            }
+        }
+
+        private void FormPvP_Load(object sender, EventArgs e)
+        {
+            if (string.Compare(currentUser, opponentUser) < 0)
+            {
+                mySymbol = "X";
+                opponentSymbol = "O";
+                isMyTurn = true;
+            }
+            else
+            {
+                mySymbol = "O";
+                opponentSymbol = "X";
+                isMyTurn = false;
+            }
+
+            lblYou.Text = $"Bạn ({currentUser}): {mySymbol}";
+            lblOpponent.Text = $"Đối thủ ({opponentUser}): {opponentSymbol}";
+
+            InitializeTimer();
+            if (isMyTurn) StartCountdown();
+
+            ListenToMoves();
+        }
+
+        private void InitializeTimer()
+        {
+            countdownTimer = new Timer();
+            countdownTimer.Interval = 1000;
+            countdownTimer.Tick += CountdownTick;
+        }
+
+        private void StartCountdown()
+        {
+            countdown = 20;
+            lblCountdown.Text = $"Thời gian: {countdown}s";
+            countdownTimer.Start();
+        }
+
+        private void StopCountdown()
+        {
+            countdownTimer.Stop();
+            lblCountdown.Text = "";
+        }
+
+        private async void CountdownTick(object sender, EventArgs e)
+        {
+            if (gameOver) return;
+            countdown--;
+            lblCountdown.Text = $"Thời gian: {countdown}s";
+            if (countdown <= 0)
+            {
+                StopCountdown();
+                gameOver = true;
+                await FirebaseHelper.SavePvPGameResult(roomId, currentUser, opponentUser, "Timeout");
+                MessageBox.Show("Bạn đã hết thời gian! Thua cuộc.");
+                this.Close();
+            }
+        }
+
+        private void ListenToMoves()
+        {
+            firebase.Child("Rooms").Child(roomId).Child("Moves")
+                .AsObservable<Move>()
+                .Subscribe(ev =>
+                {
+                    if (ev.Object != null && !processedKeys.Contains(ev.Key))
+                    {
+                        processedKeys.Add(ev.Key);
+                        var move = ev.Object;
+
+                        this.Invoke(new MethodInvoker(() =>
+                        {
+                            Button btn = board[move.row, move.col];
+                            btn.Text = move.symbol;
+                            btn.ForeColor = move.symbol == "X" ? Color.Blue : Color.Red;
+
+                            if (move.user != currentUser)
+                            {
+                                isMyTurn = true;
+                                StartCountdown();
+                            }
+
+                            if (CheckWin(move.row, move.col, move.symbol))
+                            {
+                                gameOver = true;
+                                StopCountdown();
+                                HighlightWinningLine(move.row, move.col, move.symbol);
+                                string result = move.user == currentUser ? "Win" : "Lose";
+                                FirebaseHelper.SavePvPGameResult(roomId, currentUser, opponentUser, result);
+                                MessageBox.Show($"{move.user} thắng!");
+                            }
+                        }));
+                    }
+                });
+        }
+
+        private async void PlayerMove(object sender, EventArgs e)
+        {
+            if (gameOver || !isMyTurn) return;
+
+            Button btn = sender as Button;
+            if (btn == null || btn.Text != "") return;
+
+            Point point = (Point)btn.Tag;
+
+            btn.Text = mySymbol;
+            btn.ForeColor = mySymbol == "X" ? Color.Blue : Color.Red;
+
+            StopCountdown();
+
+            var move = new Move
+            {
+                row = point.X,
+                col = point.Y,
+                user = currentUser,
+                symbol = mySymbol,
+                timestamp = DateTime.UtcNow.ToString("o")
+            };
+
+            await firebase.Child("Rooms").Child(roomId).Child("Moves").PostAsync(move);
+
+            if (CheckWin(point.X, point.Y, mySymbol))
+            {
+                gameOver = true;
+                HighlightWinningLine(point.X, point.Y, mySymbol);
+                await FirebaseHelper.SavePvPGameResult(roomId, currentUser, opponentUser, "Win");
+                MessageBox.Show("Bạn thắng!");
+            }
+            else
+            {
+                isMyTurn = false;
+            }
+        }
+
+        private bool CheckWin(int x, int y, string symbol)
+        {
+            return CheckDirection(x, y, 1, 0, symbol) ||
+                   CheckDirection(x, y, 0, 1, symbol) ||
+                   CheckDirection(x, y, 1, 1, symbol) ||
+                   CheckDirection(x, y, 1, -1, symbol);
+        }
+
+        private bool CheckDirection(int x, int y, int dx, int dy, string symbol)
+        {
+            int count = 1;
+            for (int i = 1; i < 5; i++)
+            {
+                int nx = x + dx * i, ny = y + dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != symbol) break;
+                count++;
+            }
+            for (int i = 1; i < 5; i++)
+            {
+                int nx = x - dx * i, ny = y - dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != symbol) break;
+                count++;
+            }
+            return count >= 5;
+        }
+
+        private void HighlightWinningLine(int x, int y, string symbol)
+        {
+            if (CheckDirection(x, y, 1, 0, symbol)) HighlightDirection(x, y, 1, 0, symbol);
+            else if (CheckDirection(x, y, 0, 1, symbol)) HighlightDirection(x, y, 0, 1, symbol);
+            else if (CheckDirection(x, y, 1, 1, symbol)) HighlightDirection(x, y, 1, 1, symbol);
+            else if (CheckDirection(x, y, 1, -1, symbol)) HighlightDirection(x, y, 1, -1, symbol);
+        }
+
+        private void HighlightDirection(int x, int y, int dx, int dy, string symbol)
+        {
+            board[x, y].BackColor = Color.Orange;
+
+            for (int i = 1; i < 5; i++)
+            {
+                int nx = x + dx * i, ny = y + dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != symbol) break;
+                board[nx, ny].BackColor = Color.Orange;
+            }
+
+            for (int i = 1; i < 5; i++)
+            {
+                int nx = x - dx * i, ny = y - dy * i;
+                if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != symbol) break;
+                board[nx, ny].BackColor = Color.Orange;
+            }
+        }
+
+        private async void btnRestart_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            var confirm = MessageBox.Show("Bạn có chắc muốn chơi lại?", "Chơi lại", MessageBoxButtons.YesNo);
+            if (confirm == DialogResult.Yes)
+            {
+                await firebase.Child("Rooms").Child(roomId).Child("Moves").DeleteAsync();
+                gameOver = false;
+                InitializeBoard();
+                processedKeys.Clear();
+                isMyTurn = mySymbol == "X";
+                if (isMyTurn) StartCountdown(); else StopCountdown();
+            }
+        }
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            gameOver = true;
+            StopCountdown();
+            this.Close();
+        }
+
+        private void FormPvP_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            gameOver = true;
+            StopCountdown();
+        }
+    }
+}
+
+Tên file: FormPvP.Designer.cs
+Và đây là đoạn code:
+﻿namespace DoAnMonHocNT106
+{
+    partial class FormPvP
+    {
+        private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Panel panelBoard;
+        private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Button btnRestart;
+        private System.Windows.Forms.Label lblYou;
+        private System.Windows.Forms.Label lblOpponent;
+        private System.Windows.Forms.Label lblCountdown;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.panelBoard = new System.Windows.Forms.Panel();
+            this.btnBack = new System.Windows.Forms.Button();
+            this.btnRestart = new System.Windows.Forms.Button();
+            this.lblYou = new System.Windows.Forms.Label();
+            this.lblOpponent = new System.Windows.Forms.Label();
+            this.lblCountdown = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // panelBoard
+            // 
+            this.panelBoard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.panelBoard.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBoard.Location = new System.Drawing.Point(20, 20);
+            this.panelBoard.Name = "panelBoard";
+            this.panelBoard.Size = new System.Drawing.Size(500, 600);
+            this.panelBoard.TabIndex = 0;
+            // 
+            // btnBack
+            // 
+            this.btnBack.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
+            this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBack.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnBack.ForeColor = System.Drawing.Color.Red;
+            this.btnBack.Location = new System.Drawing.Point(540, 30);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(120, 40);
+            this.btnBack.TabIndex = 1;
+            this.btnBack.Text = "❌ Thoát";
+            this.btnBack.UseVisualStyleBackColor = false;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            // 
+            // btnRestart
+            // 
+            this.btnRestart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(120)))), ((int)(((byte)(80)))));
+            this.btnRestart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRestart.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnRestart.ForeColor = System.Drawing.Color.White;
+            this.btnRestart.Location = new System.Drawing.Point(540, 80);
+            this.btnRestart.Name = "btnRestart";
+            this.btnRestart.Size = new System.Drawing.Size(120, 40);
+            this.btnRestart.TabIndex = 2;
+            this.btnRestart.Text = "🔁 Chơi lại";
+            this.btnRestart.UseVisualStyleBackColor = false;
+            this.btnRestart.Click += new System.EventHandler(this.btnRestart_Click);
+            // 
+            // lblYou
+            // 
+            this.lblYou.AutoSize = true;
+            this.lblYou.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblYou.ForeColor = System.Drawing.Color.Cyan;
+            this.lblYou.Location = new System.Drawing.Point(540, 150);
+            this.lblYou.Name = "lblYou";
+            this.lblYou.Size = new System.Drawing.Size(51, 19);
+            this.lblYou.TabIndex = 3;
+            this.lblYou.Text = "Bạn: X";
+            // 
+            // lblOpponent
+            // 
+            this.lblOpponent.AutoSize = true;
+            this.lblOpponent.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblOpponent.ForeColor = System.Drawing.Color.Orange;
+            this.lblOpponent.Location = new System.Drawing.Point(540, 180);
+            this.lblOpponent.Name = "lblOpponent";
+            this.lblOpponent.Size = new System.Drawing.Size(76, 19);
+            this.lblOpponent.TabIndex = 4;
+            this.lblOpponent.Text = "Đối thủ: O";
+            // 
+            // lblCountdown
+            // 
+            this.lblCountdown.AutoSize = true;
+            this.lblCountdown.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblCountdown.ForeColor = System.Drawing.Color.Lime;
+            this.lblCountdown.Location = new System.Drawing.Point(540, 220);
+            this.lblCountdown.Name = "lblCountdown";
+            this.lblCountdown.Size = new System.Drawing.Size(101, 19);
+            this.lblCountdown.TabIndex = 5;
+            this.lblCountdown.Text = "Thời gian: 20s";
+            // 
+            // FormPvP
+            // 
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(15)))), ((int)(((byte)(15)))));
+            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.pngtree_retro_futuristic_gaming_desk_scene_image_16555312;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(700, 650);
+            this.Controls.Add(this.lblCountdown);
+            this.Controls.Add(this.lblOpponent);
+            this.Controls.Add(this.lblYou);
+            this.Controls.Add(this.btnRestart);
+            this.Controls.Add(this.btnBack);
+            this.Controls.Add(this.panelBoard);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.Name = "FormPvP";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "🎮 Cờ Caro PvP - NT106";
+            this.Load += new System.EventHandler(this.FormPvP_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+    }
+}
+
+Tên file: Form_Introduce.cs
+Và đây là đoạn code:
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DoAnMonHocNT106
+{
+    public partial class Form_Introduce : Form
+    {
+        public Form_Introduce()
+        {
+            InitializeComponent();
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+
+Tên file: Form_Introduce.Designer.cs
+Và đây là đoạn code:
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace DoAnMonHocNT106
+{
+    public partial class Form_Introduce : Form
+    {
+
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_Introduce));
+            this.labelTitle = new System.Windows.Forms.Label();
+            this.pictureBoxImage = new System.Windows.Forms.PictureBox();
+            this.buttonClose = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImage)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // labelTitle
+            // 
+            this.labelTitle.AutoSize = true;
+            this.labelTitle.BackColor = System.Drawing.Color.Transparent;
+            this.labelTitle.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.labelTitle.ForeColor = System.Drawing.Color.Aqua;
+            this.labelTitle.Location = new System.Drawing.Point(27, 25);
+            this.labelTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelTitle.Name = "labelTitle";
+            this.labelTitle.Size = new System.Drawing.Size(228, 32);
+            this.labelTitle.TabIndex = 0;
+            this.labelTitle.Text = "Giới thiệu trò chơi:";
+            // 
+            // pictureBoxImage
+            // 
+            this.pictureBoxImage.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxImage.Image")));
+            this.pictureBoxImage.Location = new System.Drawing.Point(640, 231);
+            this.pictureBoxImage.Margin = new System.Windows.Forms.Padding(4);
+            this.pictureBoxImage.Name = "pictureBoxImage";
+            this.pictureBoxImage.Size = new System.Drawing.Size(221, 168);
+            this.pictureBoxImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxImage.TabIndex = 2;
+            this.pictureBoxImage.TabStop = false;
+            // 
+            // buttonClose
+            // 
+            this.buttonClose.BackColor = System.Drawing.SystemColors.Highlight;
+            this.buttonClose.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.buttonClose.ForeColor = System.Drawing.Color.White;
+            this.buttonClose.Location = new System.Drawing.Point(701, 431);
+            this.buttonClose.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonClose.Name = "buttonClose";
+            this.buttonClose.Size = new System.Drawing.Size(133, 49);
+            this.buttonClose.TabIndex = 3;
+            this.buttonClose.Text = "Đóng";
+            this.buttonClose.UseVisualStyleBackColor = false;
+            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.label1.Location = new System.Drawing.Point(28, 85);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(852, 100);
+            this.label1.TabIndex = 4;
+            this.label1.Text = resources.GetString("label1.Text");
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.label2.ForeColor = System.Drawing.Color.Aqua;
+            this.label2.Location = new System.Drawing.Point(27, 213);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(232, 32);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Đội ngũ phát triển:";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.label3.Location = new System.Drawing.Point(28, 262);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(592, 175);
+            this.label3.TabIndex = 6;
+            this.label3.Text = resources.GetString("label3.Text");
+            this.label3.Click += new System.EventHandler(this.label3_Click);
+            // 
+            // Form_Introduce
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._11830;
+            this.ClientSize = new System.Drawing.Size(907, 529);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.buttonClose);
+            this.Controls.Add(this.pictureBoxImage);
+            this.Controls.Add(this.labelTitle);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.MaximizeBox = false;
+            this.Name = "Form_Introduce";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Giới thiệu";
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImage)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        private System.Windows.Forms.Label labelTitle;
+        private System.Windows.Forms.PictureBox pictureBoxImage;
+        private System.Windows.Forms.Button buttonClose;
+
+        private void buttonClose_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            this.Close();
+        }
+
+        private Label label1;
+        private Label label2;
+        private Label label3;
+    }
+}
+Tên file: Form_Login.cs
+Và đây là đoạn code:
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Firebase.Auth;
+
+
+namespace DoAnMonHocNT106
+{
+    public partial class Login : Form
+    {
+        private string apiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong";
+        private FirebaseAuthProvider auth;
+
+        public Login()
+        {
+            InitializeComponent();
+            auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+        }
+        private void Password_Placeholder(object sender, EventArgs e)
+        {
+            TextBox tb = password; // Chỉ áp dụng cho password
+
+            if (tb.Focused) // Khi nhập vào (Enter)
+            {
+                if (tb.Text == "Pass Word")
+                {
+                    tb.Text = "";
+                    tb.ForeColor = Color.Black;
+                }
+            }
+            else // Khi rời khỏi (Leave)
+            {
+                if (string.IsNullOrWhiteSpace(tb.Text))
+                {
+                    tb.Text = "Enter Password";
+                    tb.ForeColor = Color.Gray;
+                    tb.PasswordChar = '\0'; // Hiện lại chữ "Enter Password"
+                }
+            }
+        }
+
+        private void Login_Load(object sender, EventArgs e)
+        {
+            username.Text = "User Name Or Email";
+            username.ForeColor = Color.Gray;
+
+            password.Text = "Pass Word";
+            password.ForeColor = Color.Gray;
+            password.PasswordChar = '\0'; // Hiển thị dạng văn bản khi form mở
+
+            username.GotFocus += Username_Placeholder;
+            username.LostFocus += Username_Placeholder;
+
+            password.GotFocus += Password_Placeholder;
+            password.LostFocus += Password_Placeholder;
+
+            // Thêm sự kiện KeyDown để nhấn Enter
+            username.KeyDown += TextBox_KeyDown;
+            password.KeyDown += TextBox_KeyDown;
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; // Ngăn tiếng beep khi nhấn Enter
+                signin_Click(sender, e); // Gọi hàm đăng nhập
+            }
+        }
+
+        private void Username_Placeholder(object sender, EventArgs e)
+        {
+            TextBox tb = username; // Chỉ áp dụng cho username
+
+            if (tb.Focused) // Khi nhập vào (Enter)
+            {
+                if (tb.Text == "User Name Or Email")
+                {
+                    tb.Text = "";
+                    tb.ForeColor = Color.Black;
+                }
+            }
+            else // Khi rời khỏi (Leave)
+            {
+                if (string.IsNullOrWhiteSpace(tb.Text))
+                {
+                    tb.Text = "User Name Or Email";
+                    tb.ForeColor = Color.Gray;
+                }
+            }
+        }
+
+        private void show_CheckedChanged(object sender, EventArgs e)
+        {
+            password.UseSystemPasswordChar = !show.Checked;
+        }
+
+        private async void signin_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            string input = username.Text; // Người dùng nhập username hoặc email
+            string Password = this.password.Text;
+
+            // Kiểm tra nếu nhập username thì lấy email tương ứng từ Firebase
+            string email = input;
+            if (!input.Contains("@"))
+            {
+                email = await FirebaseHelper.GetEmailByUsername(input);
+                if (email == null)
+                {
+                    ShowMessage("Sai tài khoản hoặc mật khẩu!", Color.Red);
+                    return;
+                }
+            }
+
+            try
+            {
+                var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+                var auth = await authProvider.SignInWithEmailAndPasswordAsync(email, Password);
+
+                string userName = input.Contains("@") ? email.Split('@')[0] : input;
+
+                Properties.Settings.Default["UserId"] = userName;
+                Properties.Settings.Default.Save();
+
+                await FirebaseHelper.SetUserOnlineStatus(userName, true);
+                FirebaseHelper.CurrentUsername = userName;
+
+                Form1 mainForm = new Form1();
+                mainForm.Show();
+                this.Hide();
+            }
+            catch (Exception)
+            {
+                ShowMessage("Sai tài khoản hoặc mật khẩu!", Color.Red);
+            }
+        }
+        private void ShowMessage(string message, Color color)
+        {
+            usererro.Text = message; // Cập nhật nội dung
+            usererro.ForeColor = color; // Đổi màu chữ theo trạng thái
+            usererro.Visible = true; // Hiển thị label
+
+            // Tự động ẩn sau 3 giây
+            Task.Delay(3000).ContinueWith(_ =>
+            {
+                if (usererro.InvokeRequired)
+                {
+                    usererro.Invoke(new Action(() => usererro.Visible = false));
+                }
+                else
+                {
+                    usererro.Visible = false;
+                }
+            });
+        }
+
+        private void BTsignup_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            SignUp form2 = new SignUp();
+            this.Hide();
+            form2.Show();
+        }
+
+        private async void forgotpw_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            string email = username.Text.Trim(); // Lấy email từ textbox
+
+            if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
+            {
+                ShowMessage("Vui lòng nhập email hợp lệ!", Color.Red);
+                return;
+            }
+
+            try
+            {
+                var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+                // Thử gửi email reset mật khẩu
+                await authProvider.SendPasswordResetEmailAsync(email);
+                ShowMessage("Email đặt lại mật khẩu đã được gửi!", Color.Green);
+            }
+            catch (FirebaseAuthException)
+            {
+                // Firebase sẽ trả lỗi nếu email không tồn tại
+                ShowMessage("Email không tồn tại trong hệ thống!", Color.Red);
+            }
+        }
+    }
+}
+
+Tên file: Form_Login.Designer.cs
+Và đây là đoạn code:
+﻿namespace DoAnMonHocNT106
+{
+    partial class Login
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.username = new System.Windows.Forms.TextBox();
+            this.password = new System.Windows.Forms.TextBox();
+            this.signin = new System.Windows.Forms.Button();
+            this.BTsignup = new System.Windows.Forms.Button();
+            this.forgotpw = new System.Windows.Forms.Label();
+            this.show = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.usererro = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // username
+            // 
+            this.username.Font = new System.Drawing.Font("Times New Roman", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.username.ForeColor = System.Drawing.Color.Gray;
+            this.username.Location = new System.Drawing.Point(87, 120);
+            this.username.Name = "username";
+            this.username.Size = new System.Drawing.Size(294, 28);
+            this.username.TabIndex = 2;
+            this.username.Text = "User Name Or Email";
+            this.username.TextChanged += new System.EventHandler(this.Username_Placeholder);
+            // 
+            // password
+            // 
+            this.password.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.password.ForeColor = System.Drawing.Color.Gray;
+            this.password.Location = new System.Drawing.Point(87, 195);
+            this.password.Name = "password";
+            this.password.Size = new System.Drawing.Size(294, 27);
+            this.password.TabIndex = 3;
+            this.password.Text = "Pass Word";
+            this.password.UseSystemPasswordChar = true;
+            this.password.TextChanged += new System.EventHandler(this.Password_Placeholder);
+            // 
+            // signin
+            // 
+            this.signin.BackColor = System.Drawing.Color.DarkSlateBlue;
+            this.signin.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.signin.ForeColor = System.Drawing.Color.White;
+            this.signin.Location = new System.Drawing.Point(87, 286);
+            this.signin.Name = "signin";
+            this.signin.Size = new System.Drawing.Size(120, 50);
+            this.signin.TabIndex = 4;
+            this.signin.Text = "Sign In";
+            this.signin.UseVisualStyleBackColor = false;
+            this.signin.Click += new System.EventHandler(this.signin_Click);
+            // 
+            // BTsignup
+            // 
+            this.BTsignup.BackColor = System.Drawing.Color.DarkSlateBlue;
+            this.BTsignup.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTsignup.ForeColor = System.Drawing.Color.White;
+            this.BTsignup.Location = new System.Drawing.Point(261, 286);
+            this.BTsignup.Name = "BTsignup";
+            this.BTsignup.Size = new System.Drawing.Size(120, 50);
+            this.BTsignup.TabIndex = 5;
+            this.BTsignup.Text = "Sign Up";
+            this.BTsignup.UseVisualStyleBackColor = false;
+            this.BTsignup.Click += new System.EventHandler(this.BTsignup_Click);
+            // 
+            // forgotpw
+            // 
+            this.forgotpw.AutoSize = true;
+            this.forgotpw.BackColor = System.Drawing.Color.White;
+            this.forgotpw.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.forgotpw.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.forgotpw.Location = new System.Drawing.Point(172, 357);
+            this.forgotpw.Name = "forgotpw";
+            this.forgotpw.Size = new System.Drawing.Size(131, 19);
+            this.forgotpw.TabIndex = 6;
+            this.forgotpw.Text = "Forgot Password?";
+            this.forgotpw.Click += new System.EventHandler(this.forgotpw_Click);
+            // 
+            // show
+            // 
+            this.show.AutoSize = true;
+            this.show.BackColor = System.Drawing.Color.White;
+            this.show.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.show.Location = new System.Drawing.Point(257, 238);
+            this.show.Name = "show";
+            this.show.Size = new System.Drawing.Size(124, 20);
+            this.show.TabIndex = 8;
+            this.show.Text = "Show password";
+            this.show.UseVisualStyleBackColor = false;
+            this.show.CheckedChanged += new System.EventHandler(this.show_CheckedChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Gainsboro;
+            this.label1.Font = new System.Drawing.Font("Times New Roman", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label1.Location = new System.Drawing.Point(139, 46);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(168, 53);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Sign In";
+            // 
+            // usererro
+            // 
+            this.usererro.AutoSize = true;
+            this.usererro.ForeColor = System.Drawing.Color.Gray;
+            this.usererro.Location = new System.Drawing.Point(84, 161);
+            this.usererro.Name = "usererro";
+            this.usererro.Size = new System.Drawing.Size(0, 16);
+            this.usererro.TabIndex = 10;
+            // 
+            // Login
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.DarkGray;
+            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.register_form_01;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.usererro);
+            this.Controls.Add(this.show);
+            this.Controls.Add(this.forgotpw);
+            this.Controls.Add(this.BTsignup);
+            this.Controls.Add(this.signin);
+            this.Controls.Add(this.password);
+            this.Controls.Add(this.username);
+            this.Controls.Add(this.label1);
+            this.DoubleBuffered = true;
+            this.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.Name = "Login";
+            this.Text = "Login";
+            this.Load += new System.EventHandler(this.Login_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+        private System.Windows.Forms.TextBox username;
+        private System.Windows.Forms.TextBox password;
+        internal System.Windows.Forms.Button signin;
+        internal System.Windows.Forms.Button BTsignup;
+        private System.Windows.Forms.Label forgotpw;
+        private System.Windows.Forms.CheckBox show;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label usererro;
+    }
+}
+Tên file: Form_Menu.cs
+Và đây là đoạn code:
+﻿using FirebaseAdmin;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DoAnMonHocNT106
+{
+    public partial class Form1 : Form
+    {
+        private string tênUser;
+
+        public Form1()
+        {
+            InitializeComponent();
+            // Lấy tên người dùng từ Settings
+            tênUser = Properties.Settings.Default.UserId;
+            FirebaseHelper.CurrentUsername = tênUser;
+            if (!MusicPlayer.IsMusicPlaying())
+                MusicPlayer.StartBackgroundMusic();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            FormLobby lobby = new FormLobby(tênUser);
+            lobby.FormClosed += (s, args) =>
+            {
+                this.Show();  // Khi FormLobby đóng thì hiện lại Form1
+            };
+            lobby.Show();
+            this.Hide();
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            FormPvE Form = new FormPvE(tênUser); // Truyền tên người dùng vào PvE
+            Form.Show();
+            this.Hide();
+        }
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            MusicPlayer.StopBackgroundMusic();  // Dừng nhạc khi log out
+            Login Form = new Login();
+            Form.Show();
+            this.Hide();
+        }
+
+        private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Console.WriteLine("Đang đóng Form1...");
+            try
+            {
+                // 1. Dừng thread giám sát nền
+                BackgroundAppCloser.StopBackgroundMonitor();
+
+                // 2. Dừng nhạc và giải phóng tài nguyên
+                MusicPlayer.StopBackgroundMusic();
+                await Task.Delay(500); // Chờ 0.5s
+                MusicPlayer.DisposeAll();
+
+                // 3. Đóng tất cả form con
+                foreach (Form form in Application.OpenForms.Cast<Form>().ToList())
+                {
+                    if (form != this)
+                    {
+                        form.Close();
+                        form.Dispose();
+                    }
+                }
+
+                // 4. Giải phóng Firebase
+                FirebaseApp.DefaultInstance?.Delete();
+
+                // 5. Thoát ứng dụng hoàn toàn
+                Application.Exit();
+                Environment.Exit(0);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thoát ứng dụng: {ex.Message}",
+                                "Lỗi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                Environment.Exit(1);
+            }
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+{
+    base.OnFormClosed(e);
+    this.Dispose(); // Giải phóng tài nguyên form
+}
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            FormSetting settingForm = new FormSetting();
+            settingForm.ShowDialog();
+        }
+    }
+}
+
+Tên file: Form_Menu.Designer.cs
+Và đây là đoạn code:
+﻿namespace DoAnMonHocNT106
+{
+    partial class Form1
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(214, 98);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(193, 57);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Lobby";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(214, 182);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(193, 57);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "PvE";
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
+            // 
+            // button3
+            // 
+            this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(214, 269);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(193, 57);
+            this.button3.TabIndex = 2;
+            this.button3.Text = "Setting";
+            this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.Location = new System.Drawing.Point(214, 353);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(193, 57);
+            this.button4.TabIndex = 3;
+            this.button4.Text = "Log Out";
+            this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click_1);
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
+            this.ClientSize = new System.Drawing.Size(615, 485);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Name = "Form1";
+            this.Text = "Form1";
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+    }
+}
+Tên file: Form_Setting.cs
+Và đây là đoạn code:
+﻿using System;
+using System.Windows.Forms;
+
+namespace DoAnMonHocNT106
+{
+
+    public partial class FormSetting : Form
+    {
+        public FormSetting()
+        {
+            InitializeComponent();
+            this.KeyPreview = true; // Cho phép form nhận sự kiện phím trước các control
+            this.KeyDown += FormSetting_KeyDown; // Gắn sự kiện KeyDown
+        }
+
+        private void FormSetting_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                MusicPlayer.PlayClickSound(); // Phát âm thanh click
+                this.Close(); // Đóng form
+            }
+        }
+
+        private void btnIntroducing_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            Form_Introduce introduceForm = new Form_Introduce();
+            introduceForm.ShowDialog();
+        }
+
+        private void FormSetting_Load(object sender, EventArgs e)
+        {
+            btnToggleMusic.Text = MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền";
+            btnToggleSound.Text = MusicPlayer.IsSoundEnabled() ? "Tắt Âm Thanh Game" : "Bật Âm Thanh Game";
+            trackBarMusicVolume.Value = Math.Min((int)(MusicPlayer.GetVolume() * 70), 70);
+            trackBarSoundVolume.Value = Math.Min((int)(MusicPlayer.GetSoundVolume() * 70), 70);
+            // Đảm bảo nút Introducing được hiển thị
+        }
+
+        private void btnToggleMusic_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            MusicPlayer.ToggleMusic();
+            btnToggleMusic.Text = MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền";
+        }
+
+        private void btnPlayerInfo_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            FormPlayerInfo playerInfoForm = new FormPlayerInfo(FirebaseHelper.CurrentUsername);
+            playerInfoForm.ShowDialog();
+        }
+
+        private void btnToggleSound_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            MusicPlayer.SetSoundEnabled(!MusicPlayer.IsSoundEnabled());
+            btnToggleSound.Text = MusicPlayer.IsSoundEnabled() ? "Tắt Âm Thanh Game" : "Bật Âm Thanh Game";
+        }
+
+        private void trackBarMusicVolume_Scroll(object sender, EventArgs e)
+        {
+            // Làm tròn giá trị về nấc gần nhất
+            int roundedValue = (int)Math.Round(trackBarMusicVolume.Value / 10.0) * 10;
+            trackBarMusicVolume.Value = roundedValue; // Đặt lại giá trị thanh trượt
+            MusicPlayer.SetVolume(roundedValue / 70f);
+        }
+
+private void trackBarSoundVolume_Scroll(object sender, EventArgs e)
+{
+    // Làm tròn giá trị về nấc gần nhất
+    int roundedValue = (int)Math.Round(trackBarSoundVolume.Value / 10.0) * 10;
+    
+    // Chỉ phát âm thanh click nếu giá trị thay đổi sang một nấc mới
+    if (trackBarSoundVolume.Value != roundedValue)
+    {
+        MusicPlayer.PlayClickSound();
+    }
+    
+    trackBarSoundVolume.Value = roundedValue; // Đặt lại giá trị thanh trượt
+    MusicPlayer.SetSoundVolume(roundedValue / 70f);
+}
+    }
+}
+Tên file: Form_Setting.Designer.cs
+Và đây là đoạn code:
+﻿namespace DoAnMonHocNT106
+{
+    partial class FormSetting
+    {
+        private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Button btnToggleMusic;
+        private System.Windows.Forms.Button btnToggleSound;
+        private System.Windows.Forms.Button btnPlayerInfo;
+        private System.Windows.Forms.Button btnIntroducing;
+        private System.Windows.Forms.TrackBar trackBarMusicVolume;
+        private System.Windows.Forms.TrackBar trackBarSoundVolume;
+        private System.Windows.Forms.Label lblMusicVolume;
+        private System.Windows.Forms.Label lblSoundVolume;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.btnToggleMusic = new System.Windows.Forms.Button();
+            this.btnToggleSound = new System.Windows.Forms.Button();
+            this.btnPlayerInfo = new System.Windows.Forms.Button();
+            this.btnIntroducing = new System.Windows.Forms.Button();
+            this.trackBarMusicVolume = new System.Windows.Forms.TrackBar();
+            this.trackBarSoundVolume = new System.Windows.Forms.TrackBar();
+            this.lblMusicVolume = new System.Windows.Forms.Label();
+            this.lblSoundVolume = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarMusicVolume)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarSoundVolume)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // btnToggleMusic
+            // 
+            this.btnToggleMusic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnToggleMusic.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnToggleMusic.Location = new System.Drawing.Point(103, 30);
+            this.btnToggleMusic.Name = "btnToggleMusic";
+            this.btnToggleMusic.Size = new System.Drawing.Size(193, 57);
+            this.btnToggleMusic.TabIndex = 0;
+            this.btnToggleMusic.Text = "Bật/Tắt Nhạc Nền";
+            this.btnToggleMusic.UseVisualStyleBackColor = false;
+            this.btnToggleMusic.Click += new System.EventHandler(this.btnToggleMusic_Click);
+            // 
+            // btnToggleSound
+            // 
+            this.btnToggleSound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnToggleSound.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnToggleSound.Location = new System.Drawing.Point(103, 100);
+            this.btnToggleSound.Name = "btnToggleSound";
+            this.btnToggleSound.Size = new System.Drawing.Size(193, 57);
+            this.btnToggleSound.TabIndex = 1;
+            this.btnToggleSound.Text = "Bật/Tắt Âm Thanh";
+            this.btnToggleSound.UseVisualStyleBackColor = false;
+            this.btnToggleSound.Click += new System.EventHandler(this.btnToggleSound_Click);
+            // 
+            // btnPlayerInfo
+            // 
+            this.btnPlayerInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnPlayerInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold);
+            this.btnPlayerInfo.Location = new System.Drawing.Point(103, 170);
+            this.btnPlayerInfo.Name = "btnPlayerInfo";
+            this.btnPlayerInfo.Size = new System.Drawing.Size(193, 57);
+            this.btnPlayerInfo.TabIndex = 2;
+            this.btnPlayerInfo.Text = "Thông tin người chơi";
+            this.btnPlayerInfo.UseVisualStyleBackColor = false;
+            this.btnPlayerInfo.Click += new System.EventHandler(this.btnPlayerInfo_Click);
+            // 
+            // btnIntroducing
+            // 
+            this.btnIntroducing.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnIntroducing.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnIntroducing.Location = new System.Drawing.Point(103, 240);
+            this.btnIntroducing.Name = "btnIntroducing";
+            this.btnIntroducing.Size = new System.Drawing.Size(193, 57);
+            this.btnIntroducing.TabIndex = 3;
+            this.btnIntroducing.Text = "Giới thiệu";
+            this.btnIntroducing.UseVisualStyleBackColor = false;
+            this.btnIntroducing.Click += new System.EventHandler(this.btnIntroducing_Click);
+            // 
+            // trackBarMusicVolume
+            // 
+            this.trackBarMusicVolume.BackColor = System.Drawing.SystemColors.ControlText;
+            this.trackBarMusicVolume.Location = new System.Drawing.Point(103, 337);
+            this.trackBarMusicVolume.Maximum = 70;
+            this.trackBarMusicVolume.Name = "trackBarMusicVolume";
+            this.trackBarMusicVolume.Size = new System.Drawing.Size(193, 56);
+            this.trackBarMusicVolume.TabIndex = 4;
+            this.trackBarMusicVolume.TickFrequency = 10;
+            this.trackBarMusicVolume.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.trackBarMusicVolume.Scroll += new System.EventHandler(this.trackBarMusicVolume_Scroll);
+            // 
+            // trackBarSoundVolume
+            // 
+            this.trackBarSoundVolume.BackColor = System.Drawing.SystemColors.MenuText;
+            this.trackBarSoundVolume.Location = new System.Drawing.Point(103, 437);
+            this.trackBarSoundVolume.Maximum = 70;
+            this.trackBarSoundVolume.Name = "trackBarSoundVolume";
+            this.trackBarSoundVolume.Size = new System.Drawing.Size(193, 56);
+            this.trackBarSoundVolume.TabIndex = 5;
+            this.trackBarSoundVolume.TickFrequency = 10;
+            this.trackBarSoundVolume.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.trackBarSoundVolume.Scroll += new System.EventHandler(this.trackBarSoundVolume_Scroll);
+            // 
+            // lblMusicVolume
+            // 
+            this.lblMusicVolume.AutoSize = true;
+            this.lblMusicVolume.BackColor = System.Drawing.Color.Transparent;
+            this.lblMusicVolume.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMusicVolume.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblMusicVolume.Location = new System.Drawing.Point(99, 310);
+            this.lblMusicVolume.Name = "lblMusicVolume";
+            this.lblMusicVolume.Size = new System.Drawing.Size(200, 24);
+            this.lblMusicVolume.TabIndex = 6;
+            this.lblMusicVolume.Text = "Âm lượng Nhạc Nền";
+            // 
+            // lblSoundVolume
+            // 
+            this.lblSoundVolume.AutoSize = true;
+            this.lblSoundVolume.BackColor = System.Drawing.Color.Transparent;
+            this.lblSoundVolume.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSoundVolume.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            this.lblSoundVolume.Location = new System.Drawing.Point(99, 410);
+            this.lblSoundVolume.Name = "lblSoundVolume";
+            this.lblSoundVolume.Size = new System.Drawing.Size(203, 24);
+            this.lblSoundVolume.TabIndex = 7;
+            this.lblSoundVolume.Text = "Âm lượng Âm Thanh";
+            // 
+            // FormSetting
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(400, 514);
+            this.Controls.Add(this.btnToggleMusic);
+            this.Controls.Add(this.btnToggleSound);
+            this.Controls.Add(this.btnPlayerInfo);
+            this.Controls.Add(this.btnIntroducing);
+            this.Controls.Add(this.lblMusicVolume);
+            this.Controls.Add(this.trackBarMusicVolume);
+            this.Controls.Add(this.lblSoundVolume);
+            this.Controls.Add(this.trackBarSoundVolume);
+            this.Name = "FormSetting";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Cài Đặt";
+            this.Load += new System.EventHandler(this.FormSetting_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarMusicVolume)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarSoundVolume)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+    }
+}
+Tên file: Form_SignUp.cs
+Và đây là đoạn code:
+﻿using System;
+using System.Windows.Forms;
+using Firebase.Auth;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Responses;
+using Google.Apis.Util.Store;
+using Newtonsoft.Json.Linq;
+using System.IO;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Net.Http.Json;
+
+namespace DoAnMonHocNT106
+{
+    public partial class SignUp : Form
+    {
+        private string apiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong";
+        private FirebaseAuthProvider auth;
+
+        public SignUp()
+        {
+            InitializeComponent();
+            auth = new FirebaseAuthProvider(new FirebaseConfig("AIzaSy..."));
+        }
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            string Username = username.Text;
+            string email = mail.Text;
+            string password = pw.Text;
+
+            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("Vui lòng nhập đầy đủ thông tin!");
+                return;
+            }
+
+            try
+            {
+                var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+
+                // Kiểm tra email đã tồn tại chưa
+                var auth = await authProvider.CreateUserWithEmailAndPasswordAsync(email, password);
+
+                // Lưu thông tin user vào Firebase Realtime Database (Không lưu mật khẩu!)
+                await FirebaseHelper.AddUser(Username, password, email);
+
+                MessageBox.Show("Đăng ký thành công!");
+                Login form = new Login();
+                form.Show();
+                this.Close();
+            }
+            catch (FirebaseAuthException ex)
+            {
+                if (ex.ResponseData.Contains("EMAIL_EXISTS"))
+                {
+                    MessageBox.Show("Email đã được đăng ký!");
+                }
+                else
+                {
+                    MessageBox.Show("Lỗi đăng ký: " + ex.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi đăng ký: " + ex.Message);
+            }
+        }
+        private void show_CheckedChanged(object sender, EventArgs e)
+        {
+            pw.UseSystemPasswordChar = !show.Checked;
+            repw.UseSystemPasswordChar = !show.Checked;
+        }
+        private async void gm_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            try
+            {
+                string clientId = "150464310449-sbdgtn4a2vo3n1dbq51cc1o9ept5tokl.apps.googleusercontent.com";
+                string clientSecret = "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";
+                string firebaseApiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong";
+                string firebaseDbUrl = "https://nt106-7c9fe-default-rtdb.firebaseio.com/";
+
+                // Step 1: Google OAuth
+                var secrets = new ClientSecrets
+                {
+                    ClientId = clientId,
+                    ClientSecret = clientSecret
+                };
+
+                var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    secrets,
+                    new[] { "email", "profile", "openid" },
+                    "user",
+                    CancellationToken.None,
+                    new FileDataStore("GoogleTokenStore")
+                );
+
+                // Kiểm tra ID token
+                string idToken = credential.Token.IdToken;
+                if (string.IsNullOrEmpty(idToken))
+                {
+                    MessageBox.Show("Không lấy được ID Token từ Google.");
+                    return;
+                }
+
+                // Step 2: Firebase Auth with Google Token
+                using (var client = new HttpClient())
+                {
+                    var requestUri = $"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key={firebaseApiKey}";
+
+                    var content = new
+                    {
+                        postBody = $"id_token={idToken}&providerId=google.com",
+                        requestUri = "http://localhost", // Đảm bảo domain này có trong Firebase Auth > Sign-in method > Authorized domains
+                        returnIdpCredential = true,
+                        returnSecureToken = true
+                    };
+
+                    var response = await client.PostAsJsonAsync(requestUri, content);
+                    var responseBody = await response.Content.ReadAsStringAsync();
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Lỗi Firebase: " + responseBody);
+                        return;
+                    }
+
+                    var json = JObject.Parse(responseBody);
+                    string firebaseIdToken = json["idToken"]?.ToString();
+                    string email = json["email"]?.ToString();
+                    string displayName = json["displayName"]?.ToString();
+                    string localId = json["localId"]?.ToString();
+
+                    if (string.IsNullOrEmpty(firebaseIdToken) || string.IsNullOrEmpty(localId))
+                    {
+                        MessageBox.Show("Thông tin người dùng từ Firebase không đầy đủ.");
+                        return;
+                    }
+
+                    // Step 3: Check if user exists in Realtime Database
+                    bool userExists = await CheckIfUserExists(firebaseDbUrl, localId, firebaseIdToken);
+
+                    if (!userExists)
+                    {
+                        await CreateUserInDatabase(firebaseDbUrl, localId, firebaseIdToken, displayName, email);
+                    }
+
+                    MessageBox.Show($"Đăng nhập Google thành công!\nChào {displayName ?? "bạn"}.");
+
+                    // Mở Lobby
+                    FormLobby lobby = new FormLobby(displayName);
+                    lobby.Show();
+                    this.Hide();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi: {ex.Message}");
+            }
+        }
+        private async Task<bool> CheckIfUserExists(string firebaseDbUrl, string userId, string idToken)
+        {
+            using (var client = new HttpClient())
+            {
+                var requestUri = $"{firebaseDbUrl}/users/{userId}.json?auth={idToken}";
+
+                var response = await client.GetAsync(requestUri);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    return responseBody != "null";
+                }
+                return false;
+            }
+        }
+        private async Task CreateUserInDatabase(string firebaseDbUrl, string userId, string idToken, string displayName, string email)
+        {
+            using (var client = new HttpClient())
+            {
+                var requestUri = $"{firebaseDbUrl}/users/{userId}.json?auth={idToken}";
+
+                var newUser = new
+                {
+                    displayName,
+                    email,
+                    role = "user", // Optional: default role
+                    createdAt = DateTime.UtcNow.ToString("o")
+                };
+
+                await client.PutAsJsonAsync(requestUri, newUser);
+            }
+        }
+    }
+}
+Tên file: Form_SignUp.Designer.cs
+Và đây là đoạn code:
+﻿namespace DoAnMonHocNT106
+{
+    partial class SignUp
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.gm = new System.Windows.Forms.Button();
+            this.sdt = new System.Windows.Forms.Button();
+            this.username = new System.Windows.Forms.TextBox();
+            this.mail = new System.Windows.Forms.TextBox();
+            this.pw = new System.Windows.Forms.TextBox();
+            this.repw = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.show = new System.Windows.Forms.CheckBox();
+            this.fb = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // gm
+            // 
+            this.gm.BackColor = System.Drawing.Color.DarkRed;
+            this.gm.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gm.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.gm.Location = new System.Drawing.Point(43, 213);
+            this.gm.Name = "gm";
+            this.gm.Size = new System.Drawing.Size(235, 45);
+            this.gm.TabIndex = 2;
+            this.gm.Text = "Login With Gmail";
+            this.gm.UseVisualStyleBackColor = false;
+            this.gm.Click += new System.EventHandler(this.gm_Click);
+            // 
+            // sdt
+            // 
+            this.sdt.BackColor = System.Drawing.Color.DarkGreen;
+            this.sdt.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sdt.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.sdt.Location = new System.Drawing.Point(43, 274);
+            this.sdt.Name = "sdt";
+            this.sdt.Size = new System.Drawing.Size(235, 40);
+            this.sdt.TabIndex = 3;
+            this.sdt.Text = "Login With PhoneNumber";
+            this.sdt.UseVisualStyleBackColor = false;
+            // 
+            // username
+            // 
+            this.username.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.username.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.username.Location = new System.Drawing.Point(398, 111);
+            this.username.Name = "username";
+            this.username.Size = new System.Drawing.Size(223, 27);
+            this.username.TabIndex = 4;
+            this.username.Text = "Username";
+            // 
+            // mail
+            // 
+            this.mail.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mail.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.mail.Location = new System.Drawing.Point(398, 164);
+            this.mail.Name = "mail";
+            this.mail.Size = new System.Drawing.Size(223, 27);
+            this.mail.TabIndex = 5;
+            this.mail.Text = "E-mail";
+            // 
+            // pw
+            // 
+            this.pw.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pw.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.pw.Location = new System.Drawing.Point(398, 220);
+            this.pw.Name = "pw";
+            this.pw.Size = new System.Drawing.Size(223, 27);
+            this.pw.TabIndex = 6;
+            this.pw.Text = "Password";
+            this.pw.UseSystemPasswordChar = true;
+            // 
+            // repw
+            // 
+            this.repw.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.repw.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.repw.Location = new System.Drawing.Point(398, 274);
+            this.repw.Name = "repw";
+            this.repw.Size = new System.Drawing.Size(223, 27);
+            this.repw.TabIndex = 7;
+            this.repw.Text = "Re-password";
+            this.repw.UseSystemPasswordChar = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Times New Roman", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(426, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(184, 53);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Sign Up";
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.LightSeaGreen;
+            this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.button1.Location = new System.Drawing.Point(425, 357);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(162, 44);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "Confirm";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Image = global::DoAnMonHocNT106.Properties.Resources.Untitled1;
+            this.pictureBox1.Location = new System.Drawing.Point(-5, -1);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(354, 422);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
+            // show
+            // 
+            this.show.AutoSize = true;
+            this.show.BackColor = System.Drawing.Color.White;
+            this.show.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.show.Location = new System.Drawing.Point(510, 318);
+            this.show.Name = "show";
+            this.show.Size = new System.Drawing.Size(111, 19);
+            this.show.TabIndex = 10;
+            this.show.Text = "Show password";
+            this.show.UseVisualStyleBackColor = false;
+            this.show.CheckedChanged += new System.EventHandler(this.show_CheckedChanged);
+            // 
+            // fb
+            // 
+            this.fb.BackColor = System.Drawing.Color.Navy;
+            this.fb.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fb.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.fb.Location = new System.Drawing.Point(43, 157);
+            this.fb.Name = "fb";
+            this.fb.Size = new System.Drawing.Size(235, 40);
+            this.fb.TabIndex = 1;
+            this.fb.Text = "Login With Facebook";
+            this.fb.UseVisualStyleBackColor = false;
+            // 
+            // SignUp
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.PeachPuff;
+            this.ClientSize = new System.Drawing.Size(700, 422);
+            this.Controls.Add(this.show);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.repw);
+            this.Controls.Add(this.pw);
+            this.Controls.Add(this.mail);
+            this.Controls.Add(this.username);
+            this.Controls.Add(this.sdt);
+            this.Controls.Add(this.gm);
+            this.Controls.Add(this.fb);
+            this.Controls.Add(this.pictureBox1);
+            this.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Name = "SignUp";
+            this.Text = "Form2";
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+        private System.Windows.Forms.Button gm;
+        private System.Windows.Forms.Button sdt;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.TextBox username;
+        private System.Windows.Forms.TextBox mail;
+        private System.Windows.Forms.TextBox pw;
+        private System.Windows.Forms.TextBox repw;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox show;
+        private System.Windows.Forms.Button fb;
+    }
+}
