@@ -1,0 +1,70 @@
+﻿using System;
+using System.Windows.Forms;
+
+namespace DoAnMonHocNT106
+{
+
+    public partial class FormSetting : Form
+    {
+        public FormSetting()
+        {
+            InitializeComponent();
+            this.KeyPreview = true; // Cho phép form nhận sự kiện phím trước các control
+            this.KeyDown += FormSetting_KeyDown; // Gắn sự kiện KeyDown
+        }
+
+        private void FormSetting_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                MusicPlayer.PlayClickSound(); // Phát âm thanh click
+                this.Close(); // Đóng form
+            }
+        }
+
+        private void FormSetting_Load(object sender, EventArgs e)
+        {
+            btnToggleMusic.Text = MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền";
+            btnToggleSound.Text = MusicPlayer.IsSoundEnabled() ? "Tắt Âm Thanh Game" : "Bật Âm Thanh Game";
+            trackBarMusicVolume.Value = Math.Min((int)(MusicPlayer.GetVolume() * 70), 70); // Giới hạn tối đa 70
+            trackBarSoundVolume.Value = Math.Min((int)(MusicPlayer.GetSoundVolume() * 70), 70); // Giới hạn tối đa 70
+        }
+
+        private void btnToggleMusic_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            MusicPlayer.ToggleMusic();
+            btnToggleMusic.Text = MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền";
+        }
+
+        private void btnToggleSound_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            MusicPlayer.SetSoundEnabled(!MusicPlayer.IsSoundEnabled());
+            btnToggleSound.Text = MusicPlayer.IsSoundEnabled() ? "Tắt Âm Thanh Game" : "Bật Âm Thanh Game";
+        }
+
+        private void trackBarMusicVolume_Scroll(object sender, EventArgs e)
+        {
+            // Làm tròn giá trị về nấc gần nhất
+            int roundedValue = (int)Math.Round(trackBarMusicVolume.Value / 10.0) * 10;
+            trackBarMusicVolume.Value = roundedValue; // Đặt lại giá trị thanh trượt
+            MusicPlayer.SetVolume(roundedValue / 70f);
+        }
+
+private void trackBarSoundVolume_Scroll(object sender, EventArgs e)
+{
+    // Làm tròn giá trị về nấc gần nhất
+    int roundedValue = (int)Math.Round(trackBarSoundVolume.Value / 10.0) * 10;
+    
+    // Chỉ phát âm thanh click nếu giá trị thay đổi sang một nấc mới
+    if (trackBarSoundVolume.Value != roundedValue)
+    {
+        MusicPlayer.PlayClickSound();
+    }
+    
+    trackBarSoundVolume.Value = roundedValue; // Đặt lại giá trị thanh trượt
+    MusicPlayer.SetSoundVolume(roundedValue / 70f);
+}
+    }
+}

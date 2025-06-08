@@ -249,6 +249,7 @@ namespace DoAnMonHocNT106
 
         private async void btnRestart_Click(object sender, EventArgs e)
         {
+            MusicPlayer.PlayClickSound();
             var confirm = MessageBox.Show("Bạn có chắc muốn chơi lại?", "Chơi lại", MessageBoxButtons.YesNo);
             if (confirm == DialogResult.Yes)
             {
@@ -262,6 +263,7 @@ namespace DoAnMonHocNT106
         }
         private void btnBack_Click(object sender, EventArgs e)
         {
+            MusicPlayer.PlayClickSound();
             gameOver = true;
             StopCountdown();
             this.Close();

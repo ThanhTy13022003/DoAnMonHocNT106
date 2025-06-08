@@ -198,6 +198,7 @@ namespace DoAnMonHocNT106
 
         private async void btnSend_Click(object sender, EventArgs e)
         {
+            MusicPlayer.PlayClickSound();
             string msg = txtMessage.Text.Trim();
             if (!string.IsNullOrEmpty(msg))
             {
