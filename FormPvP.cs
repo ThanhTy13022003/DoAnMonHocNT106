@@ -30,7 +30,7 @@ namespace DoAnMonHocNT106
             this.currentUser = currentUser;
             this.opponentUser = opponentUser;
             this.roomId = roomId;
-            firebase = FirebaseHelper.GetFirebaseClient();
+            var firebase = new FirebaseClient("https://nt106-7c9fe-default-rtdb.firebaseio.com/");
             InitializeBoard();
             this.FormClosing += FormPvP_FormClosing;
         }

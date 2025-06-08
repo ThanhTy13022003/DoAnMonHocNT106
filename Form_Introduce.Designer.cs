@@ -35,7 +35,7 @@ namespace DoAnMonHocNT106
             // pictureBoxImage
             // 
             this.pictureBoxImage.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxImage.Image")));
-            this.pictureBoxImage.Location = new System.Drawing.Point(640, 231);
+            this.pictureBoxImage.Location = new System.Drawing.Point(706, 240);
             this.pictureBoxImage.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBoxImage.Name = "pictureBoxImage";
             this.pictureBoxImage.Size = new System.Drawing.Size(221, 168);
@@ -48,7 +48,7 @@ namespace DoAnMonHocNT106
             this.buttonClose.BackColor = System.Drawing.SystemColors.Highlight;
             this.buttonClose.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.buttonClose.ForeColor = System.Drawing.Color.White;
-            this.buttonClose.Location = new System.Drawing.Point(701, 431);
+            this.buttonClose.Location = new System.Drawing.Point(767, 440);
             this.buttonClose.Margin = new System.Windows.Forms.Padding(4);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(133, 49);
@@ -62,7 +62,7 @@ namespace DoAnMonHocNT106
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label1.Location = new System.Drawing.Point(28, 85);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(852, 100);
@@ -88,7 +88,7 @@ namespace DoAnMonHocNT106
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.label3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label3.Location = new System.Drawing.Point(28, 262);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(592, 175);
@@ -101,8 +101,8 @@ namespace DoAnMonHocNT106
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._11830;
-            this.ClientSize = new System.Drawing.Size(907, 529);
+            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
+            this.ClientSize = new System.Drawing.Size(980, 529);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);

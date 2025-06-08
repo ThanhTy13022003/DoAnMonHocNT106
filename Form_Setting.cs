@@ -22,12 +22,20 @@ namespace DoAnMonHocNT106
             }
         }
 
+        private void btnIntroducing_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            Form_Introduce introduceForm = new Form_Introduce();
+            introduceForm.ShowDialog();
+        }
+
         private void FormSetting_Load(object sender, EventArgs e)
         {
             btnToggleMusic.Text = MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền";
             btnToggleSound.Text = MusicPlayer.IsSoundEnabled() ? "Tắt Âm Thanh Game" : "Bật Âm Thanh Game";
-            trackBarMusicVolume.Value = Math.Min((int)(MusicPlayer.GetVolume() * 70), 70); // Giới hạn tối đa 70
-            trackBarSoundVolume.Value = Math.Min((int)(MusicPlayer.GetSoundVolume() * 70), 70); // Giới hạn tối đa 70
+            trackBarMusicVolume.Value = Math.Min((int)(MusicPlayer.GetVolume() * 70), 70);
+            trackBarSoundVolume.Value = Math.Min((int)(MusicPlayer.GetSoundVolume() * 70), 70);
+            // Đảm bảo nút Introducing được hiển thị
         }
 
         private void btnToggleMusic_Click(object sender, EventArgs e)
@@ -35,6 +43,21 @@ namespace DoAnMonHocNT106
             MusicPlayer.PlayClickSound();
             MusicPlayer.ToggleMusic();
             btnToggleMusic.Text = MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền";
+            trackBarMusicVolume.Enabled = MusicPlayer.IsMusicPlaying(); // Làm mờ/mở thanh chỉnh âm lượng nhạc nền
+        }
+
+        private void btnPlayerInfo_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            FormPlayerInfo playerInfoForm = new FormPlayerInfo(FirebaseHelper.CurrentUsername);
+            playerInfoForm.ShowDialog();
+        }
+
+        private void btnLeaderboard_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            FormLeaderboard leaderboardForm = new FormLeaderboard();
+            leaderboardForm.ShowDialog();
         }
 
         private void btnToggleSound_Click(object sender, EventArgs e)
@@ -42,6 +65,7 @@ namespace DoAnMonHocNT106
             MusicPlayer.PlayClickSound();
             MusicPlayer.SetSoundEnabled(!MusicPlayer.IsSoundEnabled());
             btnToggleSound.Text = MusicPlayer.IsSoundEnabled() ? "Tắt Âm Thanh Game" : "Bật Âm Thanh Game";
+            trackBarSoundVolume.Enabled = MusicPlayer.IsSoundEnabled(); // Làm mờ/mở thanh chỉnh âm lượng âm thanh game
         }
 
         private void trackBarMusicVolume_Scroll(object sender, EventArgs e)
