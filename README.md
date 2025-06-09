@@ -9,7 +9,7 @@ Caro là một trò chơi dân gian phổ biến tại Việt Nam, còn được
 Trò chơi Caro được phát triển bởi nhóm sinh viên trường Đại học Công Nghệ Thông Tin, ĐHQGHCM, gồm:
 
 - Nguyễn Lê Thành Tỷ: Trưởng nhóm
-- Nguyễn Duy Quốc Bảo: Thành viên
 - Đặng Chí Trọng: Thành viên
+- Nguyễn Duy Quốc Bảo: Thành viên
 
 Qua trò chơi này, chúng tôi hy vọng sẽ mang đến trải nghiệm thú vị và ý nghĩa cho mọi người.
