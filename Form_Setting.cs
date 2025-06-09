@@ -12,41 +12,6 @@ namespace DoAnMonHocNT106
             this.KeyDown += FormSetting_KeyDown; // Gắn sự kiện KeyDown
         }
 
-        private void btnChangeLanguage_Click(object sender, EventArgs e)
-        {
-            MusicPlayer.PlayClickSound();
-            // Danh sách ngôn ngữ hỗ trợ
-            string[] languages = { "Tiếng Anh", "Tiếng Việt", "Tiếng Trung Quốc", "Tiếng Nga" };
-            // Lấy ngôn ngữ hiện tại
-            string currentLanguage = Properties.Settings.Default["Language"]?.ToString() ?? "Tiếng Anh";
-            // Tìm chỉ số ngôn ngữ hiện tại
-            int currentIndex = Array.IndexOf(languages, currentLanguage);
-            // Chuyển sang ngôn ngữ tiếp theo
-            int nextIndex = (currentIndex + 1) % languages.Length;
-            string nextLanguage = languages[nextIndex];
-
-            // Lưu ngôn ngữ mới
-            Properties.Settings.Default["Language"] = nextLanguage;
-            Properties.Settings.Default.Save();
-
-            // Cập nhật tên nút
-            btnChangeLanguage.Text = Translator.Translate("Ngôn ngữ: ") + nextLanguage;
-
-            // Cập nhật ngôn ngữ cho form hiện tại
-            UpdateLanguage();
-        }
-
-        private void UpdateLanguage()
-        {
-            btnToggleMusic.Text = Translator.Translate(MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền");
-            btnToggleSound.Text = Translator.Translate(MusicPlayer.IsSoundEnabled() ? "Tắt Âm Thanh Game" : "Bật Âm Thanh Game");
-            btnPlayerInfo.Text = Translator.Translate("Thông tin người chơi");
-            btnIntroducing.Text = Translator.Translate("Giới thiệu");
-            btnLeaderboard.Text = Translator.Translate("Bảng xếp hạng");
-            btnChangeLanguage.Text = Translator.Translate("Ngôn ngữ: ") + (Properties.Settings.Default["Language"]?.ToString() ?? "Tiếng Anh");
-            this.Text = Translator.Translate("Cài Đặt");
-        }
-
         private void FormSetting_Load(object sender, EventArgs e)
         {
             btnToggleMusic.Text = MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền";

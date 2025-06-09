@@ -10,7 +10,6 @@
         private System.Windows.Forms.TrackBar trackBarMusicVolume;
         private System.Windows.Forms.TrackBar trackBarSoundVolume;
         private System.Windows.Forms.Button btnLeaderboard;
-        private System.Windows.Forms.Button btnChangeLanguage;
 
         protected override void Dispose(bool disposing)
         {
@@ -23,7 +22,6 @@
 
         private void InitializeComponent()
         {
-            this.btnChangeLanguage = new System.Windows.Forms.Button();
             this.btnToggleMusic = new System.Windows.Forms.Button();
             this.btnToggleSound = new System.Windows.Forms.Button();
             this.btnPlayerInfo = new System.Windows.Forms.Button();
@@ -34,18 +32,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMusicVolume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarSoundVolume)).BeginInit();
             this.SuspendLayout();
-            // 
-            // btnChangeLanguage
-            // 
-            this.btnChangeLanguage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.btnChangeLanguage.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold);
-            this.btnChangeLanguage.Location = new System.Drawing.Point(162, 485);
-            this.btnChangeLanguage.Name = "btnChangeLanguage";
-            this.btnChangeLanguage.Size = new System.Drawing.Size(193, 57);
-            this.btnChangeLanguage.TabIndex = 9;
-            this.btnChangeLanguage.Text = "Ngôn ngữ: Tiếng Anh";
-            this.btnChangeLanguage.UseVisualStyleBackColor = false;
-            this.btnChangeLanguage.Click += new System.EventHandler(this.btnChangeLanguage_Click);
             // 
             // btnToggleMusic
             // 
@@ -137,8 +123,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(497, 570);
-            this.Controls.Add(this.btnChangeLanguage);
+            this.ClientSize = new System.Drawing.Size(497, 494);
             this.Controls.Add(this.btnLeaderboard);
             this.Controls.Add(this.btnToggleMusic);
             this.Controls.Add(this.btnToggleSound);
@@ -154,6 +139,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarSoundVolume)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
     }
 }
