@@ -318,6 +318,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileBackgroundAppCloser.cs" />
+    <Compile Include="FileTranslator.cs" />
     <Compile Include="Form_Leaderboard.cs">
       <SubType>Form</SubType>
     </Compile>
