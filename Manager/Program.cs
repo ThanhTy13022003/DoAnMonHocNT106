@@ -38,6 +38,9 @@ class Program
             SetWindowLong(consoleWindow, GWL_EXSTYLE, WS_EX_TOOLWINDOW);
         }
 
+        // Thời gian bắt đầu chương trình
+        DateTime programStartTime = DateTime.Now;
+
         while (true)
         {
             try
@@ -46,6 +49,16 @@ class Program
                 Process[] processes = Process.GetProcessesByName("DoAnMonHocNT106");
                 DateTime currentTime = DateTime.Now;
                 bool processKilled = false; // Flag to track if a process was killed
+
+                // Kiểm tra nếu không có tiến trình nào và đã chạy quá 7 giây
+                if (processes.Length == 0)
+                {
+                    TimeSpan programDuration = currentTime - programStartTime;
+                    if (programDuration.TotalSeconds >= 7)
+                    {
+                        break; // Thoát chương trình nếu không có tiến trình sau 7 giây
+                    }
+                }
 
                 // Update process start times and detect new processes
                 foreach (Process process in processes)

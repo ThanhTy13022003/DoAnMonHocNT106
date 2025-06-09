@@ -1,17 +1,17 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\s3cr3t\\source\\repos\\DoAn_Anonymous\\",
+  "WorkspaceRootPath": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\Manager\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0DFAA918-2E40-44AF-9B52-67A8471E90CC}|DoAn_Anonymous.csproj|c:\\users\\s3cr3t\\source\\repos\\doan_anonymous\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{0DFAA918-2E40-44AF-9B52-67A8471E90CC}|DoAn_Anonymous.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\manager\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0DFAA918-2E40-44AF-9B52-67A8471E90CC}|DoAn_Anonymous.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0DFAA918-2E40-44AF-9B52-67A8471E90CC}|DoAn_Anonymous.csproj|C:\\Users\\s3cr3t\\source\\repos\\DoAn_Anonymous\\form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{0DFAA918-2E40-44AF-9B52-67A8471E90CC}|DoAn_Anonymous.csproj|C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\Manager\\form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0DFAA918-2E40-44AF-9B52-67A8471E90CC}|DoAn_Anonymous.csproj|solutionrelative:form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0DFAA918-2E40-44AF-9B52-67A8471E90CC}|DoAn_Anonymous.csproj|C:\\Users\\s3cr3t\\source\\repos\\DoAn_Anonymous\\form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{0DFAA918-2E40-44AF-9B52-67A8471E90CC}|DoAn_Anonymous.csproj|C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\Manager\\form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{0DFAA918-2E40-44AF-9B52-67A8471E90CC}|DoAn_Anonymous.csproj|solutionrelative:form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
@@ -54,11 +54,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAn_Anonymous\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\Manager\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAn_Anonymous\\Program.cs",
+              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\Manager\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAEQAAAAAAAAAAAAkwIcAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAkwJQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-09T16:50:44.157Z",
               "EditorCaption": ""
@@ -67,9 +67,9 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Form.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAn_Anonymous\\Form.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\Manager\\Form.Designer.cs",
               "RelativeDocumentMoniker": "Form.Designer.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAn_Anonymous\\Form.Designer.cs",
+              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\Manager\\Form.Designer.cs",
               "RelativeToolTip": "Form.Designer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -79,10 +79,10 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "Form.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAn_Anonymous\\Form.cs",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\Manager\\Form.cs",
               "RelativeDocumentMoniker": "Form.cs",
               "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAn_Anonymous\\Form.cs [Design]",
-              "RelativeToolTip": "Form.cs [Design]",
+              "RelativeToolTip": "..\\..\\DoAn_Anonymous\\Form.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-09T16:50:17.894Z"
             }
