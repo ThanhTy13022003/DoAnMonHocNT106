@@ -479,3 +479,15 @@ C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\bin\Debug\System.ValueTuple.xml
 C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonH.D83D6E8A.Up2Date
 C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.exe
 C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.pdb
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.csproj.AssemblyReference.cache
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.Form_Leaderboard.resources
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.Form_PlayerInfo.resources
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.Form_Introduce.resources
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.Form1.resources
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.FormLobby.resources
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.FormPvE.resources
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.FormPvP.resources
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.FormSetting.resources
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.Properties.Resources.resources
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.csproj.GenerateResource.cache
+C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106dsfasf\obj\Debug\DoAnMonHocNT106.csproj.CoreCompileInputs.cache
