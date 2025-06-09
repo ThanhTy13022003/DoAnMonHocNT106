@@ -2,7 +2,7 @@ Giới thiệu trò chơi:
 
 Caro là một trò chơi dân gian phổ biến tại Việt Nam, còn được gọi là Gomoku hoặc Tic-tac-toe nâng cao. Người chơi sẽ lần lượt đánh dấu X hoặc O trên bàn cờ, với mục tiêu tạo thành 5 ký hiệu liên tiếp theo hàng ngang, dọc hoặc chéo. Trò chơi này mang tính giải trí cao và đòi hỏi tư duy chiến thuật cũng như logic.
 
-                  ![images](https://github.com/user-attachments/assets/641c778b-792e-4cb9-a0c8-7915740d4eed)
+  ![images](https://github.com/user-attachments/assets/641c778b-792e-4cb9-a0c8-7915740d4eed)
 
 Đội ngũ phát triển:
 
