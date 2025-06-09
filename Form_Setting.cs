@@ -49,14 +49,14 @@ namespace DoAnMonHocNT106
         private void btnPlayerInfo_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            FormPlayerInfo playerInfoForm = new FormPlayerInfo(FirebaseHelper.CurrentUsername);
+            Form_PlayerInfo playerInfoForm = new Form_PlayerInfo(FirebaseHelper.CurrentUsername);
             playerInfoForm.ShowDialog();
         }
 
         private void btnLeaderboard_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            FormLeaderboard leaderboardForm = new FormLeaderboard();
+            Form_Leaderboard leaderboardForm = new Form_Leaderboard();
             leaderboardForm.ShowDialog();
         }
 
