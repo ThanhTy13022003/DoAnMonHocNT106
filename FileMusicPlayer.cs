@@ -59,6 +59,7 @@ namespace DoAnMonHocNT106
                 MessageBox.Show("Lỗi phát nhạc: " + ex.Message);
             }
         }
+
         public static bool IsMusicPlaying()
         {
             return isPlaying;
@@ -66,18 +67,23 @@ namespace DoAnMonHocNT106
 
         private static void LoadPlaylist()
         {
-            string musicDir = AppDomain.CurrentDomain.BaseDirectory;
-            string musicFile = Path.Combine(musicDir, "BunnyGirl-VA-12414588.wav");
+            string musicDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\Resources", "Music");
+            if (!Directory.Exists(musicDir))
+            {
+                MessageBox.Show($"Thư mục nhạc không tồn tại: {musicDir}");
+                return;
+            }
 
-            if (File.Exists(musicFile))
+            // Lấy tất cả file .mp3 trong thư mục
+            var mp3Files = Directory.GetFiles(musicDir, "*.mp3").ToList();
+            if (mp3Files.Count == 0)
             {
-                playlist = new List<string> { musicFile };
-                currentIndex = 0;
+                MessageBox.Show($"Không tìm thấy file .mp3 nào trong thư mục: {musicDir}");
+                return;
             }
-            else
-            {
-                MessageBox.Show("Không tìm thấy file nhạc 'BunnyGirl-VA-12414588.wav' trong thư mục.");
-            }
+
+            playlist = mp3Files;
+            currentIndex = 0;
         }
 
         public static void DisposeAll()
@@ -89,9 +95,13 @@ namespace DoAnMonHocNT106
 
         private static void PlayCurrent()
         {
-            if (currentIndex < 0 || currentIndex >= playlist.Count) return;
+            if (playlist.Count == 0) return;
 
             StopCurrent();
+
+            // Chọn ngẫu nhiên một file từ playlist
+            Random rand = new Random();
+            currentIndex = rand.Next(playlist.Count);
 
             audioFileReader = new AudioFileReader(playlist[currentIndex]);
             waveOutDevice = new DirectSoundOut();
@@ -183,7 +193,7 @@ namespace DoAnMonHocNT106
             if (!isSoundEnabled) return;
             try
             {
-                string soundDir = AppDomain.CurrentDomain.BaseDirectory;
+                string soundDir = @"C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Resources\Music";
                 string soundFile = Path.Combine(soundDir, "click-button-140881.wav");
 
                 if (File.Exists(soundFile))
@@ -198,6 +208,10 @@ namespace DoAnMonHocNT106
                         outputDevice.Dispose();
                     };
                     outputDevice.Play();
+                }
+                else
+                {
+                    MessageBox.Show($"Không tìm thấy file âm thanh 'click-button-140881.wav' trong thư mục: {soundDir}");
                 }
             }
             catch (Exception ex)

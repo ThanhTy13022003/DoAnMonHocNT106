@@ -3,6 +3,8 @@ using System.Media;
 using System.Windows.Forms;
 using System;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.IO; // Thêm namespace này
+
 
 namespace DoAnMonHocNT106
 {
@@ -274,11 +276,14 @@ namespace DoAnMonHocNT106
         {
             try
             {
-                SoundPlayer player = new SoundPlayer(fileName);
+                string soundDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Music");
+                string soundFile = Path.Combine(soundDir, fileName);
+                SoundPlayer player = new SoundPlayer(soundFile);
                 player.Play();
             }
             catch { }
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();

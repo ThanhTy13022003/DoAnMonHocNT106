@@ -479,3 +479,5 @@ C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.csproj.Co
 C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonH.D83D6E8A.Up2Date
 C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.exe
 C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.pdb
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.csproj.SuggestedBindingRedirects.cache
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.exe.config
