@@ -6,6 +6,8 @@ namespace DoAnMonHocNT106
     public partial class Form_PlayerInfo : Form
     {
         private string currentUser;
+        private bool isPasswordVisible = false;
+        private string userPassword;
 
         public Form_PlayerInfo(string username)
         {
@@ -13,25 +15,21 @@ namespace DoAnMonHocNT106
             currentUser = username;
             this.KeyPreview = true; // Cho phép form nhận sự kiện phím
             this.KeyDown += FormPlayerInfo_KeyDown; // Gắn sự kiện KeyDown
-            LoadPlayerInfo();
+            LoadPlayerInfo(username);
         }
 
-        private async void LoadPlayerInfo()
+        private async void LoadPlayerInfo(string username)
         {
             try
             {
-                // Lấy thông tin người dùng từ Firebase
-                var user = await FirebaseHelper.GetUserByUsername(currentUser);
-                if (user != null)
-                {
-                    lblUsername.Text = $"Tên người dùng: {user.Username}";
-                    lblEmail.Text = $"Email: {user.Email}";
-                    lblLastOnline.Text = $"Lần cuối online: {user.LastOnline:dd/MM/yyyy HH:mm:ss}";
-                }
-
-                // Lấy thống kê thắng/thua
-                var stats = await FirebaseHelper.GetStats(currentUser);
+                var user = await FirebaseHelper.GetUserByUsername(username);
+                lblUsername.Text = $"Tên người dùng: {user?.Username}";
+                lblEmail.Text = $"Email: {user?.Email}";
+                lblLastOnline.Text = $"Lần cuối online: {user?.LastOnline}";
+                var stats = await FirebaseHelper.GetStats(username);
                 lblStats.Text = $"Thắng: {stats.Wins} | Thua: {stats.Losses} | Hết thời gian: {stats.Timeouts}";
+                userPassword = user?.Password; // Lưu mật khẩu
+                lblPassword.Text = "Mật khẩu: ********";
             }
             catch (Exception ex)
             {
@@ -52,6 +50,22 @@ namespace DoAnMonHocNT106
         {
             MusicPlayer.PlayClickSound();
             this.Close();
+        }
+
+        private void btnTogglePassword_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            if (isPasswordVisible)
+            {
+                lblPassword.Text = "Mật khẩu: ********";
+                //btnTogglePassword.BackgroundImage = Properties.Resources.eye_open;
+            }
+            else
+            {
+                lblPassword.Text = $"Mật khẩu: {userPassword}";
+                //btnTogglePassword.BackgroundImage = Properties.Resources.eye_close;
+            }
+            isPasswordVisible = !isPasswordVisible;
         }
     }
 }

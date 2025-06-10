@@ -37,7 +37,7 @@
             // 
             this.btnToggleMusic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.btnToggleMusic.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnToggleMusic.Location = new System.Drawing.Point(33, 306);
+            this.btnToggleMusic.Location = new System.Drawing.Point(51, 350);
             this.btnToggleMusic.Name = "btnToggleMusic";
             this.btnToggleMusic.Size = new System.Drawing.Size(193, 57);
             this.btnToggleMusic.TabIndex = 0;
@@ -49,7 +49,7 @@
             // 
             this.btnToggleSound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.btnToggleSound.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnToggleSound.Location = new System.Drawing.Point(33, 387);
+            this.btnToggleSound.Location = new System.Drawing.Point(51, 431);
             this.btnToggleSound.Name = "btnToggleSound";
             this.btnToggleSound.Size = new System.Drawing.Size(193, 57);
             this.btnToggleSound.TabIndex = 1;
@@ -61,7 +61,7 @@
             // 
             this.btnPlayerInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.btnPlayerInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold);
-            this.btnPlayerInfo.Location = new System.Drawing.Point(162, 39);
+            this.btnPlayerInfo.Location = new System.Drawing.Point(164, 84);
             this.btnPlayerInfo.Name = "btnPlayerInfo";
             this.btnPlayerInfo.Size = new System.Drawing.Size(193, 57);
             this.btnPlayerInfo.TabIndex = 2;
@@ -73,7 +73,7 @@
             // 
             this.btnIntroducing.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.btnIntroducing.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnIntroducing.Location = new System.Drawing.Point(162, 207);
+            this.btnIntroducing.Location = new System.Drawing.Point(164, 256);
             this.btnIntroducing.Name = "btnIntroducing";
             this.btnIntroducing.Size = new System.Drawing.Size(193, 57);
             this.btnIntroducing.TabIndex = 3;
@@ -85,7 +85,7 @@
             // 
             this.btnLeaderboard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.btnLeaderboard.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold);
-            this.btnLeaderboard.Location = new System.Drawing.Point(162, 121);
+            this.btnLeaderboard.Location = new System.Drawing.Point(164, 169);
             this.btnLeaderboard.Name = "btnLeaderboard";
             this.btnLeaderboard.Size = new System.Drawing.Size(193, 57);
             this.btnLeaderboard.TabIndex = 8;
@@ -96,7 +96,7 @@
             // trackBarMusicVolume
             // 
             this.trackBarMusicVolume.BackColor = System.Drawing.SystemColors.ControlText;
-            this.trackBarMusicVolume.Location = new System.Drawing.Point(270, 306);
+            this.trackBarMusicVolume.Location = new System.Drawing.Point(288, 350);
             this.trackBarMusicVolume.Maximum = 70;
             this.trackBarMusicVolume.Name = "trackBarMusicVolume";
             this.trackBarMusicVolume.Size = new System.Drawing.Size(193, 56);
@@ -108,7 +108,7 @@
             // trackBarSoundVolume
             // 
             this.trackBarSoundVolume.BackColor = System.Drawing.SystemColors.MenuText;
-            this.trackBarSoundVolume.Location = new System.Drawing.Point(270, 388);
+            this.trackBarSoundVolume.Location = new System.Drawing.Point(288, 432);
             this.trackBarSoundVolume.Maximum = 70;
             this.trackBarSoundVolume.Name = "trackBarSoundVolume";
             this.trackBarSoundVolume.Size = new System.Drawing.Size(193, 56);
@@ -123,7 +123,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(497, 494);
+            this.ClientSize = new System.Drawing.Size(525, 528);
             this.Controls.Add(this.btnLeaderboard);
             this.Controls.Add(this.btnToggleMusic);
             this.Controls.Add(this.btnToggleSound);
