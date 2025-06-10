@@ -104,12 +104,17 @@ namespace DoAnMonHocNT106
         private async void signin_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            string input = username.Text; // Người dùng nhập username hoặc email
-            string Password = this.password.Text;
 
-            // Kiểm tra nếu nhập username thì lấy email tương ứng từ Firebase
-            string email = input;
-            if (!input.Contains("@"))
+            string input = username.Text.Trim();
+            string passwordInput = password.Text;
+
+            string email;
+
+            if (IsValidEmail(input))
+            {
+                email = input; // Là email thật sự
+            }
+            else
             {
                 email = await FirebaseHelper.GetEmailByUsername(input);
                 if (email == null)
@@ -122,25 +127,42 @@ namespace DoAnMonHocNT106
             try
             {
                 var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-                var auth = await authProvider.SignInWithEmailAndPasswordAsync(email, Password);
+                var auth = await authProvider.SignInWithEmailAndPasswordAsync(email, passwordInput);
 
-                string userName = input.Contains("@") ? email.Split('@')[0] : input;
-
-                Properties.Settings.Default["UserId"] = userName;
+                // Không tách username theo email nữa — dùng đúng như nhập vào
+                Properties.Settings.Default["UserId"] = input;
                 Properties.Settings.Default.Save();
 
-                await FirebaseHelper.SetUserOnlineStatus(userName, true);
-                FirebaseHelper.CurrentUsername = userName;
+                await FirebaseHelper.SetUserOnlineStatus(input, true);
+                FirebaseHelper.CurrentUsername = input;
 
-                Form1 mainForm = new Form1();
-                mainForm.Show();
+                new Form1().Show();
                 this.Hide();
             }
-            catch (Exception)
+            catch (FirebaseAuthException ex)
             {
-                ShowMessage("Sai tài khoản hoặc mật khẩu!", Color.Red);
+                ShowMessage($"Firebase lỗi: {ex.Reason}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Đăng nhập thất bại!", Color.Red);
             }
         }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
         private void ShowMessage(string message, Color color)
         {
             usererro.Text = message; // Cập nhật nội dung

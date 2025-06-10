@@ -10,6 +10,9 @@
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.Button btnTogglePassword;
+        private System.Windows.Forms.Button btnChangeInfo;
+
+
 
         protected override void Dispose(bool disposing)
         {
@@ -22,6 +25,7 @@
 
         private void InitializeComponent()
         {
+            this.btnChangeInfo = new System.Windows.Forms.Button();
             this.lblPassword = new System.Windows.Forms.Label();
             this.btnTogglePassword = new System.Windows.Forms.Button();
             this.lblUsername = new System.Windows.Forms.Label();
@@ -30,6 +34,21 @@
             this.lblStats = new System.Windows.Forms.Label();
             this.btnClose = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            // 
+            // btnChangeInfo
+            // 
+            this.btnChangeInfo.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnChangeInfo.FlatAppearance.BorderSize = 0;
+            this.btnChangeInfo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnChangeInfo.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnChangeInfo.ForeColor = System.Drawing.Color.White;
+            this.btnChangeInfo.Location = new System.Drawing.Point(54, 257);
+            this.btnChangeInfo.Name = "btnChangeInfo";
+            this.btnChangeInfo.Size = new System.Drawing.Size(208, 36);
+            this.btnChangeInfo.TabIndex = 0;
+            this.btnChangeInfo.Text = "Thay đổi thông tin";
+            this.btnChangeInfo.UseVisualStyleBackColor = false;
+            this.btnChangeInfo.Click += new System.EventHandler(this.btnChangeInfo_Click);
             // 
             // lblPassword
             // 
@@ -95,7 +114,7 @@
             // 
             this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold);
-            this.btnClose.Location = new System.Drawing.Point(216, 268);
+            this.btnClose.Location = new System.Drawing.Point(211, 313);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(100, 40);
             this.btnClose.TabIndex = 4;
@@ -109,7 +128,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(520, 344);
+            this.ClientSize = new System.Drawing.Size(520, 377);
+            this.Controls.Add(this.btnChangeInfo);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.lblStats);
             this.Controls.Add(this.lblLastOnline);

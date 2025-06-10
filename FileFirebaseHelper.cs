@@ -47,6 +47,31 @@ namespace DoAnMonHocNT106
             }
         }
 
+        public static async Task UpdateUserCredentials(string oldUsername, string newUsername, string newPassword)
+        {
+            // 1. Lấy user cũ
+            var user = await GetUserByUsername(oldUsername);
+            if (user == null)
+                throw new InvalidOperationException($"User '{oldUsername}' không tồn tại.");
+
+            // 2. Cập nhật thông tin
+            user.Username = newUsername;
+            user.Password = newPassword;
+
+            // 3. Ghi lên key mới
+            await firebase
+                .Child("Users")
+                .Child(newUsername)
+                .PutAsync(user);
+
+            // 4. Xóa key cũ
+            await firebase
+                .Child("Users")
+                .Child(oldUsername)
+                .DeleteAsync();
+        }
+
+
         public static async Task<User> GetUserByUsername(string username)
         {
             try

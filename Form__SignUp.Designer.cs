@@ -134,8 +134,9 @@
             // pictureBox1
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.pngtree_a_neon_joystick_or_game_controller_for_a_gaming_console_set_against_a_blue_backdrop_vector_png_image_37786992;
             this.pictureBox1.Image = global::DoAnMonHocNT106.Properties.Resources.Untitled1;
-            this.pictureBox1.Location = new System.Drawing.Point(-5, -1);
+            this.pictureBox1.Location = new System.Drawing.Point(-3, 1);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(354, 422);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -172,6 +173,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.PeachPuff;
+            this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.pngtree_a_neon_joystick_or_game_controller_for_a_gaming_console_set_against_a_blue_backdrop_vector_png_image_37786992;
             this.ClientSize = new System.Drawing.Size(700, 422);
             this.Controls.Add(this.show);
             this.Controls.Add(this.button1);

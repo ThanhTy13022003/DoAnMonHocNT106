@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Firebase.Database.Query;
+using System;
 using System.Windows.Forms;
 
 namespace DoAnMonHocNT106
@@ -66,6 +67,69 @@ namespace DoAnMonHocNT106
                 //btnTogglePassword.BackgroundImage = Properties.Resources.eye_close;
             }
             isPasswordVisible = !isPasswordVisible;
+        }
+
+        private async void btnChangeInfo_Click(object sender, EventArgs e)
+        {
+            MusicPlayer.PlayClickSound();
+            Form_ChangeInfo changeInfoForm = new Form_ChangeInfo(currentUser, userPassword);
+            if (changeInfoForm.ShowDialog() != DialogResult.OK) return;
+
+            string newUsername = changeInfoForm.NewUsername;
+            string newPassword = changeInfoForm.NewPassword;
+
+            if (string.IsNullOrWhiteSpace(newUsername) && string.IsNullOrWhiteSpace(newPassword))
+            {
+                MessageBox.Show("Vui lòng nhập ít nhất một thông tin cần thay đổi!");
+                return;
+            }
+
+            try
+            {
+                // 1) Lưu tên cũ
+                var oldUsername = currentUser;
+
+                // 2) Lấy đối tượng user
+                var user = await FirebaseHelper.GetUserByUsername(oldUsername);
+                if (user == null) throw new Exception("Không tìm thấy người dùng.");
+
+                // 3) Áp dụng thay đổi lên đối tượng
+                if (!string.IsNullOrWhiteSpace(newUsername))
+                {
+                    user.Username = newUsername;
+                }
+                if (!string.IsNullOrWhiteSpace(newPassword))
+                {
+                    user.Password = newPassword;
+                }
+
+                // 4) Xác định key mới để Put
+                var targetKey = !string.IsNullOrWhiteSpace(newUsername) ? newUsername : oldUsername;
+
+                // 5) Ghi dữ liệu lên node targetKey
+                await FirebaseHelper.firebase
+                    .Child("Users")
+                    .Child(targetKey)
+                    .PutAsync(user);
+
+                // 6) Nếu đã đổi tên, xoá node cũ
+                if (!string.IsNullOrWhiteSpace(newUsername) && oldUsername != targetKey)
+                {
+                    await FirebaseHelper.firebase
+                        .Child("Users")
+                        .Child(oldUsername)
+                        .DeleteAsync();
+                }
+
+                // 7) Cập nhật biến currentUser và UI
+                currentUser = targetKey;
+                lblUsername.Text = $"Tên người dùng: {currentUser}";
+                MessageBox.Show("Thông tin đã được cập nhật thành công!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi cập nhật thông tin: {ex.Message}");
+            }
         }
     }
 }

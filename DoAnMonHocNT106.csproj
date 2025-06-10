@@ -318,6 +318,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileBackgroundAppCloser.cs" />
+    <Compile Include="Form_ChangeInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_ChangeInfo.Designer.cs">
+      <DependentUpon>Form_ChangeInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form_Leaderboard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -387,6 +393,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Form_ChangeInfo.resx">
+      <DependentUpon>Form_ChangeInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form_Leaderboard.resx">
       <DependentUpon>Form_Leaderboard.cs</DependentUpon>
     </EmbeddedResource>
@@ -410,6 +419,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form__Setting.resx">
       <DependentUpon>Form__Setting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form__SignUp.resx">
+      <DependentUpon>Form__SignUp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

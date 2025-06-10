@@ -503,3 +503,5 @@ C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106sss\obj\Debug\DoAnMonHocNT106.FormSe
 C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106sss\obj\Debug\DoAnMonHocNT106.Properties.Resources.resources
 C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106sss\obj\Debug\DoAnMonHocNT106.csproj.GenerateResource.cache
 C:\Users\s3cr3t\Source\Repos\DoAnMonHocNT106sss\obj\Debug\DoAnMonHocNT106.csproj.CoreCompileInputs.cache
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.SignUp.resources
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.Form_ChangeInfo.resources
