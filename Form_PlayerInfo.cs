@@ -1,6 +1,7 @@
 ﻿using Firebase.Database.Query;
 using System;
 using System.Windows.Forms;
+using Firebase.Database;
 
 namespace DoAnMonHocNT106
 {
@@ -9,6 +10,8 @@ namespace DoAnMonHocNT106
         private string currentUser;
         private bool isPasswordVisible = false;
         private string userPassword;
+        private FirebaseClient firebase;
+        private IDisposable passwordSubscription;
 
         public Form_PlayerInfo(string username)
         {
@@ -17,7 +20,35 @@ namespace DoAnMonHocNT106
             this.KeyPreview = true; // Cho phép form nhận sự kiện phím
             this.KeyDown += FormPlayerInfo_KeyDown; // Gắn sự kiện KeyDown
             LoadPlayerInfo(username);
+            firebase = new FirebaseClient("https://nt106-7c9fe-default-rtdb.firebaseio.com/");
+            LoadPlayerInfo(username);
+            SubscribePasswordChanges(username);
         }
+
+        private void SubscribePasswordChanges(string username)
+        {
+            passwordSubscription?.Dispose(); // Huỷ listener cũ nếu có
+
+            passwordSubscription = firebase
+                .Child("Users")
+                .Child(username)
+                .AsObservable<User>()
+                .Subscribe(ev =>
+                {
+                    if (ev.Object != null)
+                    {
+                        userPassword = ev.Object.Password;
+
+                        if (isPasswordVisible)
+                        {
+                            lblPassword.Invoke(new Action(() =>
+                                lblPassword.Text = $"Mật khẩu: {userPassword}"
+                            ));
+                        }
+                    }
+                });
+        }
+
 
         private async void LoadPlayerInfo(string username)
         {
@@ -66,6 +97,7 @@ namespace DoAnMonHocNT106
                 lblPassword.Text = $"Mật khẩu: {userPassword}";
                 //btnTogglePassword.BackgroundImage = Properties.Resources.eye_close;
             }
+
             isPasswordVisible = !isPasswordVisible;
         }
 
@@ -112,6 +144,13 @@ namespace DoAnMonHocNT106
                     .Child(targetKey)
                     .PutAsync(user);
 
+                // 👉 Cập nhật biến nội bộ ngay sau khi push
+                userPassword = user.Password;
+                if (isPasswordVisible)
+                {
+                    lblPassword.Text = $"Mật khẩu: {userPassword}";
+                }
+
                 // 6) Nếu đã đổi tên, xoá node cũ
                 if (!string.IsNullOrWhiteSpace(newUsername) && oldUsername != targetKey)
                 {
@@ -123,6 +162,7 @@ namespace DoAnMonHocNT106
 
                 // 7) Cập nhật biến currentUser và UI
                 currentUser = targetKey;
+                SubscribePasswordChanges(currentUser); // Cập nhật listener theo username mới
                 lblUsername.Text = $"Tên người dùng: {currentUser}";
                 MessageBox.Show("Thông tin đã được cập nhật thành công!");
             }
