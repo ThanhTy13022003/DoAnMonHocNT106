@@ -369,11 +369,11 @@
     </Compile>
     <Compile Include="FileFirebaseHelper.cs" />
     <Compile Include="FileProgram.cs" />
-    <Compile Include="Form_Setting.cs">
+    <Compile Include="Form__Setting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Setting.Designer.cs">
-      <DependentUpon>Form_Setting.cs</DependentUpon>
+    <Compile Include="Form__Setting.Designer.cs">
+      <DependentUpon>Form__Setting.cs</DependentUpon>
     </Compile>
     <Compile Include="Form__SignUp.cs">
       <SubType>Form</SubType>
@@ -408,8 +408,8 @@
     <EmbeddedResource Include="FormPvP.resx">
       <DependentUpon>FormPvP.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Setting.resx">
-      <DependentUpon>Form_Setting.cs</DependentUpon>
+    <EmbeddedResource Include="Form__Setting.resx">
+      <DependentUpon>Form__Setting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
