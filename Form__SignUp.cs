@@ -80,6 +80,7 @@ namespace DoAnMonHocNT106
                 MessageBox.Show("Lỗi đăng ký: " + ex.Message);
             }
         }
+
         private void show_CheckedChanged(object sender, EventArgs e)
         {
             pw.UseSystemPasswordChar = !show.Checked;

@@ -194,26 +194,44 @@ namespace DoAnMonHocNT106
         private async void forgotpw_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            string email = username.Text.Trim(); // Lấy email từ textbox
 
-            if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
+            string input = username.Text.Trim();
+            string email;
+
+            // 1) Xác định đây là email hay username
+            if (IsValidEmail(input))
             {
-                ShowMessage("Vui lòng nhập email hợp lệ!", Color.Red);
-                return;
+                email = input;
+            }
+            else
+            {
+                // Lấy email đã đăng ký theo username
+                email = await FirebaseHelper.GetEmailByUsername(input);
+                if (email == null)
+                {
+                    ShowMessage("Không tìm thấy tài khoản này!", Color.Red);
+                    return;
+                }
             }
 
+            // 2) Hiển thị thông báo đang xử lý, tự ẩn sau 3s
+            ShowMessage("Đang gửi email đặt lại mật khẩu…", Color.Green);
+
+            // 3) Chờ 3 giây để người dùng đọc thông báo
+            await Task.Delay(3000);
+
+            // 4) Thực sự gọi Firebase để gửi mail reset
             try
             {
                 var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-                // Thử gửi email reset mật khẩu
                 await authProvider.SendPasswordResetEmailAsync(email);
                 ShowMessage("Email đặt lại mật khẩu đã được gửi!", Color.Green);
             }
             catch (FirebaseAuthException)
             {
-                // Firebase sẽ trả lỗi nếu email không tồn tại
                 ShowMessage("Email không tồn tại trong hệ thống!", Color.Red);
             }
         }
+
     }
 }
