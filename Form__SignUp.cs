@@ -22,7 +22,18 @@ namespace DoAnMonHocNT106
         {
             InitializeComponent();
             auth = new FirebaseAuthProvider(new FirebaseConfig("AIzaSy..."));
+            this.FormClosing += SignUp_FormClosing;
         }
+
+        private void SignUp_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Kiểm tra nếu người dùng bấm X hoặc bấm Close
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                new Login().Show();
+            }
+        }
+
         private async void button1_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();

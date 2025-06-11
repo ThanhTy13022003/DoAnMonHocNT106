@@ -25,12 +25,15 @@ namespace DoAnMonHocNT106
         private int[] AttackPoint = { 0, 1, 10, 100, 1000, 100000 };
         private int[] DefensePoint = { 0, 2, 20, 200, 2000, 200000 };
 
+        private bool exitByButton = false;
+
         public FormPvE(string user)
         {
             InitializeComponent();
             currentUser = user;
             InitializeTimer();
             InitializeBoard();
+            this.FormClosing += FormPvE_FormClosing;
         }
 
         private void InitializeBoard()
@@ -289,18 +292,31 @@ namespace DoAnMonHocNT106
             MusicPlayer.PlayClickSound();
             gameOver = true;
             StopCountdown();
+
+            // đánh dấu đây là exit qua nút
+            exitByButton = true;
+
+            // chỉ mở Form1 ở đây
             new Form1().Show();
-            this.Close(); 
+            this.Close();
         }
+
         private void btnRestart_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
             InitializeBoard();
         }
+
         private void FormPvE_FormClosing(object sender, FormClosingEventArgs e)
         {
-            gameOver = true;
-            StopCountdown();
+            // Nếu đây là do bấm X (UserClosing) và chưa bấm button1
+            if (e.CloseReason == CloseReason.UserClosing && !exitByButton)
+            {
+                e.Cancel = true;            // Hủy đóng form tạm
+                btnBack.PerformClick();    // Giả lập bấm nút Thoát
+            }
+            // Ngược lại, để form đóng bình thường
         }
+
     }
 }
