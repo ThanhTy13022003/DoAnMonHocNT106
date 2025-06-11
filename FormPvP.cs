@@ -8,6 +8,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DoAnMonHocNT106;   // nếu ChatMessage nằm trong namespace này
+using Firebase.Database.Streaming;
 
 namespace DoAnMonHocNT106
 {
@@ -39,31 +40,31 @@ namespace DoAnMonHocNT106
 
         private void ListenToChat()
         {
-            // Lắng nghe chat dưới node Rooms/{roomId}/Chat
-            firebase.Child("Rooms")
+            var chatRef = firebase
+                .Child("Rooms")
                 .Child(roomId)
-                .Child("Chat")
+                .Child("Chat");
+
+            chatRef
                 .AsObservable<ChatMessage>()
-                .Subscribe(async ev =>
+                // Chỉ cần kiểm tra InsertOrUpdate
+                .Where(ev => ev.EventType == FirebaseEventType.InsertOrUpdate)
+                .Subscribe(ev =>
                 {
-                    if (ev.Object != null && ev.Key != null)
+                    if (ev.Object != null && ev.Key != null && !processedKeys.Contains(ev.Key))
                     {
-                        // Hiển thị
-                        var msg = ev.Object;
+                        processedKeys.Add(ev.Key);
                         this.Invoke((MethodInvoker)(() =>
                         {
-                            lstChat.Items.Add($"{msg.Time:T} {msg.FromUser}: {msg.Message}");
+                            var msg = ev.Object;
+                            var text = $"{msg.Time:T} {msg.FromUser}: {msg.Message}";
+                            lstChat.Items.Add(text);
                             lstChat.EnsureVisible(lstChat.Items.Count - 1);
                         }));
-                        // Xóa ngay để không lưu lại
-                        await firebase.Child("Rooms")
-                            .Child(roomId)
-                            .Child("Chat")
-                            .Child(ev.Key)
-                            .DeleteAsync();
                     }
                 });
         }
+
 
         private async void btnSendChat_Click(object sender, EventArgs e)
         {
@@ -72,19 +73,40 @@ namespace DoAnMonHocNT106
 
             var chatMsg = new ChatMessage
             {
+                Id = Guid.NewGuid().ToString(), // Thêm ID duy nhất
                 FromUser = currentUser,
-                ToUser = opponentUser,    // không bắt buộc, chỉ để rõ ràng
+                ToUser = opponentUser,
                 Message = text,
                 Time = DateTime.UtcNow
             };
 
-            // Đẩy lên Firebase
             await firebase.Child("Rooms")
                 .Child(roomId)
                 .Child("Chat")
-                .PostAsync(chatMsg);
+                .Child(chatMsg.Id) // Sử dụng ID làm key
+                .PutAsync(chatMsg);
 
             txtChat.Clear();
+        }
+
+        private async Task LoadChatMessages()
+        {
+            // Lấy toàn bộ chat sorted theo thời gian
+            var msgs = await firebase
+                .Child("Rooms")
+                .Child(roomId)
+                .Child("Chat")
+                .OrderBy("Time")
+                .OnceAsync<ChatMessage>();
+
+            foreach (var m in msgs)
+            {
+                string text = $"{m.Object.Time:T} {m.Object.FromUser}: {m.Object.Message}";
+                lstChat.Items.Add(text);
+            }
+
+            if (lstChat.Items.Count > 0)
+                lstChat.EnsureVisible(lstChat.Items.Count - 1);
         }
 
         private void InitializeBoard()
@@ -133,6 +155,13 @@ namespace DoAnMonHocNT106
             InitializeTimer();
             if (isMyTurn) StartCountdown();
 
+            _ = InitializeGameAsync();
+            ListenToMoves();
+        }
+
+        private async Task InitializeGameAsync()
+        {
+            await LoadChatMessages();
             ListenToMoves();
         }
 
@@ -278,6 +307,11 @@ namespace DoAnMonHocNT106
             else if (CheckDirection(x, y, 0, 1, symbol)) HighlightDirection(x, y, 0, 1, symbol);
             else if (CheckDirection(x, y, 1, 1, symbol)) HighlightDirection(x, y, 1, 1, symbol);
             else if (CheckDirection(x, y, 1, -1, symbol)) HighlightDirection(x, y, 1, -1, symbol);
+        }
+
+        private void lstChat_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
 
         private void HighlightDirection(int x, int y, int dx, int dy, string symbol)

@@ -262,6 +262,7 @@ namespace DoAnMonHocNT106
 
     public class ChatMessage
     {
+        public string Id { get; set; } // Thêm thuộc tính Id
         public string FromUser { get; set; }
         public string ToUser { get; set; }
         public string Message { get; set; }
