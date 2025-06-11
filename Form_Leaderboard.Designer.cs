@@ -18,6 +18,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_Leaderboard));
             this.lstLeaderboard = new System.Windows.Forms.ListView();
             this.btnClose = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
@@ -71,6 +72,7 @@
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.lstLeaderboard);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form_Leaderboard";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

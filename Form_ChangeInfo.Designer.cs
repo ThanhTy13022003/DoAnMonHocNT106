@@ -17,6 +17,7 @@ namespace DoAnMonHocNT106
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_ChangeInfo));
             this.txtNewUsername = new System.Windows.Forms.TextBox();
             this.txtNewPassword = new System.Windows.Forms.TextBox();
             this.btnConfirm = new System.Windows.Forms.Button();
@@ -38,14 +39,12 @@ namespace DoAnMonHocNT106
             this.txtNewPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.txtNewPassword.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtNewPassword.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.txtNewPassword.ForeColor = System.Drawing.Color.White;
+            this.txtNewPassword.ForeColor = System.Drawing.Color.Gray;
             this.txtNewPassword.Location = new System.Drawing.Point(72, 110);
             this.txtNewPassword.Name = "txtNewPassword";
             this.txtNewPassword.Size = new System.Drawing.Size(265, 25);
             this.txtNewPassword.TabIndex = 1;
-            txtNewPassword.Text = "Mật khẩu mới";
-            txtNewPassword.ForeColor = Color.Gray;
-            txtNewPassword.UseSystemPasswordChar = false;
+            this.txtNewPassword.Text = "Mật khẩu mới";
             // 
             // btnConfirm
             // 
@@ -71,6 +70,7 @@ namespace DoAnMonHocNT106
             this.Controls.Add(this.btnConfirm);
             this.Controls.Add(this.txtNewPassword);
             this.Controls.Add(this.txtNewUsername);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form_ChangeInfo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

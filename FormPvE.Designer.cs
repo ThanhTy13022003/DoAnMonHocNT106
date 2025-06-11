@@ -18,6 +18,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPvE));
             this.panelBoard = new System.Windows.Forms.Panel();
             this.btnRestart = new System.Windows.Forms.Button();
             this.btnBack = new System.Windows.Forms.Button();
@@ -71,7 +72,7 @@
             this.lblTimer.ForeColor = System.Drawing.Color.Black;
             this.lblTimer.Location = new System.Drawing.Point(650, 80);
             this.lblTimer.Name = "lblTimer";
-            this.lblTimer.Size = new System.Drawing.Size(160, 25);
+            this.lblTimer.Size = new System.Drawing.Size(215, 32);
             this.lblTimer.TabIndex = 3;
             this.lblTimer.Text = "⏱ Thời gian: 10s";
             // 
@@ -83,7 +84,7 @@
             this.lblPlayerName.ForeColor = System.Drawing.Color.Black;
             this.lblPlayerName.Location = new System.Drawing.Point(650, 30);
             this.lblPlayerName.Name = "lblPlayerName";
-            this.lblPlayerName.Size = new System.Drawing.Size(159, 25);
+            this.lblPlayerName.Size = new System.Drawing.Size(217, 32);
             this.lblPlayerName.TabIndex = 4;
             this.lblPlayerName.Text = "👤 Người chơi: ...";
             // 
@@ -95,13 +96,13 @@
             this.lblTurn.ForeColor = System.Drawing.Color.DarkGreen;
             this.lblTurn.Location = new System.Drawing.Point(650, 130);
             this.lblTurn.Name = "lblTurn";
-            this.lblTurn.Size = new System.Drawing.Size(155, 25);
+            this.lblTurn.Size = new System.Drawing.Size(190, 30);
             this.lblTurn.TabIndex = 5;
             this.lblTurn.Text = "Lượt: Người chơi";
             // 
             // FormPvE
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gainsboro;
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.pngtree_retro_futuristic_gaming_desk_scene_image_16555312;
@@ -116,13 +117,15 @@
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FormPvE";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Caro - PvE (Chơi với Máy)";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPvE_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPvE_FormClosing);
+
         }
     }
 }

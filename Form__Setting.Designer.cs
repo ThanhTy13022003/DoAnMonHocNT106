@@ -22,6 +22,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSetting));
             this.btnToggleMusic = new System.Windows.Forms.Button();
             this.btnToggleSound = new System.Windows.Forms.Button();
             this.btnPlayerInfo = new System.Windows.Forms.Button();
@@ -131,6 +132,7 @@
             this.Controls.Add(this.btnIntroducing);
             this.Controls.Add(this.trackBarMusicVolume);
             this.Controls.Add(this.trackBarSoundVolume);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormSetting";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Cài Đặt";

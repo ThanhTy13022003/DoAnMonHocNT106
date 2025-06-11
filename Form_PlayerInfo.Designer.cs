@@ -25,6 +25,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_PlayerInfo));
             this.btnChangeInfo = new System.Windows.Forms.Button();
             this.lblPassword = new System.Windows.Forms.Label();
             this.btnTogglePassword = new System.Windows.Forms.Button();
@@ -138,6 +139,7 @@
             this.Controls.Add(this.btnTogglePassword);
             this.Controls.Add(this.lblPassword);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form_PlayerInfo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

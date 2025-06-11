@@ -411,6 +411,9 @@
     <EmbeddedResource Include="Form_Introduce.resx">
       <DependentUpon>Form_Introduce.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Form__Login.resx">
+      <DependentUpon>Form__Login.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form__Menu.resx">
       <DependentUpon>Form__Menu.cs</DependentUpon>
     </EmbeddedResource>

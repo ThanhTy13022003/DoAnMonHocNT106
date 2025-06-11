@@ -23,6 +23,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPvP));
             this.lstChat = new System.Windows.Forms.ListView();
             this.txtChat = new System.Windows.Forms.TextBox();
             this.btnSendChat = new System.Windows.Forms.Button();
@@ -148,6 +149,7 @@
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.panelBoard);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FormPvP";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
