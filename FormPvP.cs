@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DoAnMonHocNT106;   // nếu ChatMessage nằm trong namespace này
 
 namespace DoAnMonHocNT106
 {
@@ -33,6 +34,57 @@ namespace DoAnMonHocNT106
             var firebase = new FirebaseClient("https://nt106-7c9fe-default-rtdb.firebaseio.com/");
             InitializeBoard();
             this.FormClosing += FormPvP_FormClosing;
+            ListenToChat();
+        }
+
+        private void ListenToChat()
+        {
+            // Lắng nghe chat dưới node Rooms/{roomId}/Chat
+            firebase.Child("Rooms")
+                .Child(roomId)
+                .Child("Chat")
+                .AsObservable<ChatMessage>()
+                .Subscribe(async ev =>
+                {
+                    if (ev.Object != null && ev.Key != null)
+                    {
+                        // Hiển thị
+                        var msg = ev.Object;
+                        this.Invoke((MethodInvoker)(() =>
+                        {
+                            lstChat.Items.Add($"{msg.Time:T} {msg.FromUser}: {msg.Message}");
+                            lstChat.EnsureVisible(lstChat.Items.Count - 1);
+                        }));
+                        // Xóa ngay để không lưu lại
+                        await firebase.Child("Rooms")
+                            .Child(roomId)
+                            .Child("Chat")
+                            .Child(ev.Key)
+                            .DeleteAsync();
+                    }
+                });
+        }
+
+        private async void btnSendChat_Click(object sender, EventArgs e)
+        {
+            var text = txtChat.Text.Trim();
+            if (string.IsNullOrEmpty(text)) return;
+
+            var chatMsg = new ChatMessage
+            {
+                FromUser = currentUser,
+                ToUser = opponentUser,    // không bắt buộc, chỉ để rõ ràng
+                Message = text,
+                Time = DateTime.UtcNow
+            };
+
+            // Đẩy lên Firebase
+            await firebase.Child("Rooms")
+                .Child(roomId)
+                .Child("Chat")
+                .PostAsync(chatMsg);
+
+            txtChat.Clear();
         }
 
         private void InitializeBoard()

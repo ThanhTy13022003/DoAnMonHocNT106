@@ -9,6 +9,10 @@
         private System.Windows.Forms.Label lblYou;
         private System.Windows.Forms.Label lblOpponent;
         private System.Windows.Forms.Label lblCountdown;
+        private System.Windows.Forms.ListView lstChat;
+        private System.Windows.Forms.TextBox txtChat;
+        private System.Windows.Forms.Button btnSendChat;
+
 
         protected override void Dispose(bool disposing)
         {
@@ -19,6 +23,37 @@
 
         private void InitializeComponent()
         {
+            // Chat List
+            this.lstChat = new System.Windows.Forms.ListView();
+            this.lstChat.HideSelection = false;
+            this.lstChat.Location = new System.Drawing.Point(540, 260);
+            this.lstChat.Name = "lstChat";
+            this.lstChat.Size = new System.Drawing.Size(140, 300);
+            this.lstChat.TabIndex = 6;
+            this.lstChat.View = System.Windows.Forms.View.List;
+
+            // Message TextBox
+            this.txtChat = new System.Windows.Forms.TextBox();
+            this.txtChat.Location = new System.Drawing.Point(540, 570);
+            this.txtChat.Name = "txtChat";
+            this.txtChat.Size = new System.Drawing.Size(100, 22);
+            this.txtChat.TabIndex = 7;
+
+            // Send Button
+            this.btnSendChat = new System.Windows.Forms.Button();
+            this.btnSendChat.Location = new System.Drawing.Point(640, 568);
+            this.btnSendChat.Name = "btnSendChat";
+            this.btnSendChat.Size = new System.Drawing.Size(40, 25);
+            this.btnSendChat.TabIndex = 8;
+            this.btnSendChat.Text = "Gửi";
+            this.btnSendChat.UseVisualStyleBackColor = true;
+            this.btnSendChat.Click += new System.EventHandler(this.btnSendChat_Click);
+
+            // Đừng quên thêm này vào phần controls:
+            this.Controls.Add(this.lstChat);
+            this.Controls.Add(this.txtChat);
+            this.Controls.Add(this.btnSendChat);
+
             this.panelBoard = new System.Windows.Forms.Panel();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnRestart = new System.Windows.Forms.Button();

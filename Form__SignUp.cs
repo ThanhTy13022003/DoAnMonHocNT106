@@ -17,6 +17,7 @@ namespace DoAnMonHocNT106
     {
         private string apiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong";
         private FirebaseAuthProvider auth;
+        private bool _navigatingToLogin = false;
 
         public SignUp()
         {
@@ -27,8 +28,8 @@ namespace DoAnMonHocNT106
 
         private void SignUp_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Kiểm tra nếu người dùng bấm X hoặc bấm Close
-            if (e.CloseReason == CloseReason.UserClosing)
+            // Chỉ show Login khi người dùng bấm X, không phải khi SignUp thành công
+            if (!_navigatingToLogin && e.CloseReason == CloseReason.UserClosing)
             {
                 new Login().Show();
             }
@@ -58,6 +59,7 @@ namespace DoAnMonHocNT106
                 await FirebaseHelper.AddUser(Username, password, email);
 
                 MessageBox.Show("Đăng ký thành công!");
+                _navigatingToLogin = true;    // Đánh dấu sắp chuyển sang Login
                 Login form = new Login();
                 form.Show();
                 this.Close();
