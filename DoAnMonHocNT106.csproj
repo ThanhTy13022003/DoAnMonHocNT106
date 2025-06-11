@@ -15,12 +15,12 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
-<PropertyGroup>
-  <!-- Use a specific version: -->
-  <LangVersion>8.0</LangVersion>
-  <!-- Or simply target the latest installed: -->
-  <!-- <LangVersion>latest</LangVersion> -->
-</PropertyGroup>
+  <PropertyGroup>
+    <!-- Use a specific version: -->
+    <LangVersion>8.0</LangVersion>
+    <!-- Or simply target the latest installed: -->
+    <!-- <LangVersion>latest</LangVersion> -->
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
