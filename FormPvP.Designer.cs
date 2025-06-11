@@ -37,9 +37,9 @@
             // lstChat
             // 
             this.lstChat.HideSelection = false;
-            this.lstChat.Location = new System.Drawing.Point(540, 260);
+            this.lstChat.Location = new System.Drawing.Point(540, 273);
             this.lstChat.Name = "lstChat";
-            this.lstChat.Size = new System.Drawing.Size(223, 300);
+            this.lstChat.Size = new System.Drawing.Size(189, 300);
             this.lstChat.TabIndex = 6;
             this.lstChat.UseCompatibleStateImageBehavior = false;
             this.lstChat.View = System.Windows.Forms.View.List;
@@ -47,14 +47,14 @@
             // 
             // txtChat
             // 
-            this.txtChat.Location = new System.Drawing.Point(540, 570);
+            this.txtChat.Location = new System.Drawing.Point(540, 579);
             this.txtChat.Name = "txtChat";
-            this.txtChat.Size = new System.Drawing.Size(177, 22);
+            this.txtChat.Size = new System.Drawing.Size(143, 22);
             this.txtChat.TabIndex = 7;
             // 
             // btnSendChat
             // 
-            this.btnSendChat.Location = new System.Drawing.Point(723, 567);
+            this.btnSendChat.Location = new System.Drawing.Point(689, 576);
             this.btnSendChat.Name = "btnSendChat";
             this.btnSendChat.Size = new System.Drawing.Size(40, 25);
             this.btnSendChat.TabIndex = 8;
@@ -77,7 +77,7 @@
             this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBack.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnBack.ForeColor = System.Drawing.Color.Red;
-            this.btnBack.Location = new System.Drawing.Point(579, 34);
+            this.btnBack.Location = new System.Drawing.Point(540, 32);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(120, 40);
             this.btnBack.TabIndex = 1;
@@ -91,7 +91,7 @@
             this.btnRestart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRestart.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnRestart.ForeColor = System.Drawing.Color.White;
-            this.btnRestart.Location = new System.Drawing.Point(579, 80);
+            this.btnRestart.Location = new System.Drawing.Point(540, 78);
             this.btnRestart.Name = "btnRestart";
             this.btnRestart.Size = new System.Drawing.Size(120, 40);
             this.btnRestart.TabIndex = 2;
@@ -137,7 +137,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(15)))), ((int)(((byte)(15)))));
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.pngtree_retro_futuristic_gaming_desk_scene_image_16555312;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(775, 650);
+            this.ClientSize = new System.Drawing.Size(754, 650);
             this.Controls.Add(this.lstChat);
             this.Controls.Add(this.txtChat);
             this.Controls.Add(this.btnSendChat);

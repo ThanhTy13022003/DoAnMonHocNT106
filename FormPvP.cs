@@ -57,7 +57,7 @@ namespace DoAnMonHocNT106
                         this.Invoke((MethodInvoker)(() =>
                         {
                             var msg = ev.Object;
-                            var text = $"{msg.Time:T} {msg.FromUser}: {msg.Message}";
+                            var text = $"{msg.FromUser}: {msg.Message}";
                             lstChat.Items.Add(text);
                             lstChat.EnsureVisible(lstChat.Items.Count - 1);
                         }));
@@ -101,7 +101,7 @@ namespace DoAnMonHocNT106
 
             foreach (var m in msgs)
             {
-                string text = $"{m.Object.Time:T} {m.Object.FromUser}: {m.Object.Message}";
+                string text = $"{m.Object.FromUser}: {m.Object.Message}";
                 lstChat.Items.Add(text);
             }
 
