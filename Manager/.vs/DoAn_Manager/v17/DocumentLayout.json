@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106sss\\Manager\\",
+  "WorkspaceRootPath": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\Manager\\",
   "Documents": [],
   "DocumentGroupContainers": [
     {
@@ -25,6 +25,10 @@
           "DockedWidth": 1498,
           "SelectedChildIndex": -1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
