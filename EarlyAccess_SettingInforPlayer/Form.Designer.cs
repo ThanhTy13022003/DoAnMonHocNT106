@@ -226,6 +226,7 @@ namespace GameCaro_SettingInforPlayer
             // 
             // cmbNationality
             // 
+            this.cmbNationality.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbNationality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbNationality.Enabled = false;
             this.cmbNationality.ForeColor = System.Drawing.Color.Black;
@@ -242,10 +243,9 @@ namespace GameCaro_SettingInforPlayer
             "Canada"});
             this.cmbNationality.Location = new System.Drawing.Point(330, 260);
             this.cmbNationality.Name = "cmbNationality";
-            this.cmbNationality.Size = new System.Drawing.Size(214, 24);
+            this.cmbNationality.Size = new System.Drawing.Size(214, 23);
             this.cmbNationality.TabIndex = 19;
-            this.cmbNationality.DrawMode = DrawMode.OwnerDrawFixed;
-            this.cmbNationality.DrawItem += new DrawItemEventHandler(cmbNationality_DrawItem);
+            this.cmbNationality.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cmbNationality_DrawItem);
             // 
             // btnUpdateInfo
             // 
@@ -275,8 +275,8 @@ namespace GameCaro_SettingInforPlayer
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackgroundImage = global::GameCaro_SettingInforPlayer.Properties.Resources.download2;
-            this.pictureBox1.Image = global::GameCaro_SettingInforPlayer.Properties.Resources.download___Copy;
+            this.pictureBox1.BackgroundImage = global::DoAn_EarlyAccess_SettingInforPlayer.Properties.Resources.download2;
+            this.pictureBox1.Image = global::DoAn_EarlyAccess_SettingInforPlayer.Properties.Resources.download___Copy;
             this.pictureBox1.Location = new System.Drawing.Point(12, 214);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(232, 168);
@@ -284,7 +284,7 @@ namespace GameCaro_SettingInforPlayer
             this.pictureBox1.TabIndex = 22;
             this.pictureBox1.TabStop = false;
             // 
-            // Form1
+            // Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -312,7 +312,7 @@ namespace GameCaro_SettingInforPlayer
             this.Controls.Add(this.btnUpdateInfo);
             this.Controls.Add(this.btnChangePassword);
             this.Controls.Add(this.pictureBox1);
-            this.Name = "Form1";
+            this.Name = "Form";
             this.Text = "Player Information";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAvatar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

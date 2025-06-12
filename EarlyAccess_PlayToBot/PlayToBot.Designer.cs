@@ -159,7 +159,7 @@ namespace GameCaro_PlayToBot
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::GameCaro_PlayToBot.Properties.Resources.images;
+            this.pictureBox1.Image = global::DoAn_EarlyAccess_PlayToBot.Properties.Resources.images;
             this.pictureBox1.Location = new System.Drawing.Point(620, 31);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(321, 299);

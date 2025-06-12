@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FA23A364-10F7-4660-91A0-FC27892D6981}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>GameCaro_SettingInforPlayer</RootNamespace>
-    <AssemblyName>GameCaro_SettingInforPlayer</AssemblyName>
+    <RootNamespace>DoAn_EarlyAccess_SettingInforPlayer</RootNamespace>
+    <AssemblyName>DoAn_EarlyAccess_SettingInforPlayer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

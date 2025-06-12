@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D6E780C6-B1B5-485B-BAD6-30EF6157599A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>GameCaro_PlayToBot</RootNamespace>
-    <AssemblyName>GameCaro_PlayToBot</AssemblyName>
+    <RootNamespace>DoAn_EarlyAccess_PlayToBot</RootNamespace>
+    <AssemblyName>DoAn_EarlyAccess_PlayToBot</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

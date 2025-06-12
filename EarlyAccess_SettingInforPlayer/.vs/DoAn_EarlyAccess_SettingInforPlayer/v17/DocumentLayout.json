@@ -1,132 +1,42 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\GameCaro_SettingInforPlayer\\",
+  "WorkspaceRootPath": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|GameCaro_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\gamecaro_settinginforplayer\\form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|GameCaro_SettingInforPlayer.csproj|solutionrelative:form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|solutionrelative:form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|GameCaro_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\gamecaro_settinginforplayer\\form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|GameCaro_SettingInforPlayer.csproj|solutionrelative:form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|DoAn_EarlyAccess_SettingInforPlayer||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|GameCaro_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\gamecaro_settinginforplayer\\form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|GameCaro_SettingInforPlayer.csproj|solutionrelative:form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|solutionrelative:form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\changepasswordform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|solutionrelative:form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ChangePasswordForm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\imageeditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ImageEditForm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|5e9a8ac2-4f34-4521-858f-4c248ba31532"
     }
   ],
   "DocumentGroupContainers": [
     {
-      "Orientation": 1,
+      "Orientation": 0,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 246,
-          "SelectedChildIndex": 6,
+          "DockedWidth": 200,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ChangePasswordForm.cs",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ChangePasswordForm.cs",
-              "RelativeDocumentMoniker": "..\\..\\..\\..\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ChangePasswordForm.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ChangePasswordForm.cs",
-              "RelativeToolTip": "..\\..\\..\\..\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ChangePasswordForm.cs",
-              "ViewState": "AgIAAJcAAAAAAAAAAAAwwKwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T18:43:32.715Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Form.cs",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\GameCaro_SettingInforPlayer\\Form.cs",
-              "RelativeDocumentMoniker": "Form.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\GameCaro_SettingInforPlayer\\Form.cs",
-              "RelativeToolTip": "Form.cs",
-              "ViewState": "AgIAAB0AAAAAAAAAAAAAwDEAAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T17:12:09.227Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ImageEditForm.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ImageEditForm.cs",
-              "RelativeDocumentMoniker": "..\\..\\..\\..\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ImageEditForm.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ImageEditForm.cs [Design]",
-              "RelativeToolTip": "..\\..\\..\\..\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ImageEditForm.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T17:38:16.407Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ImageEditForm.cs",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ImageEditForm.cs",
-              "RelativeDocumentMoniker": "..\\..\\..\\..\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ImageEditForm.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ImageEditForm.cs",
-              "RelativeToolTip": "..\\..\\..\\..\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ImageEditForm.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAF8BAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T17:37:59.977Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Form.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\GameCaro_SettingInforPlayer\\Form.Designer.cs",
-              "RelativeDocumentMoniker": "Form.Designer.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\GameCaro_SettingInforPlayer\\Form.Designer.cs",
-              "RelativeToolTip": "Form.Designer.cs",
-              "ViewState": "AgIAAD4BAAAAAAAAAAAIwFIBAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T16:57:04.524Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Form.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\GameCaro_SettingInforPlayer\\Form.cs",
-              "RelativeDocumentMoniker": "Form.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\GameCaro_SettingInforPlayer\\Form.cs [Design]",
-              "RelativeToolTip": "Form.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T16:50:38.025Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ChangePasswordForm.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ChangePasswordForm.cs",
-              "RelativeDocumentMoniker": "..\\..\\..\\..\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ChangePasswordForm.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ChangePasswordForm.cs [Design]",
-              "RelativeToolTip": "..\\..\\..\\..\\OneDrive\\M\u00E1y t\u00EDnh\\GameCaro_SettingInforPlayer\\ChangePasswordForm.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T18:44:55.795Z",
-              "EditorCaption": " [Design]"
             },
             {
               "$type": "Bookmark",
@@ -135,16 +45,79 @@
           ]
         },
         {
-          "DockedHeight": 66,
-          "SelectedChildIndex": -1,
+          "DockedWidth": 1498,
+          "SelectedChildIndex": 4,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Form.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.Designer.cs",
+              "RelativeDocumentMoniker": "Form.Designer.cs",
+              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.Designer.cs",
+              "RelativeToolTip": "Form.Designer.cs",
+              "ViewState": "AgIAAPEAAAAAAAAAAAAwwBYBAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T02:27:57.273Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DoAn_EarlyAccess_SettingInforPlayer",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\DoAn_EarlyAccess_SettingInforPlayer.csproj",
+              "RelativeDocumentMoniker": "DoAn_EarlyAccess_SettingInforPlayer.csproj",
+              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\DoAn_EarlyAccess_SettingInforPlayer.csproj",
+              "RelativeToolTip": "DoAn_EarlyAccess_SettingInforPlayer.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-06-12T02:27:08.022Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T02:20:12.633Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Form.cs",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs",
+              "RelativeDocumentMoniker": "Form.cs",
+              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs",
+              "RelativeToolTip": "Form.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAABsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T02:04:48.354Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs",
+              "RelativeDocumentMoniker": "Form.cs",
+              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs [Design]",
+              "RelativeToolTip": "Form.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T02:01:39.584Z",
+              "EditorCaption": " [Design]"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
             },
             {
               "$type": "Bookmark",
@@ -152,12 +125,12 @@
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
             }
           ]
         },
         {
-          "DockedHeight": 68,
+          "DockedWidth": 1320,
           "SelectedChildIndex": -1,
           "Children": [
             {
