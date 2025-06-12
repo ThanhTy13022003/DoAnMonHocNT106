@@ -42,11 +42,32 @@ namespace DoAnMonHocNT106
 
         private void button4_Click_1(object sender, EventArgs e)
         {
+            // Phát âm thanh click như cũ
             MusicPlayer.PlayClickSound();
-            MusicPlayer.StopBackgroundMusic();  // Dừng nhạc khi log out
-            Login Form = new Login();
-            Form.Show();
-            this.Hide();
+
+            // Hiện hộp thoại xác nhận
+            var result = MessageBox.Show(
+                "Bạn có muốn thoát hoàn toàn ứng dụng không?\n" +
+                "Chọn Yes để thoát hoàn toàn, No để quay lại màn hình Sign In.",
+                "Xác nhận",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                // Thoát ứng dụng hoàn toàn
+                Application.Exit();
+                Environment.Exit(0);
+            }
+            else if (result == DialogResult.No)
+            {
+                // Dừng nhạc nền (nếu cần) và chuyển về form Login
+                MusicPlayer.StopBackgroundMusic();
+                var loginForm = new Login();
+                loginForm.Show();
+                this.Hide();
+            }
         }
 
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
