@@ -70,6 +70,15 @@ namespace DoAnMonHocNT106
             }
         }
 
+        private void button5_Click(object sender, EventArgs e)
+        {
+            // TODO: Chèn logic hiển thị thông tin cập nhật sắp tới
+            MessageBox.Show("Here you can show upcoming features or a changelog.",
+                            "Upcoming Updates",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+        }
+
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             // Chỉ bắt khi người dùng nhấn nút X (UserClosing)
