@@ -18,6 +18,26 @@ namespace DoAnMonHocNT106
             FirebaseHelper.CurrentUsername = tênUser;
             if (!MusicPlayer.IsMusicPlaying())
                 MusicPlayer.StartBackgroundMusic();
+            earlyAccessMenu = new ContextMenuStrip();
+            earlyAccessMenu.Items.Add("PlayViaLan").Click += (s, e) => OpenPlayViaLan();
+            earlyAccessMenu.Items.Add("PlayToBot").Click += (s, e) => OpenPlayToBot();
+            earlyAccessMenu.Items.Add("SettingInforPlayer").Click += (s, e) => OpenSettingInforPlayer();
+            button5.ContextMenuStrip = earlyAccessMenu; // Gán menu cho nút Early Access
+        }
+
+        private void OpenPlayViaLan()
+        {
+
+        }
+
+        private void OpenPlayToBot()
+        {
+
+        }
+
+        private void OpenSettingInforPlayer()
+        {
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -72,11 +92,8 @@ namespace DoAnMonHocNT106
 
         private void button5_Click(object sender, EventArgs e)
         {
-            // TODO: Chèn logic hiển thị thông tin cập nhật sắp tới
-            MessageBox.Show("Here you can show upcoming features or a changelog.",
-                            "Upcoming Updates",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+            MusicPlayer.PlayClickSound();
+            earlyAccessMenu.Show(button5, new System.Drawing.Point(0, button5.Height)); // Hiển thị menu ngay dưới nút
         }
 
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
