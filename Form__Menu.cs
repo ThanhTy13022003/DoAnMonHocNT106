@@ -51,7 +51,25 @@ namespace DoAnMonHocNT106
 
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Console.WriteLine("Đang đóng Form1...");
+            // Chỉ bắt khi người dùng nhấn nút X (UserClosing)
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                var result = MessageBox.Show(
+                    "Bạn chắc chắn có muốn thoát game chứ?",
+                    "Xác nhận thoát",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result == DialogResult.No)
+                {
+                    e.Cancel = true; // Hủy đóng form
+                    return;
+                }
+            }
+
+            // Nếu người dùng xác nhận Yes, thì tiếp tục thực hiện cleanup như trước
+            Console.WriteLine("Đang đóng Form1.");
             try
             {
                 // 1. Dừng thread giám sát nền
@@ -81,13 +99,16 @@ namespace DoAnMonHocNT106
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi thoát ứng dụng: {ex.Message}",
-                                "Lỗi",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"Lỗi khi thoát ứng dụng: {ex.Message}",
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 Environment.Exit(1);
             }
         }
+
 
         protected override void OnFormClosed(FormClosedEventArgs e)
 {
