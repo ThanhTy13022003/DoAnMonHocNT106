@@ -54,11 +54,11 @@ namespace GameCaro_SettingInforPlayer
         {
             try
             {
-                var processes = System.Diagnostics.Process.GetProcessesByName("GameCaro_Menu");
-                System.Diagnostics.Debug.WriteLine($"Found {processes.Length} process(es) named 'GameCaro_Menu'");
+                var processes = System.Diagnostics.Process.GetProcessesByName("DoAnMonHocNT106");
+                System.Diagnostics.Debug.WriteLine($"Found {processes.Length} process(es) named 'DoAnMonHocNT106'");
                 if (processes.Length == 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("No GameCaro_Menu process found. Stopping timer and closing form.");
+                    System.Diagnostics.Debug.WriteLine("No DoAnMonHocNT106 process found. Stopping timer and closing form.");
                     processCheckTimer.Stop();
                     this.Invoke((MethodInvoker)delegate
                     {
@@ -67,7 +67,7 @@ namespace GameCaro_SettingInforPlayer
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("GameCaro_Menu process is running.");
+                    System.Diagnostics.Debug.WriteLine("DoAnMonHocNT106 process is running.");
                 }
             }
             catch (Exception ex)

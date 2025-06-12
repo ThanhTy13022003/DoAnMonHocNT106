@@ -44,10 +44,11 @@ namespace DoAnMonHocNT106
         public PlayViaLan()
         {
             InitializeComponent();
-            setTimeComboBox.SelectedItem = $"{timeLimit}s"; // Hiển thị giá trị mặc định trong setTimeComboBox
-            timeLabel.Text = $"Time: {timeLimit}s";         // Cập nhật timeLabel cho nhất quán
+            setTimeComboBox.SelectedItem = $"{timeLimit}s"; // Hiển thị giá trị mặc định
+            timeLabel.Text = $"Time: {timeLimit}s";         // Cập nhật label
             InitializeGameBoard();
             InitializeFirebase();
+
             timer = new System.Windows.Forms.Timer();
             timer.Interval = 1000;
             timer.Tick += Timer_Tick;
@@ -59,40 +60,15 @@ namespace DoAnMonHocNT106
             processCheckTimer.AutoReset = true;
             processCheckTimer.Start();
 
-            // Danh sách tên người dùng hợp lệ
-            List<string> validUsernames = new List<string> { "baongdqu1", "baongdqu2", "baongdqu3", "baongdqu4", "baongdqu5" };
-
-            // Retrieve username from command-line arguments
+            // 👉 Bỏ kiểm tra tên và không yêu cầu nhập
             string[] args = Environment.GetCommandLineArgs();
-            currentUsername = args.Length > 1 ? args[1] : null;
+            currentUsername = args.Length > 1 ? args[1] : "Guest"; // Nếu không có thì gán "Guest"
 
-            // If no username is provided via command-line, prompt for it
-            if (string.IsNullOrEmpty(currentUsername))
-            {
-                currentUsername = Prompt.ShowDialog("Nhập tên người dùng (baongdqu1, baongdqu2, baongdqu3, baongdqu4, baongdqu5):", "Nhập tên người dùng");
-                while (!validUsernames.Contains(currentUsername, StringComparer.OrdinalIgnoreCase))
-                {
-                    MessageBox.Show("Tên người dùng không hợp lệ. Vui lòng nhập một trong các tên: baongdqu1, baongdqu2, baongdqu3, baongdqu4, baongdqu5.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    currentUsername = Prompt.ShowDialog("Nhập tên người dùng (baongdqu1, baongdqu2, baongdqu3, baongdqu4, baongdqu5):", "Nhập tên người dùng");
-                    if (string.IsNullOrEmpty(currentUsername))
-                    {
-                        MessageBox.Show("Tên người dùng không được để trống.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        Application.Exit();
-                        return;
-                    }
-                }
-            }
-            else if (!validUsernames.Contains(currentUsername, StringComparer.OrdinalIgnoreCase))
-            {
-                MessageBox.Show("Tên người dùng không hợp lệ. Phải là một trong: baongdqu1, baongdqu2, baongdqu3, baongdqu4, baongdqu5.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Application.Exit();
-                return;
-            }
-
-            // Cập nhật giao diện với tên người dùng
+            // Cập nhật giao diện
             yourNameLabel.Text = currentUsername;
             yourDetailsButton.Enabled = true;
         }
+
 
         private async Task UpdatePlayerStatsAsync(bool isWin, bool isDraw = false)
         {
@@ -161,11 +137,11 @@ namespace DoAnMonHocNT106
         {
             try
             {
-                var processes = System.Diagnostics.Process.GetProcessesByName("GameCaro_Menu");
-                System.Diagnostics.Debug.WriteLine($"Found {processes.Length} process(es) named 'GameCaro_Menu'");
+                var processes = System.Diagnostics.Process.GetProcessesByName("DoAnMonHocNT106");
+                System.Diagnostics.Debug.WriteLine($"Found {processes.Length} process(es) named 'DoAnMonHocNT106'");
                 if (processes.Length == 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("No GameCaro_Menu process found. Stopping timer and closing form.");
+                    System.Diagnostics.Debug.WriteLine("No DoAnMonHocNT106 process found. Stopping timer and closing form.");
                     processCheckTimer.Stop();
                     this.Invoke((MethodInvoker)delegate
                     {
@@ -174,7 +150,7 @@ namespace DoAnMonHocNT106
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("GameCaro_Menu process is running.");
+                    System.Diagnostics.Debug.WriteLine("DoAnMonHocNT106 process is running.");
                 }
             }
             catch (Exception ex)

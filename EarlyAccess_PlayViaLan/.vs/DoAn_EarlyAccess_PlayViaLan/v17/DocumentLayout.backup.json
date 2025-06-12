@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_PlayViaLan\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{8992A0EF-CD97-427B-9660-715D29140186}|DoAn_EarlyAccess_PlayViaLan.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_playvialan\\playvialan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8992A0EF-CD97-427B-9660-715D29140186}|DoAn_EarlyAccess_PlayViaLan.csproj|solutionrelative:playvialan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|DoAn_EarlyAccess_PlayViaLan||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
@@ -35,6 +39,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "PlayViaLan.cs",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_PlayViaLan\\PlayViaLan.cs",
+              "RelativeDocumentMoniker": "PlayViaLan.cs",
+              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_PlayViaLan\\PlayViaLan.cs",
+              "RelativeToolTip": "PlayViaLan.cs",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAYwJgAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T03:25:29.494Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "DoAn_EarlyAccess_PlayViaLan",
               "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_PlayViaLan\\DoAn_EarlyAccess_PlayViaLan.csproj",
               "RelativeDocumentMoniker": "DoAn_EarlyAccess_PlayViaLan.csproj",

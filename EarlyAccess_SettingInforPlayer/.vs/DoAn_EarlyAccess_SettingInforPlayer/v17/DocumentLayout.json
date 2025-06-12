@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|solutionrelative:form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|solutionrelative:form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
@@ -10,19 +14,12 @@
       "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|DoAn_EarlyAccess_SettingInforPlayer||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|solutionrelative:form.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|solutionrelative:form.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FA23A364-10F7-4660-91A0-FC27892D6981}|DoAn_EarlyAccess_SettingInforPlayer.csproj|c:\\users\\s3cr3t\\source\\repos\\doanmonhocnt106\\earlyaccess_settinginforplayer\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|5e9a8ac2-4f34-4521-858f-4c248ba31532"
     }
   ],
   "DocumentGroupContainers": [
@@ -50,7 +47,19 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
+              "Title": "Form.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs",
+              "RelativeDocumentMoniker": "Form.cs",
+              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs [Design]",
+              "RelativeToolTip": "Form.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T02:01:39.584Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Form.Designer.cs",
               "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.Designer.cs",
               "RelativeDocumentMoniker": "Form.Designer.cs",
@@ -63,15 +72,14 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "DoAn_EarlyAccess_SettingInforPlayer",
               "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\DoAn_EarlyAccess_SettingInforPlayer.csproj",
               "RelativeDocumentMoniker": "DoAn_EarlyAccess_SettingInforPlayer.csproj",
               "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\DoAn_EarlyAccess_SettingInforPlayer.csproj",
               "RelativeToolTip": "DoAn_EarlyAccess_SettingInforPlayer.csproj",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-06-12T02:27:08.022Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-12T02:27:08.022Z"
             },
             {
               "$type": "Document",
@@ -83,33 +91,20 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-12T02:20:12.633Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-12T02:20:12.633Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "Form.cs",
               "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs",
               "RelativeDocumentMoniker": "Form.cs",
               "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs",
               "RelativeToolTip": "Form.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAABsAAAAAAAAAA==",
+              "ViewState": "AgIAACIAAAAAAAAAAAAQwEUAAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-12T02:04:48.354Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Form.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs",
-              "RelativeDocumentMoniker": "Form.cs",
-              "ToolTip": "C:\\Users\\s3cr3t\\source\\repos\\DoAnMonHocNT106\\EarlyAccess_SettingInforPlayer\\Form.cs [Design]",
-              "RelativeToolTip": "Form.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-12T02:01:39.584Z",
-              "EditorCaption": " [Design]"
             },
             {
               "$type": "Bookmark",
