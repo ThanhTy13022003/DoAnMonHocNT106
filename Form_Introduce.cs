@@ -52,21 +52,21 @@ namespace DoAnMonHocNT106
 
         private void OpenPlayViaLan()
         {
-            LaunchExternalApp(@"..\..\EarlyAccess_PlayViaLan\bin\Debug",
+            LaunchExternalApp(@"..\..\Contribute_PlayViaLan\bin\Debug",
                       "DoAn_EarlyAccess_PlayViaLan.exe",
                       currentUser);
         }
 
         private void OpenPlayToBot()
         {
-            LaunchExternalApp(@"..\..\EarlyAccess_PlayToBot\bin\Debug",
+            LaunchExternalApp(@"..\..\Contribute_PlayToBot\bin\Debug",
                   "DoAn_EarlyAccess_PlayToBot.exe",
                   currentUser);
         }
 
         private void OpenSettingInforPlayer()
         {
-            LaunchExternalApp(@"..\..\EarlyAccess_SettingInforPlayer\bin\Debug",
+            LaunchExternalApp(@"..\..\Contribute_SettingInforPlayer\bin\Debug",
                   "DoAn_EarlyAccess_SettingInforPlayer.exe",
                   currentUser);
         }
