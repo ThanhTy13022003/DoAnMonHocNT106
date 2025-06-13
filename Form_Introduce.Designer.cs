@@ -41,7 +41,7 @@ namespace DoAnMonHocNT106
             // pictureBoxImage
             // 
             this.pictureBoxImage.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxImage.Image")));
-            this.pictureBoxImage.Location = new System.Drawing.Point(690, 341);
+            this.pictureBoxImage.Location = new System.Drawing.Point(710, 341);
             this.pictureBoxImage.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBoxImage.Name = "pictureBoxImage";
             this.pictureBoxImage.Size = new System.Drawing.Size(221, 168);
@@ -54,7 +54,7 @@ namespace DoAnMonHocNT106
             this.buttonClose.BackColor = System.Drawing.SystemColors.Highlight;
             this.buttonClose.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.buttonClose.ForeColor = System.Drawing.Color.White;
-            this.buttonClose.Location = new System.Drawing.Point(778, 552);
+            this.buttonClose.Location = new System.Drawing.Point(760, 547);
             this.buttonClose.Margin = new System.Windows.Forms.Padding(4);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(133, 49);
@@ -179,7 +179,7 @@ namespace DoAnMonHocNT106
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
-            this.ClientSize = new System.Drawing.Size(962, 641);
+            this.ClientSize = new System.Drawing.Size(979, 641);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
