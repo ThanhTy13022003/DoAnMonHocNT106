@@ -108,7 +108,7 @@ namespace DoAnMonHocNT106
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
             this.label4.ForeColor = System.Drawing.Color.Aqua;
-            this.label4.Location = new System.Drawing.Point(27, 466);
+            this.label4.Location = new System.Drawing.Point(27, 462);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(137, 32);
@@ -122,17 +122,17 @@ namespace DoAnMonHocNT106
             this.label5.BackColor = System.Drawing.Color.Transparent;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label5.Location = new System.Drawing.Point(28, 528);
+            this.label5.Location = new System.Drawing.Point(28, 524);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(421, 75);
+            this.label5.Size = new System.Drawing.Size(417, 100);
             this.label5.TabIndex = 8;
-            this.label5.Text = "Và cuối cùng xin chân thành cảm ơn tới những \r\nngười hâm mộ đã đóng góp ý kiến để" +
-    " chúng tôi \r\ncó thể hoàn thiện hơn được game này.";
+            this.label5.Text = "Và cuối cùng xin chân thành cảm ơn tới những \r\nngười hâm mộ đã đóng góp ý kiến và" +
+    " một chút \r\ncông sức để chúng tôi có thể hoàn thiện hơn \r\nđược game này.";
             // 
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(492, 483);
+            this.button1.Location = new System.Drawing.Point(497, 492);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(179, 26);
             this.button1.TabIndex = 9;
@@ -143,7 +143,7 @@ namespace DoAnMonHocNT106
             // button2
             // 
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(492, 515);
+            this.button2.Location = new System.Drawing.Point(497, 524);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(179, 26);
             this.button2.TabIndex = 10;
@@ -154,7 +154,7 @@ namespace DoAnMonHocNT106
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(492, 547);
+            this.button3.Location = new System.Drawing.Point(497, 556);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(179, 26);
             this.button3.TabIndex = 11;
@@ -165,7 +165,7 @@ namespace DoAnMonHocNT106
             // button4
             // 
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(492, 579);
+            this.button4.Location = new System.Drawing.Point(497, 588);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(179, 26);
             this.button4.TabIndex = 12;
@@ -179,7 +179,7 @@ namespace DoAnMonHocNT106
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
-            this.ClientSize = new System.Drawing.Size(979, 641);
+            this.ClientSize = new System.Drawing.Size(979, 651);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -198,7 +198,7 @@ namespace DoAnMonHocNT106
             this.MaximizeBox = false;
             this.Name = "Form_Introduce";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Giới thiệu";
+            this.Text = "Ư";
             this.Load += new System.EventHandler(this.Form_Introduce_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImage)).EndInit();
             this.ResumeLayout(false);
