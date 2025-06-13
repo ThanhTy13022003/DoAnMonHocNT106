@@ -97,7 +97,7 @@ namespace DoAnMonHocNT106
             this.label3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label3.Location = new System.Drawing.Point(28, 276);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(883, 150);
+            this.label3.Size = new System.Drawing.Size(1104, 188);
             this.label3.TabIndex = 6;
             this.label3.Text = resources.GetString("label3.Text");
             this.label3.Click += new System.EventHandler(this.label3_Click);
