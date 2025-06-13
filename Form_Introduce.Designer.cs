@@ -108,7 +108,7 @@ namespace DoAnMonHocNT106
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
             this.label4.ForeColor = System.Drawing.Color.Aqua;
-            this.label4.Location = new System.Drawing.Point(27, 462);
+            this.label4.Location = new System.Drawing.Point(27, 454);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(137, 32);
@@ -122,7 +122,7 @@ namespace DoAnMonHocNT106
             this.label5.BackColor = System.Drawing.Color.Transparent;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label5.Location = new System.Drawing.Point(28, 524);
+            this.label5.Location = new System.Drawing.Point(28, 516);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(417, 100);
             this.label5.TabIndex = 8;
@@ -179,7 +179,7 @@ namespace DoAnMonHocNT106
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
-            this.ClientSize = new System.Drawing.Size(979, 651);
+            this.ClientSize = new System.Drawing.Size(979, 643);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
