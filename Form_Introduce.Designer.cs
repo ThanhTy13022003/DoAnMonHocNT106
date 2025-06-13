@@ -16,6 +16,12 @@ namespace DoAnMonHocNT106
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -35,7 +41,7 @@ namespace DoAnMonHocNT106
             // pictureBoxImage
             // 
             this.pictureBoxImage.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxImage.Image")));
-            this.pictureBoxImage.Location = new System.Drawing.Point(706, 240);
+            this.pictureBoxImage.Location = new System.Drawing.Point(690, 341);
             this.pictureBoxImage.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBoxImage.Name = "pictureBoxImage";
             this.pictureBoxImage.Size = new System.Drawing.Size(221, 168);
@@ -48,7 +54,7 @@ namespace DoAnMonHocNT106
             this.buttonClose.BackColor = System.Drawing.SystemColors.Highlight;
             this.buttonClose.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.buttonClose.ForeColor = System.Drawing.Color.White;
-            this.buttonClose.Location = new System.Drawing.Point(767, 440);
+            this.buttonClose.Location = new System.Drawing.Point(778, 552);
             this.buttonClose.Margin = new System.Windows.Forms.Padding(4);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(133, 49);
@@ -89,12 +95,83 @@ namespace DoAnMonHocNT106
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label3.Location = new System.Drawing.Point(28, 262);
+            this.label3.Location = new System.Drawing.Point(28, 276);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(592, 175);
+            this.label3.Size = new System.Drawing.Size(883, 150);
             this.label3.TabIndex = 6;
             this.label3.Text = resources.GetString("label3.Text");
             this.label3.Click += new System.EventHandler(this.label3_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.label4.ForeColor = System.Drawing.Color.Aqua;
+            this.label4.Location = new System.Drawing.Point(27, 466);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(137, 32);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Cuối cùng:";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.BackColor = System.Drawing.Color.Transparent;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label5.Location = new System.Drawing.Point(28, 528);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(421, 75);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "Và cuối cùng xin chân thành cảm ơn tới những \r\nngười hâm mộ đã đóng góp ý kiến để" +
+    " chúng tôi \r\ncó thể hoàn thiện hơn được game này.";
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(492, 483);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(179, 26);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "PlayViaLan";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(492, 515);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(179, 26);
+            this.button2.TabIndex = 10;
+            this.button2.Text = "PlayToBot";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(492, 547);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(179, 26);
+            this.button3.TabIndex = 11;
+            this.button3.Text = "SettingInforPlayer";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.Location = new System.Drawing.Point(492, 579);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(179, 26);
+            this.button4.TabIndex = 12;
+            this.button4.Text = "...";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // Form_Introduce
             // 
@@ -102,12 +179,18 @@ namespace DoAnMonHocNT106
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
-            this.ClientSize = new System.Drawing.Size(980, 529);
+            this.ClientSize = new System.Drawing.Size(962, 641);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.pictureBoxImage);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonClose);
-            this.Controls.Add(this.pictureBoxImage);
             this.Controls.Add(this.labelTitle);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -116,6 +199,7 @@ namespace DoAnMonHocNT106
             this.Name = "Form_Introduce";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Giới thiệu";
+            this.Load += new System.EventHandler(this.Form_Introduce_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -135,5 +219,11 @@ namespace DoAnMonHocNT106
         private Label label1;
         private Label label2;
         private Label label3;
+        private Label label4;
+        private Label label5;
+        private Button button1;
+        private Button button2;
+        private Button button3;
+        private Button button4;
     }
 }
