@@ -109,7 +109,7 @@
             this.lblStats.Name = "lblStats";
             this.lblStats.Size = new System.Drawing.Size(323, 25);
             this.lblStats.TabIndex = 3;
-            this.lblStats.Text = "Thắng: 0 | Thua: 0 | Hết thời gian: 0";
+            this.lblStats.Text = "Thắng: 0 | Thua: 0 | Hòa: 0";
             // 
             // btnClose
             // 

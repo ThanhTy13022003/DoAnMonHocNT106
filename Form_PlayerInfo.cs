@@ -54,12 +54,12 @@ namespace DoAnMonHocNT106
         {
             try
             {
-                var user = await FirebaseHelper.GetUserByUsername(username);
-                lblUsername.Text = $"Tên người dùng: {user?.Username}";
+                var user = await FirebaseHelper.GetUserByUsername(username); // Lấy thông tin người dùng từ Firebase
+                lblUsername.Text = $"Tên người dùng: {user?.Username}"; // Hiển thị tên người dùng ở node "Users" và các dòng dưới đó cũng thế
                 lblEmail.Text = $"Email: {user?.Email}";
                 lblLastOnline.Text = $"Lần cuối online: {user?.LastOnline}";
-                var stats = await FirebaseHelper.GetStats(username);
-                lblStats.Text = $"Thắng: {stats.Wins} | Thua: {stats.Losses} | Hết thời gian: {stats.Timeouts}";
+                var stats = await FirebaseHelper.GetStats(username); // Lấy thống kê từ Firebase
+                lblStats.Text = $"Thắng: {user.Wins} | Thua: {user.Losses} | Hòa: {user.Draws}";
                 userPassword = user?.Password; // Lưu mật khẩu
                 lblPassword.Text = "Mật khẩu: ********";
             }

@@ -31,7 +31,6 @@ namespace DoAnMonHocNT106
                 lstLeaderboard.Columns.Add("Thắng", 60);
                 lstLeaderboard.Columns.Add("Thua", 60);
                 lstLeaderboard.Columns.Add("Hòa", 60);
-                lstLeaderboard.Columns.Add("Hết thời gian", 100);
 
                 // Thêm dữ liệu
                 int rank = 1;

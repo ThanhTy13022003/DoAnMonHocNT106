@@ -188,33 +188,49 @@ namespace DoAnMonHocNT106
 
         public static async Task SavePvPGameResult(string roomId, string playerX, string playerO, string result)
         {
+            // 1) Ghi vào MatchHistory chung
             var match = new
             {
                 roomId = roomId,
                 playerX = playerX,
                 playerO = playerO,
-                result = result,
+                result = result,   // "X_Win", "O_Win" hoặc "Draw"
                 time = DateTime.UtcNow.ToString("o")
             };
-
             await firebase.Child("MatchHistory").PostAsync(match);
 
-            // Cập nhật thống kê người dùng
-            if (result == "X_Win")
-            {
-                await UpdateUserStats(playerX, "Win");
-                await UpdateUserStats(playerO, "Lose");
-            }
-            else if (result == "O_Win")
-            {
-                await UpdateUserStats(playerX, "Lose");
-                await UpdateUserStats(playerO, "Win");
-            }
-            else if (result == "Draw")
-            {
-                await UpdateUserStats(playerX, "Draw");
-                await UpdateUserStats(playerO, "Draw");
-            }
+            // 2) Chuẩn bị record riêng cho mỗi user
+            //    Kết quả theo góc nhìn userX và userO
+            string resX = result == "X_Win" ? "Win"
+                        : result == "O_Win" ? "Lose"
+                        : "Draw";
+            string resO = result == "O_Win" ? "Win"
+                        : result == "X_Win" ? "Lose"
+                        : "Draw";
+            var recordX = new { opponent = playerO, result = resX, time = match.time };
+            var recordO = new { opponent = playerX, result = resO, time = match.time };
+
+            // 3) Ghi vào /Users/{username}/MatchHistory
+            await firebase
+              .Child("Users")
+              .Child(playerX)
+              .Child("MatchHistory")
+              .PostAsync(recordX);
+
+            await firebase
+              .Child("Users")
+              .Child(playerO)
+              .Child("MatchHistory")
+              .PostAsync(recordO);
+
+            // 4) Cập nhật Win/Loss/Draw counters
+            if (resX == "Win") await UpdateUserStats(playerX, "Win");
+            else if (resX == "Lose") await UpdateUserStats(playerX, "Lose");
+            else await UpdateUserStats(playerX, "Draw");
+
+            if (resO == "Win") await UpdateUserStats(playerO, "Win");
+            else if (resO == "Lose") await UpdateUserStats(playerO, "Lose");
+            else await UpdateUserStats(playerO, "Draw");
         }
 
         public static async Task<(int Wins, int Losses, int Timeouts)> GetStats(string playerName)
@@ -225,6 +241,7 @@ namespace DoAnMonHocNT106
             int timeouts = history.Count(r => r.Result == "Timeout");
             return (wins, losses, timeouts);
         }
+
         public static string CurrentUsername { get; set; } = "Guest";
 
         public static async Task<List<(string Username, double WinRate, int TotalGames, int Wins, int Losses, int Draws)>> GetLeaderboard()
