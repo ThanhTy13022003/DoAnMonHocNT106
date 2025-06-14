@@ -141,12 +141,12 @@ namespace DoAnMonHocNT106
         {
             // Hiển thị hộp thoại cảm ơn
             string title = "Cảm ơn";
-            string message = "Cảm ơn các bạn đã đóng góp cho chúng tôi! \n" +
+            string message = "Cảm ơn bạn đã đóng góp cho chúng tôi! \n" +
                              "Và mọi sự đóng góp của các bạn xin hãy gửi về mail admin@example.com.";
             MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             // Đóng form giới thiệu
-            this.Close();
+            //this.Close();
         }
 
         private void Form_Introduce_Load(object sender, EventArgs e)

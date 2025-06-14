@@ -97,7 +97,7 @@ namespace DoAnMonHocNT106
             this.label3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label3.Location = new System.Drawing.Point(28, 276);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(1104, 188);
+            this.label3.Size = new System.Drawing.Size(883, 150);
             this.label3.TabIndex = 6;
             this.label3.Text = resources.GetString("label3.Text");
             this.label3.Click += new System.EventHandler(this.label3_Click);
@@ -124,10 +124,10 @@ namespace DoAnMonHocNT106
             this.label5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label5.Location = new System.Drawing.Point(28, 516);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(417, 100);
+            this.label5.Size = new System.Drawing.Size(525, 125);
             this.label5.TabIndex = 8;
             this.label5.Text = "Và cuối cùng xin chân thành cảm ơn tới những \r\nngười hâm mộ đã đóng góp ý kiến và" +
-    " một chút \r\ncông sức để chúng tôi có thể hoàn thiện hơn \r\nđược game này.";
+    " công sức \r\nđể chúng tôi có thể hoàn thiện hơn được game \r\nnày.";
             // 
             // button1
             // 

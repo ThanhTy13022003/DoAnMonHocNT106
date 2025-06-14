@@ -31,7 +31,7 @@
             this.lstLeaderboard.HideSelection = false;
             this.lstLeaderboard.Location = new System.Drawing.Point(32, 89);
             this.lstLeaderboard.Name = "lstLeaderboard";
-            this.lstLeaderboard.Size = new System.Drawing.Size(708, 373);
+            this.lstLeaderboard.Size = new System.Drawing.Size(736, 373);
             this.lstLeaderboard.TabIndex = 0;
             this.lstLeaderboard.UseCompatibleStateImageBehavior = false;
             this.lstLeaderboard.View = System.Windows.Forms.View.Details;
@@ -41,7 +41,7 @@
             this.btnClose.BackColor = System.Drawing.Color.IndianRed;
             this.btnClose.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnClose.ForeColor = System.Drawing.Color.White;
-            this.btnClose.Location = new System.Drawing.Point(326, 480);
+            this.btnClose.Location = new System.Drawing.Point(343, 483);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(114, 43);
             this.btnClose.TabIndex = 1;
@@ -67,7 +67,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources._4768220eda2bdf16308f85bc566d46f7;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(777, 550);
+            this.ClientSize = new System.Drawing.Size(806, 550);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.lstLeaderboard);
