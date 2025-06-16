@@ -129,8 +129,9 @@ namespace DoAnMonHocNT106
             this.Hide();
         }
 
-        private void button4_Click_1(object sender, EventArgs e)
+        private async void button4_Click_1(object sender, EventArgs e)
         {
+
             // Phát âm thanh click như cũ
             MusicPlayer.PlayClickSound();
 
@@ -144,18 +145,20 @@ namespace DoAnMonHocNT106
             );
 
             if (result == DialogResult.Yes)
-            {
+            {                
+                await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
                 // Thoát ứng dụng hoàn toàn
                 Application.Exit();
-                Environment.Exit(0);
             }
             else if (result == DialogResult.No)
             {
+                await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
                 // Dừng nhạc nền (nếu cần) và chuyển về form Login
                 MusicPlayer.StopBackgroundMusic();
                 var loginForm = new Login();
                 loginForm.Show();
                 this.Hide();
+                _ = FirebaseHelper.SetUserOnlineStatus(currentUser, false);
             }
         }
 
@@ -175,6 +178,7 @@ namespace DoAnMonHocNT106
                     "Xác nhận thoát",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question
+
                 );
 
                 if (result == DialogResult.No)
@@ -183,6 +187,8 @@ namespace DoAnMonHocNT106
                     return;
                 }
             }
+
+            await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
 
             // Nếu người dùng xác nhận Yes, thì tiếp tục thực hiện cleanup như trước
             Console.WriteLine("Đang đóng Form1.");
@@ -209,6 +215,8 @@ namespace DoAnMonHocNT106
                 // 4. Giải phóng Firebase
                 FirebaseApp.DefaultInstance?.Delete();
 
+                _ = FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+
                 // 5. Thoát ứng dụng hoàn toàn
                 Application.Exit();
                 Environment.Exit(0);
@@ -228,9 +236,11 @@ namespace DoAnMonHocNT106
 
         protected override void OnFormClosed(FormClosedEventArgs e)
 {
-    base.OnFormClosed(e);
+            _ = FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+
+            base.OnFormClosed(e);
     this.Dispose(); // Giải phóng tài nguyên form
-}
+        }
 
         private void button3_Click(object sender, EventArgs e)
         {

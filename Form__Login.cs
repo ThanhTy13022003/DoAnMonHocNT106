@@ -106,48 +106,53 @@ namespace DoAnMonHocNT106
             MusicPlayer.PlayClickSound();
 
             string input = username.Text.Trim();
-            string passwordInput = password.Text;
+            string passwordInput = password.Text.Trim();
 
-            string email;
+            // Xác định email từ username hoặc email trực tiếp
+            string email = IsValidEmail(input)
+                ? input
+                : await FirebaseHelper.GetEmailByUsername(input);
 
-            if (IsValidEmail(input))
+            if (email == null)
             {
-                email = input; // Là email thật sự
-            }
-            else
-            {
-                email = await FirebaseHelper.GetEmailByUsername(input);
-                if (email == null)
-                {
-                    ShowMessage("Sai tài khoản hoặc mật khẩu!", Color.Red);
-                    return;
-                }
+                MessageBox.Show("Tài khoản không tồn tại hoặc sai định dạng!");
+                return;
             }
 
             try
             {
-                var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-                var auth = await authProvider.SignInWithEmailAndPasswordAsync(email, passwordInput);
+                // 1) Lấy thông tin user từ Realtime DB
+                var user = await FirebaseHelper.GetUserByUsername(input);
+                if (user.IsOnline)
+                {
+                    MessageBox.Show("Tài khoản đang được đăng nhập ở nơi khác!", "Đã online", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-                // Không tách username theo email nữa — dùng đúng như nhập vào
-                Properties.Settings.Default["UserId"] = input;
-                Properties.Settings.Default.Save();
+                // 2) Xác thực email/password với FirebaseAuth
+                var authResult = await auth.SignInWithEmailAndPasswordAsync(email, passwordInput);
 
-                await FirebaseHelper.SetUserOnlineStatus(input, true);
-                FirebaseHelper.CurrentUsername = input;
+                // 3) Đánh dấu user là online và cập nhật LastOnline
+                await FirebaseHelper.SetUserOnlineStatus(user.Username, true);
 
-                new Form1().Show();
+                // 4) Lưu CurrentUsername để các form khác dùng chung
+                FirebaseHelper.CurrentUsername = user.Username;
+
+                // 5) Chuyển sang form chính (ví dụ Form1) và ẩn Login
+                var mainForm = new Form1(user.Username);
+                mainForm.Show();
                 this.Hide();
             }
             catch (FirebaseAuthException ex)
             {
-                ShowMessage($"Firebase lỗi: {ex.Reason}", Color.Red);
+                MessageBox.Show("Đăng nhập thất bại: " + ex.Message);
             }
             catch (Exception ex)
             {
-                ShowMessage("Đăng nhập thất bại!", Color.Red);
+                MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
             }
         }
+
 
         private bool IsValidEmail(string email)
         {

@@ -12,6 +12,12 @@ namespace DoAnMonHocNT106
         [STAThread]
         static void Main()
         {
+            Application.ApplicationExit += async (s, e) =>
+            {
+                // CurrentUsername do bạn lưu tĩnh trong FirebaseHelper
+                await FirebaseHelper.SetUserOnlineStatus(FirebaseHelper.CurrentUsername, false);
+            };
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
