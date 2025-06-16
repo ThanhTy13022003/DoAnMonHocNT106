@@ -1,0 +1,20 @@
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\obj\Debug\GameCaro_PlayToBot.csproj.AssemblyReference.cache
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\obj\Debug\GameCaro_PlayToBot.Properties.Resources.resources
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\obj\Debug\GameCaro_PlayToBot.csproj.GenerateResource.cache
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\obj\Debug\GameCaro_PlayToBot.csproj.CoreCompileInputs.cache
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\bin\Debug\GameCaro_PlayToBot.exe.config
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\bin\Debug\GameCaro_PlayToBot.exe
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\bin\Debug\GameCaro_PlayToBot.pdb
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\obj\Debug\GameCaro_PlayToBot.exe
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\obj\Debug\GameCaro_PlayToBot.pdb
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_PlayToBot\obj\Debug\GameCaro_PlayToBot.Form1.resources
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\bin\Debug\GameCaro_PlayToBot.exe.config
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\bin\Debug\GameCaro_PlayToBot.exe
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\bin\Debug\GameCaro_PlayToBot.pdb
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\obj\Debug\GameCaro_PlayToBot.csproj.AssemblyReference.cache
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\obj\Debug\GameCaro_PlayToBot.Form.resources
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\obj\Debug\GameCaro_PlayToBot.Properties.Resources.resources
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\obj\Debug\GameCaro_PlayToBot.csproj.GenerateResource.cache
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\obj\Debug\GameCaro_PlayToBot.csproj.CoreCompileInputs.cache
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\obj\Debug\GameCaro_PlayToBot.exe
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_PlayToBot\obj\Debug\GameCaro_PlayToBot.pdb
