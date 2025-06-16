@@ -1,0 +1,84 @@
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\GameCaro_SettingInforPlayer.exe.config
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\GameCaro_SettingInforPlayer.exe
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\GameCaro_SettingInforPlayer.pdb
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.csproj.AssemblyReference.cache
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.Properties.Resources.resources
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.csproj.GenerateResource.cache
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.csproj.CoreCompileInputs.cache
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.exe
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.pdb
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\Dropbox.Api.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\Dropbox.Api.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\obj\Debug\GameCaro.88C0487A.Up2Date
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.ImageEditForm.resources
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\Firebase.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\LiteDB.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Reactive.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\Firebase.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\LiteDB.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Reactive.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.Form1.resources
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Buffers.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.IO.Pipelines.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Memory.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Text.Json.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.ValueTuple.dll
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Buffers.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.IO.Pipelines.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Memory.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Text.Encodings.Web.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.Text.Json.xml
+C:\Users\s3cr3t\OneDrive\Máy tính\GameCaro_SettingInforPlayer\bin\Debug\System.ValueTuple.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\GameCaro_SettingInforPlayer.exe.config
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\GameCaro_SettingInforPlayer.exe
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\GameCaro_SettingInforPlayer.pdb
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\Dropbox.Api.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\Firebase.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\LiteDB.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Buffers.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.IO.Pipelines.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Memory.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Reactive.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Text.Json.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.ValueTuple.dll
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\Dropbox.Api.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\Firebase.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\LiteDB.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Buffers.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.IO.Pipelines.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Memory.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Reactive.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Text.Encodings.Web.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Text.Json.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\bin\Debug\System.ValueTuple.xml
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.csproj.AssemblyReference.cache
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.Form.resources
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.ImageEditForm.resources
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.Properties.Resources.resources
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.csproj.GenerateResource.cache
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.csproj.CoreCompileInputs.cache
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\obj\Debug\GameCaro.88C0487A.Up2Date
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.exe
+C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Contribute_SettingInforPlayer\obj\Debug\GameCaro_SettingInforPlayer.pdb
