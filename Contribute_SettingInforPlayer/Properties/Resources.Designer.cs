@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DoAn_EarlyAccess_SettingInforPlayer.Properties {
+namespace GameCaro_SettingInforPlayer.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace DoAn_EarlyAccess_SettingInforPlayer.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DoAn_EarlyAccess_SettingInforPlayer.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GameCaro_SettingInforPlayer.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

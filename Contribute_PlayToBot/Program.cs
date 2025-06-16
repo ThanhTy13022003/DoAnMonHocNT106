@@ -16,7 +16,7 @@ namespace GameCaro_PlayToBot
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new PlayToBot());
+            Application.Run(new Form());
         }
     }
 }

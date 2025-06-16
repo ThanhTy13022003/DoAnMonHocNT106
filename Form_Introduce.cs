@@ -53,21 +53,21 @@ namespace DoAnMonHocNT106
         private void OpenPlayViaLan()
         {
             LaunchExternalApp(@"..\..\Contribute_PlayViaLan\bin\Debug",
-                      "DoAn_EarlyAccess_PlayViaLan.exe",
+                      "GameCaro_PlayViaLan.exe",
                       currentUser);
         }
 
         private void OpenPlayToBot()
         {
             LaunchExternalApp(@"..\..\Contribute_PlayToBot\bin\Debug",
-                  "DoAn_EarlyAccess_PlayToBot.exe",
+                  "GameCaro_PlayToBot.exe",
                   currentUser);
         }
 
         private void OpenSettingInforPlayer()
         {
             LaunchExternalApp(@"..\..\Contribute_SettingInforPlayer\bin\Debug",
-                  "DoAn_EarlyAccess_SettingInforPlayer.exe",
+                  "GameCaro_SettingInforPlayer.exe",
                   currentUser);
         }
 

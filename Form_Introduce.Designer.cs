@@ -124,7 +124,7 @@ namespace DoAnMonHocNT106
             this.label5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label5.Location = new System.Drawing.Point(28, 516);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(525, 125);
+            this.label5.Size = new System.Drawing.Size(420, 100);
             this.label5.TabIndex = 8;
             this.label5.Text = "Và cuối cùng xin chân thành cảm ơn tới những \r\nngười hâm mộ đã đóng góp ý kiến và" +
     " công sức \r\nđể chúng tôi có thể hoàn thiện hơn được game \r\nnày.";
@@ -198,7 +198,7 @@ namespace DoAnMonHocNT106
             this.MaximizeBox = false;
             this.Name = "Form_Introduce";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Ư";
+            this.Text = "Giới thiệu";
             this.Load += new System.EventHandler(this.Form_Introduce_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxImage)).EndInit();
             this.ResumeLayout(false);
