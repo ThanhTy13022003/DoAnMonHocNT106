@@ -11,42 +11,28 @@ namespace DoAnMonHocNT106
 {
     public partial class Form1 : Form
     {
-        private string tênUser;
+        private string tenUser;
         private readonly string currentUser;
 
-
-        // Constructor chính: nhận loginIdentifier (có thể là email hoặc username)
         public Form1(string loginIdentifier)
         {
             InitializeComponent();
             currentUser = UserIdentifier.ExtractUsername(loginIdentifier);
-
             InitializeUser(loginIdentifier);
             InitializeMenu();
         }
 
-        // Overload không tham số: tự động lấy UserId từ Settings
-        public Form1()
-            : this(Properties.Settings.Default.UserId)
-        {
-            // Không cần body nữa
-        }
+        public Form1() : this(Properties.Settings.Default.UserId) { }
 
-        // Tách ra hàm khởi tạo chung cho phần user/Music/Firebase
         private void InitializeUser(string loginIdentifier)
         {
-            // 1) Xác định username
-            tênUser = Properties.Settings.Default.UserId;
+            tenUser = Properties.Settings.Default.UserId;
+            FirebaseHelper.CurrentUsername = tenUser;
 
-            // 2) Lưu vào FirebaseHelper
-            FirebaseHelper.CurrentUsername = tênUser;
-
-            // 3) Bắt đầu nhạc nền nếu chưa chạy
             if (!MusicPlayer.IsMusicPlaying())
                 MusicPlayer.StartBackgroundMusic();
         }
 
-        // Tách ra hàm khởi tạo chung cho phần menu Early Access
         private void InitializeMenu()
         {
             earlyAccessMenu = new ContextMenuStrip();
@@ -56,34 +42,14 @@ namespace DoAnMonHocNT106
             button5.ContextMenuStrip = earlyAccessMenu;
         }
 
+        private void OpenPlayViaLan() => LaunchExternalApp(@"..\..\EarlyAccess_PlayViaLan\bin\Debug", "DoAn_EarlyAccess_PlayViaLan.exe", currentUser);
+        private void OpenPlayToBot() => LaunchExternalApp(@"..\..\EarlyAccess_PlayToBot\bin\Debug", "DoAn_EarlyAccess_PlayToBot.exe", currentUser);
+        private void OpenSettingInforPlayer() => LaunchExternalApp(@"..\..\EarlyAccess_SettingInforPlayer\bin\Debug", "DoAn_EarlyAccess_SettingInforPlayer.exe", currentUser);
 
-        private void OpenPlayViaLan()
-        {
-            LaunchExternalApp(@"..\..\EarlyAccess_PlayViaLan\bin\Debug",
-                      "DoAn_EarlyAccess_PlayViaLan.exe",
-                      currentUser);
-        }
-
-        private void OpenPlayToBot()
-        {
-            LaunchExternalApp(@"..\..\EarlyAccess_PlayToBot\bin\Debug",
-                  "DoAn_EarlyAccess_PlayToBot.exe",
-                  currentUser);
-        }
-
-        private void OpenSettingInforPlayer()
-        {
-            LaunchExternalApp(@"..\..\EarlyAccess_SettingInforPlayer\bin\Debug",
-                  "DoAn_EarlyAccess_SettingInforPlayer.exe",
-                  currentUser);
-        }
-
-        // Hàm tiện ích
         private void LaunchExternalApp(string relativeFolder, string exeName, string args)
         {
-            // Tính đường dẫn tuyệt đối đến exe
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            string exePath = Path.GetFullPath(Path.Combine(baseDir, relativeFolder, exeName));
+            string exePath = Path.Combine(baseDir, relativeFolder, exeName);
 
             if (!File.Exists(exePath))
             {
@@ -91,17 +57,15 @@ namespace DoAnMonHocNT106
                 return;
             }
 
-            var psi = new ProcessStartInfo
-            {
-                FileName = exePath,
-                Arguments = args,              // truyền username
-                UseShellExecute = false,       // hoặc true nếu không cần redirect I/O
-                WorkingDirectory = Path.GetDirectoryName(exePath)
-            };
-
             try
             {
-                Process.Start(psi);
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = exePath,
+                    Arguments = args,
+                    UseShellExecute = false,
+                    WorkingDirectory = Path.GetDirectoryName(exePath)
+                });
             }
             catch (Exception ex)
             {
@@ -112,11 +76,8 @@ namespace DoAnMonHocNT106
         private void button1_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            FormLobby lobby = new FormLobby(currentUser);
-            lobby.FormClosed += (s, args) =>
-            {
-                this.Show();  // Khi FormLobby đóng thì hiện lại Form1
-            };
+            var lobby = new FormLobby(currentUser);
+            lobby.FormClosed += (s, args) => this.Show();
             lobby.Show();
             this.Hide();
         }
@@ -124,85 +85,79 @@ namespace DoAnMonHocNT106
         private void button2_Click_1(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            FormPvE Form = new FormPvE(currentUser); // Truyền tên người dùng vào PvE
-            Form.Show();
+            var formPvE = new FormPvE(currentUser);
+            formPvE.Show();
             this.Hide();
         }
 
         private async void button4_Click_1(object sender, EventArgs e)
         {
-
-            // Phát âm thanh click như cũ
             MusicPlayer.PlayClickSound();
 
-            // Hiện hộp thoại xác nhận
             var result = MessageBox.Show(
-                "Bạn có muốn thoát hoàn toàn ứng dụng không?\n" +
-                "Chọn Yes để thoát hoàn toàn, No để quay lại màn hình Sign In.",
+                "Bạn có muốn thoát hoàn toàn ứng dụng không?\nChọn Yes để thoát hoàn toàn, No để quay lại màn hình Sign In.",
                 "Xác nhận",
                 MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
+                MessageBoxIcon.Question);
+
+            await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
 
             if (result == DialogResult.Yes)
-            {                
-                await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
-                // Thoát ứng dụng hoàn toàn
+            {
                 Application.Exit();
             }
-            else if (result == DialogResult.No)
+            else
             {
-                await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
-                // Dừng nhạc nền (nếu cần) và chuyển về form Login
                 MusicPlayer.StopBackgroundMusic();
                 var loginForm = new Login();
                 loginForm.Show();
                 this.Hide();
-                _ = FirebaseHelper.SetUserOnlineStatus(currentUser, false);
             }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            earlyAccessMenu.Show(button5, new System.Drawing.Point(0, button5.Height)); // Hiển thị menu ngay dưới nút
+            earlyAccessMenu.Show(button5, new System.Drawing.Point(0, button5.Height));
         }
 
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Chỉ bắt khi người dùng nhấn nút X (UserClosing)
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 var result = MessageBox.Show(
                     "Bạn chắc chắn có muốn thoát game chứ?",
                     "Xác nhận thoát",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-
-                );
+                    MessageBoxIcon.Question);
 
                 if (result == DialogResult.No)
                 {
-                    e.Cancel = true; // Hủy đóng form
+                    e.Cancel = true;
                     return;
                 }
             }
 
-            await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+            await HandleExitAsync();
+        }
 
-            // Nếu người dùng xác nhận Yes, thì tiếp tục thực hiện cleanup như trước
-            Console.WriteLine("Đang đóng Form1.");
+        protected override async void OnFormClosed(FormClosedEventArgs e)
+        {
+            base.OnFormClosed(e);
+            await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+            this.Dispose();
+        }
+
+        private async Task HandleExitAsync()
+        {
             try
             {
-                // 1. Dừng thread giám sát nền
+                await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
                 BackgroundAppCloser.StopBackgroundMonitor();
-
-                // 2. Dừng nhạc và giải phóng tài nguyên
                 MusicPlayer.StopBackgroundMusic();
-                await Task.Delay(500); // Chờ 0.5s
+                await Task.Delay(500);
                 MusicPlayer.DisposeAll();
 
-                // 3. Đóng tất cả form con
                 foreach (Form form in Application.OpenForms.Cast<Form>().ToList())
                 {
                     if (form != this)
@@ -212,51 +167,28 @@ namespace DoAnMonHocNT106
                     }
                 }
 
-                // 4. Giải phóng Firebase
                 FirebaseApp.DefaultInstance?.Delete();
 
-                _ = FirebaseHelper.SetUserOnlineStatus(currentUser, false);
-
-                // 5. Thoát ứng dụng hoàn toàn
                 Application.Exit();
                 Environment.Exit(0);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Lỗi khi thoát ứng dụng: {ex.Message}",
-                    "Lỗi",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show($"Lỗi khi thoát ứng dụng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(1);
             }
-        }
-
-
-        protected override void OnFormClosed(FormClosedEventArgs e)
-{
-            base.OnFormClosed(e);
-            // Dù là UserClosing hay ApplicationExit, vẫn set offline
-            FirebaseHelper.SetUserOnlineStatus(currentUser, false).Wait();
-            this.Dispose(); // Giải phóng tài nguyên form
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            FormSetting settingForm = new FormSetting(currentUser);
+            var settingForm = new FormSetting(currentUser);
             settingForm.ShowDialog();
         }
     }
 
     public static class UserIdentifier
     {
-        /// <summary>
-        /// Kiểm tra xem input có phải email hợp lệ không.
-        /// Nếu đúng, trả về phần username (trước @).
-        /// Nếu không, trả luôn input dưới dạng username.
-        /// </summary>
         public static string ExtractUsername(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -264,19 +196,13 @@ namespace DoAnMonHocNT106
 
             try
             {
-                // Nếu parse thành công => input là email hợp lệ
                 var addr = new MailAddress(input);
-                string localPart = addr.User;    // phần trước '@'
-                return string.IsNullOrWhiteSpace(localPart)
-                    ? input                   // phòng khi user là rỗng
-                    : localPart;
+                return string.IsNullOrWhiteSpace(addr.User) ? input : addr.User;
             }
-            catch (FormatException)
+            catch
             {
-                // Không phải email, coi input là username
                 return input;
             }
         }
     }
-
 }
