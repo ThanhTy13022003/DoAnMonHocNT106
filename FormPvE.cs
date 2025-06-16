@@ -307,7 +307,7 @@ namespace DoAnMonHocNT106
             InitializeBoard();
         }
 
-        private void FormPvE_FormClosing(object sender, FormClosingEventArgs e)
+        private async void FormPvE_FormClosing(object sender, FormClosingEventArgs e)
         {
             // Nếu đây là do bấm X (UserClosing) và chưa bấm button1
             if (e.CloseReason == CloseReason.UserClosing && !exitByButton)
@@ -316,6 +316,9 @@ namespace DoAnMonHocNT106
                 btnBack.PerformClick();    // Giả lập bấm nút Thoát
             }
             // Ngược lại, để form đóng bình thường
+
+            await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+
         }
 
     }

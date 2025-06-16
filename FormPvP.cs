@@ -284,10 +284,13 @@ namespace DoAnMonHocNT106
             this.Close();
         }
 
-        private void FormPvP_FormClosing(object sender, FormClosingEventArgs e)
+        private async void FormPvP_FormClosing(object sender, FormClosingEventArgs e)
         {
             gameOver = true;
             StopCountdown();
+
+            // nếu không quay về lobby, đánh dấu offline
+            await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
         }
     }
 }

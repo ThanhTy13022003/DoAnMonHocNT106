@@ -20,6 +20,8 @@ namespace DoAnMonHocNT106
             currentUser = UserIdentifier.ExtractUsername(loginIdentifier);
             InitializeUser(loginIdentifier);
             InitializeMenu();
+            // mở tự động file DoAn_Followonline.exe khi khởi động Form1
+            Open_DoAn_Followonline();
         }
 
         public Form1() : this(Properties.Settings.Default.UserId) { }
@@ -46,7 +48,11 @@ namespace DoAnMonHocNT106
         private void OpenPlayToBot() => LaunchExternalApp(@"..\..\EarlyAccess_PlayToBot\bin\Debug", "DoAn_EarlyAccess_PlayToBot.exe", currentUser);
         private void OpenSettingInforPlayer() => LaunchExternalApp(@"..\..\EarlyAccess_SettingInforPlayer\bin\Debug", "DoAn_EarlyAccess_SettingInforPlayer.exe", currentUser);
 
-        private void LaunchExternalApp(string relativeFolder, string exeName, string args)
+        // truyền vào tên ứng dụng DoAn_Followonline.exe và tên người dùng hiện tại, còn id pid sẽ được lấy tự động
+        private void Open_DoAn_Followonline() => LaunchExternalApp(@"..\..\Followonline\bin\Debug", "DoAn_Followonline.exe", currentUser);
+
+        // Mở ứng dụng bên ngoài với đường dẫn tương đối và tên file
+        private void LaunchExternalApp(string relativeFolder, string exeName, string userArg)
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
             string exePath = Path.Combine(baseDir, relativeFolder, exeName);
@@ -57,12 +63,17 @@ namespace DoAnMonHocNT106
                 return;
             }
 
+            // Lấy PID của tiến trình hiện tại
+            int pid = GetCurrentProcessId();
+            // Kết hợp username và PID thành chuỗi arguments
+            string combinedArgs = $"{userArg} {pid}";
+
             try
             {
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = exePath,
-                    Arguments = args,
+                    Arguments = combinedArgs,
                     UseShellExecute = false,
                     WorkingDirectory = Path.GetDirectoryName(exePath)
                 });
@@ -71,6 +82,12 @@ namespace DoAnMonHocNT106
             {
                 MessageBox.Show($"Không thể mở ứng dụng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+
+        public static int GetCurrentProcessId()
+        {
+            return Process.GetCurrentProcess().Id;
         }
 
         private void button1_Click(object sender, EventArgs e)
