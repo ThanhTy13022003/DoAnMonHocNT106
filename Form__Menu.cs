@@ -112,7 +112,7 @@ namespace DoAnMonHocNT106
         private void button1_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            FormLobby lobby = new FormLobby(tênUser);
+            FormLobby lobby = new FormLobby(currentUser);
             lobby.FormClosed += (s, args) =>
             {
                 this.Show();  // Khi FormLobby đóng thì hiện lại Form1
@@ -124,7 +124,7 @@ namespace DoAnMonHocNT106
         private void button2_Click_1(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            FormPvE Form = new FormPvE(tênUser); // Truyền tên người dùng vào PvE
+            FormPvE Form = new FormPvE(currentUser); // Truyền tên người dùng vào PvE
             Form.Show();
             this.Hide();
         }
@@ -236,16 +236,16 @@ namespace DoAnMonHocNT106
 
         protected override void OnFormClosed(FormClosedEventArgs e)
 {
-            _ = FirebaseHelper.SetUserOnlineStatus(currentUser, false);
-
             base.OnFormClosed(e);
-    this.Dispose(); // Giải phóng tài nguyên form
+            // Dù là UserClosing hay ApplicationExit, vẫn set offline
+            FirebaseHelper.SetUserOnlineStatus(currentUser, false).Wait();
+            this.Dispose(); // Giải phóng tài nguyên form
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            FormSetting settingForm = new FormSetting();
+            FormSetting settingForm = new FormSetting(currentUser);
             settingForm.ShowDialog();
         }
     }

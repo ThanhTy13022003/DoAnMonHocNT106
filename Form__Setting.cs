@@ -5,11 +5,15 @@ namespace DoAnMonHocNT106
 {
     public partial class FormSetting : Form
     {
-        public FormSetting()
+        // thêm biến current user và được l
+        private readonly string currentUser;
+
+        public FormSetting(string currentUser)
         {
             InitializeComponent();
             this.KeyPreview = true; // Cho phép form nhận sự kiện phím trước các control
             this.KeyDown += FormSetting_KeyDown; // Gắn sự kiện KeyDown
+            this.currentUser = currentUser;
         }
 
         private void FormSetting_Load(object sender, EventArgs e)
@@ -19,6 +23,7 @@ namespace DoAnMonHocNT106
             trackBarMusicVolume.Value = Math.Min((int)(MusicPlayer.GetVolume() * 70), 70);
             trackBarSoundVolume.Value = Math.Min((int)(MusicPlayer.GetSoundVolume() * 70), 70);
             // Đảm bảo nút Introducing được hiển thị
+
         }
 
         private void FormSetting_KeyDown(object sender, KeyEventArgs e)
@@ -48,7 +53,7 @@ namespace DoAnMonHocNT106
         private void btnPlayerInfo_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            Form_PlayerInfo playerInfoForm = new Form_PlayerInfo(FirebaseHelper.CurrentUsername);
+            Form_PlayerInfo playerInfoForm = new Form_PlayerInfo(currentUser);
             playerInfoForm.ShowDialog();
         }
 

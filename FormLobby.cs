@@ -36,29 +36,35 @@ namespace DoAnMonHocNT106
         private async Task LoadUsers()
         {
             var users = await FirebaseHelper.GetAllUsers();
+            Font fontStyle;
 
             var existingItems = lstUsers.Items.Cast<ListViewItem>()
                                     .ToDictionary(item => item.Text, item => item);
 
             foreach (var user in users)
             {
-                if (user.Username == currentUser) continue;
+                string displayName = user.Username == currentUser
+                    ? $"{user.Username} (You)"
+                    : user.Username;
 
                 if (existingItems.ContainsKey(user.Username))
                 {
+                    // Cập nhật trạng thái như trước, chỉ thêm đánh dấu You
                     var item = existingItems[user.Username];
-                    string newStatus = user.IsOnline ? "Online" : "Offline";
-                    if (item.SubItems[1].Text != newStatus)
-                    {
-                        item.SubItems[1].Text = newStatus;
-                        item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
-                    }
+                    item.Text = displayName;
+                    item.SubItems[1].Text = user.IsOnline ? "Online" : "Offline";
+                    item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
                 }
                 else
                 {
-                    var item = new ListViewItem(user.Username);
+                    // Tạo mới với đánh dấu You nếu đúng
+                    var item = new ListViewItem(displayName);
                     item.SubItems.Add(user.IsOnline ? "Online" : "Offline");
                     item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
+                    fontStyle = user.Username == currentUser
+                        ? new Font(lstUsers.Font, FontStyle.Bold)
+                        : lstUsers.Font;
+                    item.Font = fontStyle;
                     lstUsers.Items.Add(item);
                 }
             }
@@ -230,6 +236,11 @@ namespace DoAnMonHocNT106
 
                     var formPvp = new FormPvP(currentUser, targetUser, roomId);
                     formPvp.Show();
+                }
+                if (selectedUser.Text.Contains("(You)"))
+                {
+                    MessageBox.Show("Đây chính là bạn!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
                 }
                 else
                 {
