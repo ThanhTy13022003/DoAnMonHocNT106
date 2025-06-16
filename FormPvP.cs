@@ -35,78 +35,6 @@ namespace DoAnMonHocNT106
             this.firebase = new FirebaseClient("https://nt106-7c9fe-default-rtdb.firebaseio.com/");
             InitializeBoard();
             this.FormClosing += FormPvP_FormClosing;
-            ListenToChat();
-        }
-
-        private void ListenToChat()
-        {
-            var chatRef = firebase
-                .Child("Rooms")
-                .Child(roomId)
-                .Child("Chat");
-
-            chatRef
-                .AsObservable<ChatMessage>()
-                // Chỉ cần kiểm tra InsertOrUpdate
-                .Where(ev => ev.EventType == FirebaseEventType.InsertOrUpdate)
-                .Subscribe(ev =>
-                {
-                    if (ev.Object != null && ev.Key != null && !processedKeys.Contains(ev.Key))
-                    {
-                        processedKeys.Add(ev.Key);
-                        this.Invoke((MethodInvoker)(() =>
-                        {
-                            var msg = ev.Object;
-                            var text = $"{msg.FromUser}: {msg.Message}";
-                            lstChat.Items.Add(text);
-                            lstChat.EnsureVisible(lstChat.Items.Count - 1);
-                        }));
-                    }
-                });
-        }
-
-
-        private async void btnSendChat_Click(object sender, EventArgs e)
-        {
-            var text = txtChat.Text.Trim();
-            if (string.IsNullOrEmpty(text)) return;
-
-            var chatMsg = new ChatMessage
-            {
-                Id = Guid.NewGuid().ToString(), // Thêm ID duy nhất
-                FromUser = currentUser,
-                ToUser = opponentUser,
-                Message = text,
-                Time = DateTime.UtcNow
-            };
-
-            await firebase.Child("Rooms")
-                .Child(roomId)
-                .Child("Chat")
-                .Child(chatMsg.Id) // Sử dụng ID làm key
-                .PutAsync(chatMsg);
-
-            txtChat.Clear();
-        }
-
-        private async Task LoadChatMessages()
-        {
-            // Lấy toàn bộ chat sorted theo thời gian
-            var msgs = await firebase
-                .Child("Rooms")
-                .Child(roomId)
-                .Child("Chat")
-                .OrderBy("Time")
-                .OnceAsync<ChatMessage>();
-
-            foreach (var m in msgs)
-            {
-                string text = $"{m.Object.FromUser}: {m.Object.Message}";
-                lstChat.Items.Add(text);
-            }
-
-            if (lstChat.Items.Count > 0)
-                lstChat.EnsureVisible(lstChat.Items.Count - 1);
         }
 
         private void InitializeBoard()
@@ -159,10 +87,11 @@ namespace DoAnMonHocNT106
             ListenToMoves();
         }
 
-        private async Task InitializeGameAsync()
+        private Task InitializeGameAsync()
         {
-            await LoadChatMessages();
+            //await LoadChatMessages();
             ListenToMoves();
+            return Task.CompletedTask;
         }
 
         private void InitializeTimer()

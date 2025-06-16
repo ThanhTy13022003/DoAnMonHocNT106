@@ -9,9 +9,6 @@
         private System.Windows.Forms.Label lblYou;
         private System.Windows.Forms.Label lblOpponent;
         private System.Windows.Forms.Label lblCountdown;
-        private System.Windows.Forms.ListView lstChat;
-        private System.Windows.Forms.TextBox txtChat;
-        private System.Windows.Forms.Button btnSendChat;
 
 
         protected override void Dispose(bool disposing)
@@ -24,9 +21,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPvP));
-            this.lstChat = new System.Windows.Forms.ListView();
-            this.txtChat = new System.Windows.Forms.TextBox();
-            this.btnSendChat = new System.Windows.Forms.Button();
             this.panelBoard = new System.Windows.Forms.Panel();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnRestart = new System.Windows.Forms.Button();
@@ -34,34 +28,6 @@
             this.lblOpponent = new System.Windows.Forms.Label();
             this.lblCountdown = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // lstChat
-            // 
-            this.lstChat.HideSelection = false;
-            this.lstChat.Location = new System.Drawing.Point(540, 273);
-            this.lstChat.Name = "lstChat";
-            this.lstChat.Size = new System.Drawing.Size(189, 300);
-            this.lstChat.TabIndex = 6;
-            this.lstChat.UseCompatibleStateImageBehavior = false;
-            this.lstChat.View = System.Windows.Forms.View.List;
-            this.lstChat.SelectedIndexChanged += new System.EventHandler(this.lstChat_SelectedIndexChanged);
-            // 
-            // txtChat
-            // 
-            this.txtChat.Location = new System.Drawing.Point(540, 579);
-            this.txtChat.Name = "txtChat";
-            this.txtChat.Size = new System.Drawing.Size(143, 22);
-            this.txtChat.TabIndex = 7;
-            // 
-            // btnSendChat
-            // 
-            this.btnSendChat.Location = new System.Drawing.Point(689, 576);
-            this.btnSendChat.Name = "btnSendChat";
-            this.btnSendChat.Size = new System.Drawing.Size(40, 25);
-            this.btnSendChat.TabIndex = 8;
-            this.btnSendChat.Text = "Gửi";
-            this.btnSendChat.UseVisualStyleBackColor = true;
-            this.btnSendChat.Click += new System.EventHandler(this.btnSendChat_Click);
             // 
             // panelBoard
             // 
@@ -138,10 +104,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(15)))), ((int)(((byte)(15)))));
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.pngtree_retro_futuristic_gaming_desk_scene_image_16555312;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(754, 650);
-            this.Controls.Add(this.lstChat);
-            this.Controls.Add(this.txtChat);
-            this.Controls.Add(this.btnSendChat);
+            this.ClientSize = new System.Drawing.Size(699, 650);
             this.Controls.Add(this.lblCountdown);
             this.Controls.Add(this.lblOpponent);
             this.Controls.Add(this.lblYou);
