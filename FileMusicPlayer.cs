@@ -67,14 +67,14 @@ namespace DoAnMonHocNT106
 
         private static void LoadPlaylist()
         {
-            string musicDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\Resources", "Music");
+            // Thư mục Music nằm trong Resources của project (đi lên 2 cấp rồi vào Resources/Music)
+            string musicDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Resources", "Music"));
             if (!Directory.Exists(musicDir))
             {
                 MessageBox.Show($"Thư mục nhạc không tồn tại: {musicDir}");
                 return;
             }
 
-            // Lấy tất cả file .mp3 trong thư mục
             var mp3Files = Directory.GetFiles(musicDir, "*.mp3").ToList();
             if (mp3Files.Count == 0)
             {
@@ -193,7 +193,7 @@ namespace DoAnMonHocNT106
             if (!isSoundEnabled) return;
             try
             {
-                string soundDir = @"C:\Users\s3cr3t\source\repos\DoAnMonHocNT106\Resources\Music";
+                string soundDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Resources", "Music"));
                 string soundFile = Path.Combine(soundDir, "click-button-140881.wav");
 
                 if (File.Exists(soundFile))

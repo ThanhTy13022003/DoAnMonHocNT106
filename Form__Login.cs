@@ -103,55 +103,72 @@ namespace DoAnMonHocNT106
 
         private async void signin_Click(object sender, EventArgs e)
         {
+            // 1) Disable nút để chặn click chồng
+            signin.Enabled = false;
+
+            // 2) Phát âm thanh click
             MusicPlayer.PlayClickSound();
-
-            string input = username.Text.Trim();
-            string passwordInput = password.Text.Trim();
-
-            // Xác định email từ username hoặc email trực tiếp
-            string email = IsValidEmail(input)
-                ? input
-                : await FirebaseHelper.GetEmailByUsername(input);
-
-            if (email == null)
-            {
-                MessageBox.Show("Tài khoản không tồn tại hoặc sai định dạng!");
-                return;
-            }
 
             try
             {
-                // 1) Lấy thông tin user từ Realtime DB
+                // 3) Lấy input và trim
+                string input = username.Text.Trim();
+                string passwordInput = password.Text.Trim();
+
+                // 4) Xác định email từ username hoặc email trực tiếp
+                string email = IsValidEmail(input)
+                    ? input
+                    : await FirebaseHelper.GetEmailByUsername(input);
+
+                if (email == null)
+                {
+                    MessageBox.Show("Tài khoản không tồn tại hoặc sai định dạng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // 5) Lấy info user và kiểm tra xem đã online chưa
                 var user = await FirebaseHelper.GetUserByUsername(input);
+                if (user == null)
+                {
+                    MessageBox.Show("Không tìm thấy thông tin người dùng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 if (user.IsOnline)
                 {
                     MessageBox.Show("Tài khoản đang được đăng nhập ở nơi khác!", "Đã online", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // 2) Xác thực email/password với FirebaseAuth
+                // 6) Xác thực với FirebaseAuth
                 var authResult = await auth.SignInWithEmailAndPasswordAsync(email, passwordInput);
 
-                // 3) Đánh dấu user là online và cập nhật LastOnline
+                // 7) Đánh dấu online và cập nhật LastOnline
                 await FirebaseHelper.SetUserOnlineStatus(user.Username, true);
 
-                // 4) Lưu CurrentUsername để các form khác dùng chung
+                // 8) Lưu username hiện tại
                 FirebaseHelper.CurrentUsername = user.Username;
 
-                // 5) Chuyển sang form chính (ví dụ Form1) và ẩn Login
+                // 9) Mở form chính và ẩn Login
                 var mainForm = new Form1(user.Username);
                 mainForm.Show();
                 this.Hide();
             }
             catch (FirebaseAuthException ex)
             {
-                MessageBox.Show("Đăng nhập thất bại: " + ex.Message);
+                MessageBox.Show("Đăng nhập thất bại: " + ex.Message, "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
+                MessageBox.Show("Có lỗi xảy ra: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // 10) Nếu Login form vẫn hiện (nghĩa là login không thành công), re-enable nút
+                if (this.Visible)
+                    signin.Enabled = true;
             }
         }
+
 
 
         private bool IsValidEmail(string email)
