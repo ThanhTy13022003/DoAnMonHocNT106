@@ -7,8 +7,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DoAnMonHocNT106;   // nếu ChatMessage nằm trong namespace này
-using Firebase.Database.Streaming;
+using DoAnMonHocNT106;
 
 namespace DoAnMonHocNT106
 {
@@ -25,6 +24,7 @@ namespace DoAnMonHocNT106
 
         private Timer countdownTimer;
         private int countdown = 20;
+        private bool isReturningToLobby = false; // Biến để kiểm tra nếu người chơi muốn quay lại phòng chờ
 
         public FormPvP(string currentUser, string opponentUser, string roomId)
         {
@@ -32,7 +32,18 @@ namespace DoAnMonHocNT106
             this.currentUser = currentUser;
             this.opponentUser = opponentUser;
             this.roomId = roomId;
-            this.firebase = new FirebaseClient("https://nt106-7c9fe-default-rtdb.firebaseio.com/");
+
+            try
+            {
+                this.firebase = new FirebaseClient("https://nt106-7c9fe-default-rtdb.firebaseio.com/");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi kết nối Firebase: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
+                return;
+            }
+
             InitializeBoard();
             this.FormClosing += FormPvP_FormClosing;
         }
@@ -62,8 +73,10 @@ namespace DoAnMonHocNT106
             }
         }
 
-        private void FormPvP_Load(object sender, EventArgs e)
+        private async void FormPvP_Load(object sender, EventArgs e)
         {
+            await FirebaseHelper.SetUserOnlineStatus(currentUser, true);
+
             if (string.Compare(currentUser, opponentUser) < 0)
             {
                 mySymbol = "X";
@@ -83,15 +96,15 @@ namespace DoAnMonHocNT106
             InitializeTimer();
             if (isMyTurn) StartCountdown();
 
+            await Task.Delay(1000);
             _ = InitializeGameAsync();
-            ListenToMoves();
         }
 
-        private Task InitializeGameAsync()
+        private async Task InitializeGameAsync()
         {
-            //await LoadChatMessages();
             ListenToMoves();
-            return Task.CompletedTask;
+            ListenToOpponentStatus();
+            await Task.CompletedTask;
         }
 
         private void InitializeTimer()
@@ -129,43 +142,6 @@ namespace DoAnMonHocNT106
             }
         }
 
-        private void ListenToMoves()
-        {
-            firebase.Child("Rooms").Child(roomId).Child("Moves")
-                .AsObservable<Move>()
-                .Subscribe(ev =>
-                {
-                    if (ev.Object != null && !processedKeys.Contains(ev.Key))
-                    {
-                        processedKeys.Add(ev.Key);
-                        var move = ev.Object;
-
-                        this.Invoke(new MethodInvoker(() =>
-                        {
-                            Button btn = board[move.row, move.col];
-                            btn.Text = move.symbol;
-                            btn.ForeColor = move.symbol == "X" ? Color.Blue : Color.Red;
-
-                            if (move.user != currentUser)
-                            {
-                                isMyTurn = true;
-                                StartCountdown();
-                            }
-
-                            if (CheckWin(move.row, move.col, move.symbol))
-                            {
-                                gameOver = true;
-                                StopCountdown();
-                                HighlightWinningLine(move.row, move.col, move.symbol);
-                                string result = move.user == currentUser ? "Win" : "Lose";
-                                FirebaseHelper.SavePvPGameResult(roomId, currentUser, opponentUser, result);
-                                MessageBox.Show($"{move.user} thắng!");
-                            }
-                        }));
-                    }
-                });
-        }
-
         private async void PlayerMove(object sender, EventArgs e)
         {
             if (gameOver || !isMyTurn) return;
@@ -175,33 +151,110 @@ namespace DoAnMonHocNT106
 
             Point point = (Point)btn.Tag;
 
-            btn.Text = mySymbol;
-            btn.ForeColor = mySymbol == "X" ? Color.Blue : Color.Red;
-
-            StopCountdown();
-
-            var move = new Move
+            try
             {
-                row = point.X,
-                col = point.Y,
-                user = currentUser,
-                symbol = mySymbol,
-                timestamp = DateTime.UtcNow.ToString("o")
-            };
+                btn.Text = mySymbol;
+                btn.ForeColor = mySymbol == "X" ? Color.Blue : Color.Red;
 
-            await firebase.Child("Rooms").Child(roomId).Child("Moves").PostAsync(move);
+                StopCountdown();
 
-            if (CheckWin(point.X, point.Y, mySymbol))
-            {
-                gameOver = true;
-                HighlightWinningLine(point.X, point.Y, mySymbol);
-                await FirebaseHelper.SavePvPGameResult(roomId, currentUser, opponentUser, "Win");
-                MessageBox.Show("Bạn thắng!");
+                var move = new Move
+                {
+                    row = point.X,
+                    col = point.Y,
+                    user = currentUser,
+                    symbol = mySymbol,
+                    timestamp = DateTime.UtcNow.ToString("o")
+                };
+
+                await firebase.Child("Rooms").Child(roomId).Child("Moves").PostAsync(move);
+
+                if (CheckWin(point.X, point.Y, mySymbol))
+                {
+                    gameOver = true;
+                    HighlightWinningLine(point.X, point.Y, mySymbol);
+                    await FirebaseHelper.SavePvPGameResult(roomId, currentUser, opponentUser, "Win");
+                    MessageBox.Show("Bạn thắng!");
+                }
+                else if (CheckDraw())
+                {
+                    gameOver = true;
+                    await FirebaseHelper.SavePvPGameResult(roomId, currentUser, opponentUser, "Draw");
+                    MessageBox.Show("Trò chơi hòa!");
+                }
+                else
+                {
+                    isMyTurn = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                isMyTurn = false;
+                MessageBox.Show($"Lỗi khi thực hiện nước đi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void ListenToMoves()
+        {
+            firebase.Child("Rooms").Child(roomId).Child("Moves")
+                .AsObservable<Move>()
+                .Subscribe(ev =>
+                {
+                    if (gameOver || ev.Object == null || processedKeys.Contains(ev.Key)) return;
+
+                    processedKeys.Add(ev.Key);
+                    var move = ev.Object;
+
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        Button btn = board[move.row, move.col];
+                        btn.Text = move.symbol;
+                        btn.ForeColor = move.symbol == "X" ? Color.Blue : Color.Red;
+
+                        if (move.user != currentUser)
+                        {
+                            isMyTurn = true;
+                            StartCountdown();
+                        }
+
+                        if (CheckWin(move.row, move.col, move.symbol))
+                        {
+                            gameOver = true;
+                            StopCountdown();
+                            HighlightWinningLine(move.row, move.col, move.symbol);
+                            string result = move.user == currentUser ? "Win" : "Lose";
+                            FirebaseHelper.SavePvPGameResult(roomId, currentUser, opponentUser, result);
+                            MessageBox.Show($"{move.user} thắng!");
+                        }
+                        else if (CheckDraw())
+                        {
+                            gameOver = true;
+                            StopCountdown();
+                            FirebaseHelper.SavePvPGameResult(roomId, currentUser, opponentUser, "Draw");
+                            MessageBox.Show("Trò chơi hòa!");
+                        }
+                    }));
+                });
+        }
+
+        private void ListenToOpponentStatus()
+        {
+            firebase.Child("Users").Child(opponentUser).Child("online")
+                .AsObservable<bool>()
+                .Subscribe(status =>
+                {
+                    if (status.Object == null) return;
+
+                    if (!status.Object && !gameOver)
+                    {
+                        this.Invoke(new MethodInvoker(() =>
+                        {
+                            gameOver = true;
+                            StopCountdown();
+                            MessageBox.Show("Đối thủ đã thoát khỏi trò chơi!", "Thông báo");
+                            this.Close();
+                        }));
+                    }
+                });
         }
 
         private bool CheckWin(int x, int y, string symbol)
@@ -210,6 +263,14 @@ namespace DoAnMonHocNT106
                    CheckDirection(x, y, 0, 1, symbol) ||
                    CheckDirection(x, y, 1, 1, symbol) ||
                    CheckDirection(x, y, 1, -1, symbol);
+        }
+
+        private bool CheckDraw()
+        {
+            for (int i = 0; i < Rows; i++)
+                for (int j = 0; j < Cols; j++)
+                    if (board[i, j].Text == "") return false;
+            return true;
         }
 
         private bool CheckDirection(int x, int y, int dx, int dy, string symbol)
@@ -238,22 +299,15 @@ namespace DoAnMonHocNT106
             else if (CheckDirection(x, y, 1, -1, symbol)) HighlightDirection(x, y, 1, -1, symbol);
         }
 
-        private void lstChat_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void HighlightDirection(int x, int y, int dx, int dy, string symbol)
         {
             board[x, y].BackColor = Color.Orange;
-
             for (int i = 1; i < 5; i++)
             {
                 int nx = x + dx * i, ny = y + dy * i;
                 if (nx < 0 || ny < 0 || nx >= Rows || ny >= Cols || board[nx, ny].Text != symbol) break;
                 board[nx, ny].BackColor = Color.Orange;
             }
-
             for (int i = 1; i < 5; i++)
             {
                 int nx = x - dx * i, ny = y - dy * i;
@@ -271,15 +325,17 @@ namespace DoAnMonHocNT106
                 await firebase.Child("Rooms").Child(roomId).Child("Moves").DeleteAsync();
                 gameOver = false;
                 InitializeBoard();
-                processedKeys.Clear();
                 isMyTurn = mySymbol == "X";
-                if (isMyTurn) StartCountdown(); else StopCountdown();
+                if (isMyTurn) StartCountdown();
+                else StopCountdown();
             }
         }
+
         private void btnBack_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
             gameOver = true;
+            isReturningToLobby = true; 
             StopCountdown();
             this.Close();
         }
@@ -288,9 +344,10 @@ namespace DoAnMonHocNT106
         {
             gameOver = true;
             StopCountdown();
-
-            // nếu không quay về lobby, đánh dấu offline
-            await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+            if (!isReturningToLobby)
+            {
+                await FirebaseHelper.SetUserOnlineStatus(currentUser, false); // Chỉ offline nếu không quay về Lobby
+            }
         }
     }
 }

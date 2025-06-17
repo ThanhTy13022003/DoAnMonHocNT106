@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-
 namespace DoAnMonHocNT106
 {
     public partial class FormLobby : Form
@@ -16,6 +15,7 @@ namespace DoAnMonHocNT106
         private FirebaseClient firebase = new FirebaseClient("https://nt106-7c9fe-default-rtdb.firebaseio.com/");
         private HashSet<string> processedInviteKeys = new HashSet<string>();
         private HashSet<string> processedChatKeys = new HashSet<string>();
+        private const int MaxProcessedKeys = 1000; // Giới hạn số key để tránh rò rỉ bộ nhớ
 
         public FormLobby(string username)
         {
@@ -25,72 +25,87 @@ namespace DoAnMonHocNT106
 
         private async void FormLobby_Load(object sender, EventArgs e)
         {
-            await FirebaseHelper.SetUserOnlineStatus(currentUser, true);
-            await LoadUsers();
-            await LoadChatMessages();
-            LangNgheLoiMoi();
-            LangNgheNguoiDungThayDoi();
-            LangNgheChat();
+            try
+            {
+                await FirebaseHelper.SetUserOnlineStatus(currentUser, true);
+                await LoadUsers();
+                await LoadChatMessages();
+                LangNgheLoiMoi();
+                LangNgheNguoiDungThayDoi();
+                LangNgheChat();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải lobby: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async Task LoadUsers()
         {
-            var users = await FirebaseHelper.GetAllUsers();
-            Font fontStyle;
-
-            var existingItems = lstUsers.Items.Cast<ListViewItem>()
+            try
+            {
+                var users = await FirebaseHelper.GetAllUsers();
+                var existingItems = lstUsers.Items.Cast<ListViewItem>()
                                     .ToDictionary(item => item.Text, item => item);
 
-            foreach (var user in users)
-            {
-                string displayName = user.Username == currentUser
-                    ? $"{user.Username} (You)"
-                    : user.Username;
+                foreach (var user in users)
+                {
+                    string displayName = user.Username == currentUser
+                        ? $"{user.Username} (You)"
+                        : user.Username;
 
-                if (existingItems.ContainsKey(user.Username))
-                {
-                    // Cập nhật trạng thái như trước, chỉ thêm đánh dấu You
-                    var item = existingItems[user.Username];
-                    item.Text = displayName;
-                    item.SubItems[1].Text = user.IsOnline ? "Online" : "Offline";
-                    item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
+                    if (existingItems.ContainsKey(user.Username))
+                    {
+                        var item = existingItems[user.Username];
+                        item.Text = displayName;
+                        item.SubItems[1].Text = user.IsOnline ? "Online" : "Offline";
+                        item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
+                    }
+                    else
+                    {
+                        var item = new ListViewItem(displayName);
+                        item.SubItems.Add(user.IsOnline ? "Online" : "Offline");
+                        item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
+                        item.Font = user.Username == currentUser
+                            ? new Font(lstUsers.Font, FontStyle.Bold)
+                            : lstUsers.Font;
+                        lstUsers.Items.Add(item);
+                    }
                 }
-                else
+
+                foreach (var item in existingItems)
                 {
-                    // Tạo mới với đánh dấu You nếu đúng
-                    var item = new ListViewItem(displayName);
-                    item.SubItems.Add(user.IsOnline ? "Online" : "Offline");
-                    item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
-                    fontStyle = user.Username == currentUser
-                        ? new Font(lstUsers.Font, FontStyle.Bold)
-                        : lstUsers.Font;
-                    item.Font = fontStyle;
-                    lstUsers.Items.Add(item);
+                    if (!users.Any(u => u.Username == item.Key))
+                    {
+                        lstUsers.Items.Remove(item.Value);
+                    }
                 }
             }
-
-            // Xóa user không còn tồn tại
-            foreach (var item in existingItems)
+            catch (Exception ex)
             {
-                if (!users.Any(u => u.Username == item.Key))
-                {
-                    lstUsers.Items.Remove(item.Value);
-                }
+                MessageBox.Show($"Lỗi khi tải danh sách người dùng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private async Task LoadChatMessages()
         {
-            lstChat.Items.Clear();
-            var msgs = await FirebaseHelper.GetPublicChatMessages();
-            foreach (var msg in msgs)
+            try
             {
-                var item = new ListViewItem($"{msg.Time:T} - {msg.FromUser}: {msg.Message}");
-                item.ForeColor = msg.FromUser == currentUser ? Color.Blue : Color.Black;
-                lstChat.Items.Add(item);
+                lstChat.Items.Clear();
+                var msgs = await FirebaseHelper.GetPublicChatMessages();
+                foreach (var msg in msgs)
+                {
+                    var item = new ListViewItem($"{msg.Time:T} - {msg.FromUser}: {msg.Message}");
+                    item.ForeColor = msg.FromUser == currentUser ? Color.Blue : Color.Black;
+                    lstChat.Items.Add(item);
+                }
+                if (lstChat.Items.Count > 0)
+                    lstChat.EnsureVisible(lstChat.Items.Count - 1);
             }
-            if (lstChat.Items.Count > 0)
-                lstChat.EnsureVisible(lstChat.Items.Count - 1);
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải tin nhắn chat: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void LangNgheNguoiDungThayDoi()
@@ -99,15 +114,17 @@ namespace DoAnMonHocNT106
                 .AsObservable<User>()
                 .Subscribe(async ev =>
                 {
-                    if (ev.Object != null && !string.IsNullOrEmpty(ev.Key))
-                    {
-                        if (this.IsDisposed || !this.IsHandleCreated) return;
+                    if (ev.Object == null || string.IsNullOrEmpty(ev.Key)) return;
 
-                        await this.InvokeAsync(() =>
+                    if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                    await this.InvokeAsync(() =>
+                    {
+                        try
                         {
                             var existingItem = lstUsers.Items
                                 .Cast<ListViewItem>()
-                                .FirstOrDefault(item => item.Text == ev.Object.Username);
+                                .FirstOrDefault(item => item.Text == ev.Object.Username || item.Text == $"{ev.Object.Username} (You)");
 
                             if (existingItem != null)
                             {
@@ -125,8 +142,12 @@ namespace DoAnMonHocNT106
                                 item.ForeColor = ev.Object.IsOnline ? Color.Green : Color.Gray;
                                 lstUsers.Items.Add(item);
                             }
-                        });
-                    }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Lỗi khi cập nhật danh sách người dùng: {ex.Message}");
+                        }
+                    });
                 });
         }
 
@@ -136,13 +157,18 @@ namespace DoAnMonHocNT106
                 .AsObservable<ChatMessage>()
                 .Subscribe(async ev =>
                 {
-                    if (ev.Object != null && ev.Key != null && !processedChatKeys.Contains(ev.Key))
+                    if (ev.Object == null || ev.Key == null || processedChatKeys.Contains(ev.Key)) return;
+
+                    if (processedChatKeys.Count > MaxProcessedKeys)
+                        processedChatKeys.Clear(); // Làm sạch để tránh rò rỉ bộ nhớ
+
+                    processedChatKeys.Add(ev.Key);
+
+                    if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                    await this.InvokeAsync(() =>
                     {
-                        processedChatKeys.Add(ev.Key);
-
-                        if (this.IsDisposed || !this.IsHandleCreated) return;
-
-                        await this.InvokeAsync(() =>
+                        try
                         {
                             var msg = ev.Object;
                             var text = $"{msg.Time:T} - {msg.FromUser}: {msg.Message}";
@@ -156,8 +182,12 @@ namespace DoAnMonHocNT106
                                 lstChat.Items.Add(item);
                                 lstChat.EnsureVisible(lstChat.Items.Count - 1);
                             }
-                        });
-                    }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Lỗi khi cập nhật tin nhắn: {ex.Message}");
+                        }
+                    });
                 });
         }
 
@@ -167,38 +197,44 @@ namespace DoAnMonHocNT106
                 .AsObservable<Invite>()
                 .Subscribe(async ev =>
                 {
-                    if (ev.Object != null &&
-                        ev.Object.to == currentUser &&
-                        !processedInviteKeys.Contains(ev.Key))
+                    if (ev.Object == null || ev.Object.to != currentUser || processedInviteKeys.Contains(ev.Key)) return;
+
+                    if (DateTime.TryParse(ev.Object.timestamp, out DateTime inviteTime))
                     {
-                        if (DateTime.TryParse(ev.Object.timestamp, out DateTime inviteTime))
+                        var now = DateTime.UtcNow;
+                        if ((now - inviteTime).TotalSeconds > 30)
                         {
-                            var now = DateTime.UtcNow;
-                            if ((now - inviteTime).TotalSeconds <= 30)
-                            {
-                                processedInviteKeys.Add(ev.Key);
-
-                                if (this.IsDisposed || !this.IsHandleCreated) return;
-
-                                await this.InvokeAsync(async () =>
-                                {
-                                    var result = MessageBox.Show($"{ev.Object.from} mời bạn chơi PvP. Chấp nhận?",
-                                        "Lời mời chơi", MessageBoxButtons.YesNo);
-
-                                    await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
-
-                                    if (result == DialogResult.Yes)
-                                    {
-                                        var form = new FormPvP(currentUser, ev.Object.from, ev.Object.roomId);
-                                        form.Show();
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
-                            }
+                            await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
+                            return;
                         }
+
+                        if (processedInviteKeys.Count > MaxProcessedKeys)
+                            processedInviteKeys.Clear(); // Làm sạch để tránh rò rỉ bộ nhớ
+
+                        processedInviteKeys.Add(ev.Key);
+
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        await this.InvokeAsync(async () =>
+                        {
+                            try
+                            {
+                                var result = MessageBox.Show($"{ev.Object.from} mời bạn chơi PvP. Chấp nhận?",
+                                    "Lời mời chơi", MessageBoxButtons.YesNo);
+
+                                await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
+
+                                if (result == DialogResult.Yes)
+                                {
+                                    var form = new FormPvP(currentUser, ev.Object.from, ev.Object.roomId);
+                                    form.Show();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Lỗi khi xử lý lời mời: {ex.Message}");
+                            }
+                        });
                     }
                 });
         }
@@ -207,51 +243,74 @@ namespace DoAnMonHocNT106
         {
             MusicPlayer.PlayClickSound();
             string msg = txtMessage.Text.Trim();
-            if (!string.IsNullOrEmpty(msg))
+            if (string.IsNullOrEmpty(msg))
+            {
+                MessageBox.Show("Vui lòng nhập tin nhắn!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
             {
                 await FirebaseHelper.SendChatMessage(currentUser, msg);
                 txtMessage.Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi gửi tin nhắn: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private async void lstUsers_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (lstUsers.SelectedItems.Count > 0)
+            if (lstUsers.SelectedItems.Count == 0) return;
+
+            var selectedUser = lstUsers.SelectedItems[0];
+            string targetUser = selectedUser.Text.Replace(" (You)", "");
+
+            if (targetUser == currentUser)
             {
-                var selectedUser = lstUsers.SelectedItems[0];
-                if (selectedUser.SubItems[1].Text == "Online")
+                MessageBox.Show("Đây chính là bạn!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                var user = await FirebaseHelper.GetUserByUsername(targetUser);
+                if (user?.IsOnline != true)
                 {
-                    string targetUser = selectedUser.Text;
-                    string roomId = Guid.NewGuid().ToString();
-
-                    var invite = new Invite
-                    {
-                        from = currentUser,
-                        to = targetUser,
-                        roomId = roomId,
-                        timestamp = DateTime.UtcNow.ToString("o")
-                    };
-
-                    await firebase.Child("Invites").PostAsync(invite);
-
-                    var formPvp = new FormPvP(currentUser, targetUser, roomId);
-                    formPvp.Show();
-                }
-                if (selectedUser.Text.Contains("(You)"))
-                {
-                    MessageBox.Show("Đây chính là bạn!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Người chơi này hiện đang offline.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-                else
+
+                string roomId = Guid.NewGuid().ToString();
+                var invite = new Invite
                 {
-                    MessageBox.Show("Người chơi này hiện đang offline.");
-                }
+                    from = currentUser,
+                    to = targetUser,
+                    roomId = roomId,
+                    timestamp = DateTime.UtcNow.ToString("o")
+                };
+
+                await firebase.Child("Invites").PostAsync(invite);
+                var formPvp = new FormPvP(currentUser, targetUser, roomId);
+                formPvp.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi gửi lời mời: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private async void FormLobby_FormClosing(object sender, FormClosingEventArgs e)
         {
-            await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+            try
+            {
+                await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi cập nhật trạng thái offline: {ex.Message}");
+            }
         }
     }
 
