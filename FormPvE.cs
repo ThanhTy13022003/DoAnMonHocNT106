@@ -3,7 +3,7 @@ using System.Media;
 using System.Windows.Forms;
 using System;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using System.IO; // Thêm namespace này
+using System.IO; 
 
 
 namespace DoAnMonHocNT106
@@ -123,6 +123,13 @@ namespace DoAnMonHocNT106
                 MessageBox.Show($"{playerName} thắng!");
                 return;
             }
+            if (IsBoardFull())
+            {
+                gameOver = true;
+                await FirebaseHelper.SaveGameResult(playerName, "Draw");
+                MessageBox.Show("Hòa! Bàn cờ đã đầy.");
+                return;
+            }
 
             isPlayerTurn = false;
             BotMove();
@@ -143,6 +150,13 @@ namespace DoAnMonHocNT106
                 PlaySound("lose.wav");
                 await FirebaseHelper.SaveGameResult(playerName, "Lose");
                 MessageBox.Show("Bot thắng!");
+                return;
+            }
+            if (IsBoardFull())
+            {
+                gameOver = true;
+                await FirebaseHelper.SaveGameResult(playerName, "Draw");
+                MessageBox.Show("Hòa! Bàn cờ đã đầy.");
                 return;
             }
 
@@ -218,6 +232,15 @@ namespace DoAnMonHocNT106
                    CheckDirection(x, y, 1, 1, player) ||
                    CheckDirection(x, y, 1, -1, player);
         }
+        private bool IsBoardFull()
+        {
+            for (int i = 0; i < Rows; i++)
+                for (int j = 0; j < Cols; j++)
+                    if (string.IsNullOrEmpty(board[i, j].Text))
+                        return false;
+            return true;
+        }
+
 
         private bool CheckDirection(int x, int y, int dx, int dy, string player)
         {

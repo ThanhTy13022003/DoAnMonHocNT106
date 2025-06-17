@@ -233,7 +233,6 @@ C:\Users\T\source\repos\DoAnMonHocNT106\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT10
 C:\Users\T\source\repos\DoAnMonHocNT106\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.FormLobby.resources
 D:\NT106\obj\Debug\DoAnMonHocNT106.csproj.AssemblyReference.cache
 D:\NT106\obj\Debug\DoAnMonHocNT106.FormLobby.resources
-D:\NT106\obj\Debug\DoAnMonHocNT106.Introducing.resources
 D:\NT106\obj\Debug\DoAnMonHocNT106.Login.resources
 D:\NT106\obj\Debug\DoAnMonHocNT106.Properties.Resources.resources
 D:\NT106\obj\Debug\DoAnMonHocNT106.SignUp.resources
@@ -307,19 +306,6 @@ D:\NT106\obj\Debug\DoAnMonH.D83D6E8A.Up2Date
 D:\NT106\obj\Debug\DoAnMonHocNT106.Form1.resources
 D:\NT106\obj\Debug\DoAnMonHocNT106.FormPvP.resources
 D:\NT106\obj\Debug\DoAnMonHocNT106.FormPvE.resources
-D:\NT106\bin\Debug\FireSharp.dll
-D:\NT106\bin\Debug\Microsoft.Threading.Tasks.dll
-D:\NT106\bin\Debug\Microsoft.Threading.Tasks.Extensions.Desktop.dll
-D:\NT106\bin\Debug\Microsoft.Threading.Tasks.Extensions.dll
-D:\NT106\bin\Debug\System.Net.Http.Extensions.dll
-D:\NT106\bin\Debug\System.Net.Http.Primitives.dll
-D:\NT106\bin\Debug\Microsoft.Threading.Tasks.xml
-D:\NT106\bin\Debug\Microsoft.Threading.Tasks.Extensions.xml
-D:\NT106\bin\Debug\Microsoft.Threading.Tasks.Extensions.Desktop.xml
-D:\NT106\bin\Debug\System.Net.Http.Extensions.xml
-D:\NT106\bin\Debug\System.Net.Http.Primitives.xml
-D:\NT106\obj\Debug\DoAnMonHocNT106.csproj.App.config
-D:\NT106\bin\Debug\Microsoft.Win32.Registry.dll
 D:\NT106\bin\Debug\NAudio.Asio.dll
 D:\NT106\bin\Debug\NAudio.Core.dll
 D:\NT106\bin\Debug\NAudio.dll
@@ -327,9 +313,6 @@ D:\NT106\bin\Debug\NAudio.Midi.dll
 D:\NT106\bin\Debug\NAudio.Wasapi.dll
 D:\NT106\bin\Debug\NAudio.WinForms.dll
 D:\NT106\bin\Debug\NAudio.WinMM.dll
-D:\NT106\bin\Debug\System.Security.AccessControl.dll
-D:\NT106\bin\Debug\System.Security.Principal.Windows.dll
-D:\NT106\bin\Debug\Microsoft.Win32.Registry.xml
 D:\NT106\bin\Debug\NAudio.xml
 D:\NT106\bin\Debug\NAudio.Asio.xml
 D:\NT106\bin\Debug\NAudio.Core.xml
@@ -337,8 +320,6 @@ D:\NT106\bin\Debug\NAudio.Midi.xml
 D:\NT106\bin\Debug\NAudio.Wasapi.xml
 D:\NT106\bin\Debug\NAudio.WinForms.xml
 D:\NT106\bin\Debug\NAudio.WinMM.xml
-D:\NT106\bin\Debug\System.Security.AccessControl.xml
-D:\NT106\bin\Debug\System.Security.Principal.Windows.xml
 D:\NT106\bin\Debug\Resources\icon.ico
 D:\NT106\bin\Debug\Resources\icons8-circle-48.png
 D:\NT106\bin\Debug\Resources\icons8-circle-96.png
@@ -596,3 +577,8 @@ C:\Users\NKC\Source\Repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.csproj.CoreC
 C:\Users\NKC\Source\Repos\DoAnMonHocNT106\obj\Debug\DoAnMonH.D83D6E8A.Up2Date
 C:\Users\NKC\Source\Repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.exe
 C:\Users\NKC\Source\Repos\DoAnMonHocNT106\obj\Debug\DoAnMonHocNT106.pdb
+D:\NT106\obj\Debug\DoAnMonHocNT106.Form_ChangeInfo.resources
+D:\NT106\obj\Debug\DoAnMonHocNT106.Form_Leaderboard.resources
+D:\NT106\obj\Debug\DoAnMonHocNT106.Form_PlayerInfo.resources
+D:\NT106\obj\Debug\DoAnMonHocNT106.Form_Introduce.resources
+D:\NT106\obj\Debug\DoAnMonHocNT106.FormSetting.resources
