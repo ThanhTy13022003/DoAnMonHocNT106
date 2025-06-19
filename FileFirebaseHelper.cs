@@ -1,4 +1,9 @@
-﻿using Firebase.Database;
+﻿// FirebaseHelper.cs
+// Xử lý các tác vụ tương tác với Firebase Realtime Database:
+// Bao gồm các chức năng thêm người dùng, cập nhật thống kê, quản lý trạng thái online,
+// lưu kết quả trò chơi, gửi/lấy tin nhắn chat công khai, và quản lý lịch sử trận đấu.
+
+using Firebase.Database;
 using Firebase.Database.Query;
 using Newtonsoft.Json;
 using System;
@@ -10,15 +15,19 @@ using System.Reactive.Disposables;
 
 namespace DoAnMonHocNT106
 {
+    // Lớp cung cấp các phương thức để tương tác với Firebase Realtime Database
     public class FirebaseHelper
     {
+        // URL cơ sở của Firebase Realtime Database
         private static readonly string FirebaseURL = "https://nt106-7c9fe-default-rtdb.firebaseio.com/";
+        // Đối tượng FirebaseClient để kết nối và thao tác với cơ sở dữ liệu
         private static readonly FirebaseClient firebase = new FirebaseClient(FirebaseURL);
 
+        // Thêm người dùng mới vào cơ sở dữ liệu
         public static async Task AddUser(string username, string password, string email)
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("Username, password, và email không được để trống.");
+                throw new ArgumentException("Tên người dùng, mật khẩu và email không được để trống.");
 
             try
             {
@@ -44,6 +53,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Cập nhật thống kê kết quả trò chơi của người dùng
         public static async Task UpdateUserStats(string username, string result)
         {
             var user = await GetUserByUsername(username);
@@ -71,10 +81,11 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Cập nhật thông tin đăng nhập của người dùng
         public static async Task UpdateUserCredentials(string oldUsername, string newUsername, string newPassword)
         {
             if (string.IsNullOrWhiteSpace(oldUsername) || string.IsNullOrWhiteSpace(newUsername) || string.IsNullOrWhiteSpace(newPassword))
-                throw new ArgumentException("Username và password không được để trống.");
+                throw new ArgumentException("Tên người dùng và mật khẩu không được để trống.");
 
             var user = await GetUserByUsername(oldUsername);
             if (user == null)
@@ -95,10 +106,11 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lấy thông tin người dùng theo tên đăng nhập
         public static async Task<User> GetUserByUsername(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
-                throw new ArgumentException("Username không được để trống.");
+                throw new ArgumentException("Tên người dùng không được để trống.");
 
             try
             {
@@ -114,12 +126,14 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lấy email của người dùng theo tên đăng nhập
         public static async Task<string> GetEmailByUsername(string username)
         {
             var user = await GetUserByUsername(username);
             return user?.Email;
         }
 
+        // Cập nhật trạng thái online của người dùng
         public static async Task SetUserOnlineStatus(string username, bool isOnline)
         {
             var user = await GetUserByUsername(username);
@@ -138,6 +152,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lấy danh sách người dùng đang online
         public static async Task<List<User>> GetOnlineUsers()
         {
             try
@@ -152,6 +167,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lấy danh sách tất cả người dùng
         public static async Task<List<User>> GetAllUsers()
         {
             try
@@ -166,10 +182,11 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Gửi tin nhắn chat công khai
         public static async Task SendChatMessage(string username, string message)
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(message))
-                throw new ArgumentException("Username và tin nhắn không được để trống.");
+                throw new ArgumentException("Tên người dùng và tin nhắn không được để trống.");
 
             try
             {
@@ -189,6 +206,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lấy danh sách tin nhắn chat công khai
         public static async Task<List<ChatMessage>> GetPublicChatMessages()
         {
             try
@@ -203,6 +221,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lưu kết quả trò chơi vào cơ sở dữ liệu
         public static async Task SaveGameResult(string playerName, string result)
         {
             try
@@ -223,6 +242,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lấy lịch sử trò chơi của người chơi
         public static async Task<List<GameResult>> GetGameHistory(string playerName)
         {
             try
@@ -245,6 +265,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Đảm bảo các trường thống kê được khởi tạo cho tất cả người dùng
         public static async Task EnsureUserStatsFields()
         {
             try
@@ -268,6 +289,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lưu kết quả trận đấu PvP
         public static async Task SavePvPGameResult(string roomId, string playerX, string playerO, string result)
         {
             if (string.IsNullOrWhiteSpace(roomId) || string.IsNullOrWhiteSpace(playerX) || string.IsNullOrWhiteSpace(playerO))
@@ -308,6 +330,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lấy thống kê thắng/thua/hết thời gian của người chơi
         public static async Task<(int Wins, int Losses, int Timeouts)> GetStats(string playerName)
         {
             try
@@ -325,8 +348,10 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Tên người dùng hiện tại, mặc định là "Guest"
         public static string CurrentUsername { get; set; } = "Guest";
 
+        // Lấy bảng xếp hạng người chơi
         public static async Task<List<(string Username, double WinRate, int TotalGames, int Wins, int Losses, int Draws)>> GetLeaderboard()
         {
             try
@@ -353,10 +378,11 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Theo dõi thay đổi thông tin người dùng
         public static IDisposable SubscribeUserChanges(string username, Action<User> onUserChanged)
         {
             if (string.IsNullOrWhiteSpace(username))
-                throw new ArgumentException("Username không được để trống.");
+                throw new ArgumentException("Tên người dùng không được để trống.");
 
             return firebase
                 .Child("Users")
@@ -373,49 +399,54 @@ namespace DoAnMonHocNT106
         }
     }
 
+    // Lớp định nghĩa thông tin người dùng
     public class User
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public bool IsOnline { get; set; }
-        public DateTime LastOnline { get; set; }
-        public int Wins { get; set; }
-        public int Losses { get; set; }
-        public int Draws { get; set; }
-        public double WinRate { get; set; }
+        public string Username { get; set; } // Tên đăng nhập
+        public string Password { get; set; } // Mật khẩu
+        public string Email { get; set; } // Email
+        public bool IsOnline { get; set; } // Trạng thái online
+        public DateTime LastOnline { get; set; } // Thời gian online lần cuối
+        public int Wins { get; set; } // Số trận thắng
+        public int Losses { get; set; } // Số trận thua
+        public int Draws { get; set; } // Số trận hòa
+        public double WinRate { get; set; } // Tỷ lệ thắng
     }
 
+    // Lớp định nghĩa tin nhắn chat
     public class ChatMessage
     {
-        public string Id { get; set; }
-        public string FromUser { get; set; }
-        public string ToUser { get; set; }
-        public string Message { get; set; }
-        public DateTime Time { get; set; }
+        public string Id { get; set; } // ID tin nhắn
+        public string FromUser { get; set; } // Người gửi
+        public string ToUser { get; set; } // Người nhận
+        public string Message { get; set; } // Nội dung tin nhắn
+        public DateTime Time { get; set; } // Thời gian gửi
     }
 
+    // Lớp định nghĩa kết quả trò chơi
     public class GameResult
     {
-        public string PlayerName { get; set; }
-        public string Result { get; set; }
-        public DateTime Time { get; set; }
+        public string PlayerName { get; set; } // Tên người chơi
+        public string Result { get; set; } // Kết quả (Win, Lose, Draw, Timeout)
+        public DateTime Time { get; set; } // Thời gian diễn ra
     }
 
+    // Lớp định nghĩa lời mời chơi
     public class Invite
     {
-        public string from { get; set; }
-        public string to { get; set; }
-        public string roomId { get; set; }
-        public string timestamp { get; set; }
+        public string from { get; set; } // Người gửi lời mời
+        public string to { get; set; } // Người nhận lời mời
+        public string roomId { get; set; } // ID phòng chơi
+        public string timestamp { get; set; } // Thời gian gửi
     }
 
+    // Lớp định nghĩa nước đi trong trận đấu
     public class Move
     {
-        public int row { get; set; }
-        public int col { get; set; }
-        public string user { get; set; }
-        public string symbol { get; set; }
-        public string timestamp { get; set; }
+        public int row { get; set; } // Hàng của nước đi
+        public int col { get; set; } // Cột của nước đi
+        public string user { get; set; } // Người thực hiện nước đi
+        public string symbol { get; set; } // Ký hiệu (X hoặc O)
+        public string timestamp { get; set; } // Thời gian thực hiện
     }
 }

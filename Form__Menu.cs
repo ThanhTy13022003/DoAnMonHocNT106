@@ -1,4 +1,7 @@
-﻿using FirebaseAdmin;
+﻿// Form1.cs
+// Form chính của ứng dụng: quản lý điều hướng giữa các chế độ chơi, khởi động tiến trình phụ,
+// xử lý đăng xuất, thoát ứng dụng và cấu hình các thành phần như menu, âm thanh nền.
+using FirebaseAdmin;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,23 +12,36 @@ using System.Net.Mail;
 
 namespace DoAnMonHocNT106
 {
+    /// <summary>
+    /// Form1 là form chính hiển thị các tùy chọn chơi game,
+    /// khởi tạo tiến trình khác, cập nhật trạng thái user và xử lý đóng ứng dụng.
+    /// </summary>
     public partial class Form1 : Form
     {
         private string tenUser;
         private readonly string currentUser;
 
+        /// <summary>
+        /// Khởi tạo Form1 với thông tin đăng nhập (username hoặc email)
+        /// </summary>
         public Form1(string loginIdentifier)
         {
             InitializeComponent();
             currentUser = UserIdentifier.ExtractUsername(loginIdentifier);
             InitializeUser(loginIdentifier);
             InitializeMenu();
-            // mở tự động file DoAn_Followonline.exe khi khởi động Form1
+            // Mở tự động file DoAn_Followonline.exe khi khởi động Form1
             Open_DoAn_Followonline();
         }
 
+        /// <summary>
+        /// Constructor mặc định sử dụng UserId từ Settings
+        /// </summary>
         public Form1() : this(Properties.Settings.Default.UserId) { }
 
+        /// <summary>
+        /// Gán thông tin user và khởi động nhạc nền nếu chưa phát
+        /// </summary>
         private void InitializeUser(string loginIdentifier)
         {
             tenUser = Properties.Settings.Default.UserId;
@@ -35,6 +51,9 @@ namespace DoAnMonHocNT106
                 MusicPlayer.StartBackgroundMusic();
         }
 
+        /// <summary>
+        /// Thiết lập context menu cho nút PlayViaLan, PlayToBot, SettingInforPlayer
+        /// </summary>
         private void InitializeMenu()
         {
             earlyAccessMenu = new ContextMenuStrip();
@@ -44,14 +63,17 @@ namespace DoAnMonHocNT106
             button5.ContextMenuStrip = earlyAccessMenu;
         }
 
+        // Các phương thức mở ứng dụng con qua LAN, PvE và cài đặt thông tin
         private void OpenPlayViaLan() => LaunchExternalApp(@"..\..\EarlyAccess_PlayViaLan\bin\Debug", "DoAn_EarlyAccess_PlayViaLan.exe", currentUser);
         private void OpenPlayToBot() => LaunchExternalApp(@"..\..\EarlyAccess_PlayToBot\bin\Debug", "DoAn_EarlyAccess_PlayToBot.exe", currentUser);
         private void OpenSettingInforPlayer() => LaunchExternalApp(@"..\..\EarlyAccess_SettingInforPlayer\bin\Debug", "DoAn_EarlyAccess_SettingInforPlayer.exe", currentUser);
 
-        // truyền vào tên ứng dụng DoAn_Followonline.exe và tên người dùng hiện tại, còn id pid sẽ được lấy tự động
+        // Mở tiến trình Followonline khi form khởi động
         private void Open_DoAn_Followonline() => LaunchExternalApp(@"..\..\Followonline\bin\Debug", "DoAn_Followonline.exe", currentUser);
 
-        // Mở ứng dụng bên ngoài với đường dẫn tương đối và tên file
+        /// <summary>
+        /// Khởi chạy ứng dụng bên ngoài với đường dẫn tương đối, exe và đối số truyền username + PID
+        /// </summary>
         private void LaunchExternalApp(string relativeFolder, string exeName, string userArg)
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
@@ -65,7 +87,6 @@ namespace DoAnMonHocNT106
 
             // Lấy PID của tiến trình hiện tại
             int pid = GetCurrentProcessId();
-            // Kết hợp username và PID thành chuỗi arguments
             string combinedArgs = $"{userArg} {pid}";
 
             try
@@ -84,12 +105,14 @@ namespace DoAnMonHocNT106
             }
         }
 
+        /// <summary>
+        /// Lấy Process ID của tiến trình đang chạy
+        /// </summary>
+        public static int GetCurrentProcessId() => Process.GetCurrentProcess().Id;
 
-        public static int GetCurrentProcessId()
-        {
-            return Process.GetCurrentProcess().Id;
-        }
-
+        /// <summary>
+        /// Xử lý sự kiện nút lobby: mở FormLobby và ẩn Form1
+        /// </summary>
         private void button1_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -99,6 +122,9 @@ namespace DoAnMonHocNT106
             this.Hide();
         }
 
+        /// <summary>
+        /// Mở chế độ PvE
+        /// </summary>
         private void button2_Click_1(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -107,6 +133,9 @@ namespace DoAnMonHocNT106
             this.Hide();
         }
 
+        /// <summary>
+        /// Xử lý nút thoát hoặc đăng xuất
+        /// </summary>
         private async void button4_Click_1(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -120,9 +149,7 @@ namespace DoAnMonHocNT106
             await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
 
             if (result == DialogResult.Yes)
-            {
                 Application.Exit();
-            }
             else
             {
                 MusicPlayer.StopBackgroundMusic();
@@ -132,12 +159,18 @@ namespace DoAnMonHocNT106
             }
         }
 
+        /// <summary>
+        /// Hiển thị context menu khi click nút 5
+        /// </summary>
         private void button5_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
             earlyAccessMenu.Show(button5, new System.Drawing.Point(0, button5.Height));
         }
 
+        /// <summary>
+        /// Xác nhận trước khi đóng form
+        /// </summary>
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
@@ -158,6 +191,9 @@ namespace DoAnMonHocNT106
             await HandleExitAsync();
         }
 
+        /// <summary>
+        /// Khi form đóng, cập nhật online và giải phóng tài nguyên
+        /// </summary>
         protected override async void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
@@ -165,6 +201,9 @@ namespace DoAnMonHocNT106
             this.Dispose();
         }
 
+        /// <summary>
+        /// Xử lý đóng toàn bộ ứng dụng: dừng nhạc, giám sát, đóng tất cả form và tiến trình Firebase
+        /// </summary>
         private async Task HandleExitAsync()
         {
             try
@@ -196,6 +235,9 @@ namespace DoAnMonHocNT106
             }
         }
 
+        /// <summary>
+        /// Mở form cài đặt
+        /// </summary>
         private void button3_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -204,6 +246,9 @@ namespace DoAnMonHocNT106
         }
     }
 
+    /// <summary>
+    /// Helper để trích xuất username từ input (email hoặc chuỗi đơn giản)
+    /// </summary>
     public static class UserIdentifier
     {
         public static string ExtractUsername(string input)

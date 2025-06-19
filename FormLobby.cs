@@ -1,4 +1,10 @@
-﻿using Firebase.Database;
+﻿// FormLobby.cs
+// Xử lý logic và giao diện cho sảnh chờ (Lobby):
+// Hiển thị danh sách người dùng online/offline, hỗ trợ chat công khai,
+// gửi và nhận lời mời chơi PvP, lắng nghe thay đổi trạng thái người dùng,
+// và quản lý trạng thái online của người dùng hiện tại.
+
+using Firebase.Database;
 using Firebase.Database.Query;
 using System;
 using System.Collections.Generic;
@@ -11,27 +17,40 @@ namespace DoAnMonHocNT106
 {
     public partial class FormLobby : Form
     {
+        // Tên người dùng hiện tại
         private string currentUser;
+        // Kết nối tới Firebase Realtime Database
         private FirebaseClient firebase = new FirebaseClient("https://nt106-7c9fe-default-rtdb.firebaseio.com/");
+        // Lưu trữ các key lời mời đã xử lý để tránh lặp
         private HashSet<string> processedInviteKeys = new HashSet<string>();
+        // Lưu trữ các key tin nhắn chat đã xử lý để tránh lặp
         private HashSet<string> processedChatKeys = new HashSet<string>();
-        private const int MaxProcessedKeys = 1000; // Giới hạn số key để tránh rò rỉ bộ nhớ
+        // Giới hạn số key lưu trữ để tránh rò rỉ bộ nhớ
+        private const int MaxProcessedKeys = 1000;
 
+        // Khởi tạo form với tên người dùng
         public FormLobby(string username)
         {
             InitializeComponent();
             currentUser = username;
         }
 
+        // Xử lý khi form được tải
         private async void FormLobby_Load(object sender, EventArgs e)
         {
             try
             {
+                // Cập nhật trạng thái online cho người dùng hiện tại
                 await FirebaseHelper.SetUserOnlineStatus(currentUser, true);
+                // Tải danh sách người dùng
                 await LoadUsers();
+                // Tải tin nhắn chat công khai
                 await LoadChatMessages();
+                // Lắng nghe lời mời chơi PvP
                 LangNgheLoiMoi();
+                // Lắng nghe thay đổi trạng thái người dùng
                 LangNgheNguoiDungThayDoi();
+                // Lắng nghe tin nhắn chat mới
                 LangNgheChat();
             }
             catch (Exception ex)
@@ -40,6 +59,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Tải danh sách người dùng từ Firebase
         private async Task LoadUsers()
         {
             try
@@ -50,12 +70,14 @@ namespace DoAnMonHocNT106
 
                 foreach (var user in users)
                 {
+                    // Hiển thị tên người dùng, thêm "(You)" nếu là người dùng hiện tại
                     string displayName = user.Username == currentUser
                         ? $"{user.Username} (You)"
                         : user.Username;
 
                     if (existingItems.ContainsKey(user.Username))
                     {
+                        // Cập nhật thông tin nếu người dùng đã tồn tại trong danh sách
                         var item = existingItems[user.Username];
                         item.Text = displayName;
                         item.SubItems[1].Text = user.IsOnline ? "Online" : "Offline";
@@ -63,6 +85,7 @@ namespace DoAnMonHocNT106
                     }
                     else
                     {
+                        // Thêm người dùng mới vào danh sách
                         var item = new ListViewItem(displayName);
                         item.SubItems.Add(user.IsOnline ? "Online" : "Offline");
                         item.ForeColor = user.IsOnline ? Color.Green : Color.Gray;
@@ -73,6 +96,7 @@ namespace DoAnMonHocNT106
                     }
                 }
 
+                // Xóa các người dùng không còn trong danh sách từ Firebase
                 foreach (var item in existingItems)
                 {
                     if (!users.Any(u => u.Username == item.Key))
@@ -87,6 +111,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Tải tin nhắn chat công khai từ Firebase
         private async Task LoadChatMessages()
         {
             try
@@ -95,10 +120,12 @@ namespace DoAnMonHocNT106
                 var msgs = await FirebaseHelper.GetPublicChatMessages();
                 foreach (var msg in msgs)
                 {
+                    // Hiển thị tin nhắn với thời gian, người gửi và nội dung
                     var item = new ListViewItem($"{msg.Time:T} - {msg.FromUser}: {msg.Message}");
                     item.ForeColor = msg.FromUser == currentUser ? Color.Blue : Color.Black;
                     lstChat.Items.Add(item);
                 }
+                // Cuộn xuống tin nhắn mới nhất
                 if (lstChat.Items.Count > 0)
                     lstChat.EnsureVisible(lstChat.Items.Count - 1);
             }
@@ -108,6 +135,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Lắng nghe thay đổi trạng thái của người dùng
         private void LangNgheNguoiDungThayDoi()
         {
             firebase.Child("Users")
@@ -128,6 +156,7 @@ namespace DoAnMonHocNT106
 
                             if (existingItem != null)
                             {
+                                // Cập nhật trạng thái online/offline
                                 string newStatus = ev.Object.IsOnline ? "Online" : "Offline";
                                 if (existingItem.SubItems[1].Text != newStatus)
                                 {
@@ -137,6 +166,7 @@ namespace DoAnMonHocNT106
                             }
                             else if (ev.Object.Username != currentUser)
                             {
+                                // Thêm người dùng mới vào danh sách
                                 var item = new ListViewItem(ev.Object.Username);
                                 item.SubItems.Add(ev.Object.IsOnline ? "Online" : "Offline");
                                 item.ForeColor = ev.Object.IsOnline ? Color.Green : Color.Gray;
@@ -151,6 +181,7 @@ namespace DoAnMonHocNT106
                 });
         }
 
+        // Lắng nghe tin nhắn chat công khai mới
         private void LangNgheChat()
         {
             firebase.Child("PublicChat")
@@ -160,7 +191,7 @@ namespace DoAnMonHocNT106
                     if (ev.Object == null || ev.Key == null || processedChatKeys.Contains(ev.Key)) return;
 
                     if (processedChatKeys.Count > MaxProcessedKeys)
-                        processedChatKeys.Clear(); // Làm sạch để tránh rò rỉ bộ nhớ
+                        processedChatKeys.Clear(); // Xóa danh sách key để tránh rò rỉ bộ nhớ
 
                     processedChatKeys.Add(ev.Key);
 
@@ -173,10 +204,12 @@ namespace DoAnMonHocNT106
                             var msg = ev.Object;
                             var text = $"{msg.Time:T} - {msg.FromUser}: {msg.Message}";
 
+                            // Kiểm tra xem tin nhắn đã tồn tại chưa
                             bool exists = lstChat.Items.Cast<ListViewItem>().Any(i => i.Text == text);
 
                             if (!exists)
                             {
+                                // Thêm tin nhắn mới vào danh sách
                                 var item = new ListViewItem(text);
                                 item.ForeColor = msg.FromUser == currentUser ? Color.Blue : Color.Black;
                                 lstChat.Items.Add(item);
@@ -191,6 +224,7 @@ namespace DoAnMonHocNT106
                 });
         }
 
+        // Lắng nghe lời mời chơi PvP
         private void LangNgheLoiMoi()
         {
             firebase.Child("Invites")
@@ -204,12 +238,13 @@ namespace DoAnMonHocNT106
                         var now = DateTime.UtcNow;
                         if ((now - inviteTime).TotalSeconds > 30)
                         {
+                            // Xóa lời mời nếu quá 30 giây
                             await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
                             return;
                         }
 
                         if (processedInviteKeys.Count > MaxProcessedKeys)
-                            processedInviteKeys.Clear(); // Làm sạch để tránh rò rỉ bộ nhớ
+                            processedInviteKeys.Clear(); // Xóa danh sách key để tránh rò rỉ bộ nhớ
 
                         processedInviteKeys.Add(ev.Key);
 
@@ -219,13 +254,16 @@ namespace DoAnMonHocNT106
                         {
                             try
                             {
+                                // Hiển thị thông báo lời mời
                                 var result = MessageBox.Show($"{ev.Object.from} mời bạn chơi PvP. Chấp nhận?",
                                     "Lời mời chơi", MessageBoxButtons.YesNo);
 
+                                // Xóa lời mời sau khi xử lý
                                 await firebase.Child("Invites").Child(ev.Key).DeleteAsync();
 
                                 if (result == DialogResult.Yes)
                                 {
+                                    // Mở form PvP nếu chấp nhận lời mời
                                     var form = new FormPvP(currentUser, ev.Object.from, ev.Object.roomId);
                                     form.Show();
                                 }
@@ -239,6 +277,7 @@ namespace DoAnMonHocNT106
                 });
         }
 
+        // Xử lý sự kiện nhấn nút gửi tin nhắn
         private async void btnSend_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -251,6 +290,7 @@ namespace DoAnMonHocNT106
 
             try
             {
+                // Gửi tin nhắn chat công khai
                 await FirebaseHelper.SendChatMessage(currentUser, msg);
                 txtMessage.Clear();
             }
@@ -260,6 +300,7 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Xử lý sự kiện double-click vào người dùng để gửi lời mời PvP
         private async void lstUsers_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (lstUsers.SelectedItems.Count == 0) return;
@@ -282,6 +323,7 @@ namespace DoAnMonHocNT106
                     return;
                 }
 
+                // Tạo ID phòng chơi mới
                 string roomId = Guid.NewGuid().ToString();
                 var invite = new Invite
                 {
@@ -291,6 +333,7 @@ namespace DoAnMonHocNT106
                     timestamp = DateTime.UtcNow.ToString("o")
                 };
 
+                // Gửi lời mời và mở form PvP
                 await firebase.Child("Invites").PostAsync(invite);
                 var formPvp = new FormPvP(currentUser, targetUser, roomId);
                 formPvp.Show();
@@ -301,10 +344,12 @@ namespace DoAnMonHocNT106
             }
         }
 
+        // Xử lý sự kiện khi đóng form
         private async void FormLobby_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
             {
+                // Cập nhật trạng thái offline cho người dùng
                 await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
             }
             catch (Exception ex)
@@ -314,8 +359,10 @@ namespace DoAnMonHocNT106
         }
     }
 
+    // Lớp mở rộng để hỗ trợ gọi bất đồng bộ trên Control
     public static class ControlExtensions
     {
+        // Thực thi hành động bất đồng bộ trên luồng UI
         public static Task InvokeAsync(this Control control, Action action)
         {
             var tcs = new TaskCompletionSource<object>();

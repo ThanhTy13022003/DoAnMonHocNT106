@@ -1,16 +1,20 @@
-﻿namespace DoAnMonHocNT106
+﻿// Login.Designer.cs
+// Partial class do Windows Forms Designer sinh tự động,
+// chứa định nghĩa giao diện và các control của form Login.
+
+namespace DoAnMonHocNT106
 {
     partial class Login
     {
         /// <summary>
-        /// Required designer variable.
+        /// Component container do Designer quản lý
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// Clean up any resources being used.
+        /// Giải phóng tài nguyên đang sử dụng
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// <param name="disposing">true nếu dispose managed resources; ngược lại false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -23,8 +27,8 @@
         #region Windows Form Designer generated code
 
         /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
+        /// Phương thức khởi tạo và cấu hình tất cả control trên form do Designer sinh tự động.
+        /// Không chỉnh sửa nội dung phương thức này trực tiếp để tránh lỗi với Designer.
         /// </summary>
         private void InitializeComponent()
         {

@@ -1,14 +1,24 @@
+// BackgroundAppCloser.cs
+// Lớp giám sát và tự động đóng ứng dụng khi thỏa điều kiện nhất định
 using System;
 using System.Diagnostics;
 using System.Threading;
 
 namespace DoAnMonHocNT106
 {
+    /// <summary>
+    /// Giám sát ứng dụng trong nền và tự động đóng khi cần thiết
+    /// </summary>
     public class BackgroundAppCloser
     {
+        // Thread thực thi giám sát ở chế độ nền
         private static Thread backgroundThread;
+        // Token để hủy vòng lặp giám sát
         private static CancellationTokenSource cancellationTokenSource;
 
+        /// <summary>
+        /// Bắt đầu luồng giám sát ứng dụng
+        /// </summary>
         public static void StartBackgroundMonitor()
         {
             cancellationTokenSource = new CancellationTokenSource();
@@ -19,8 +29,6 @@ namespace DoAnMonHocNT106
                 while (!token.IsCancellationRequested)
                 {
                     Thread.Sleep(1000);
-                    if (token.IsCancellationRequested) break;
-
                     if (ShouldCloseApp())
                     {
                         CloseMainApplication();
@@ -31,25 +39,33 @@ namespace DoAnMonHocNT106
             {
                 IsBackground = true
             };
+
             backgroundThread.Start();
         }
 
+        /// <summary>
+        /// Dừng giám sát và hủy luồng nền
+        /// </summary>
         public static void StopBackgroundMonitor()
         {
             cancellationTokenSource?.Cancel();
-            backgroundThread?.Join(1000); // Chờ thread kết thúc trong 1s
+            backgroundThread?.Join(1000);
         }
 
+        /// <summary>
+        /// Xác định điều kiện để đóng ứng dụng
+        /// </summary>
         private static bool ShouldCloseApp()
         {
-            // Thêm logic để quyết định khi nào đóng ứng dụng
-            // Ví dụ: kiểm tra file, thời gian, hoặc tín hiệu từ Firebase
-            return false; // Thay bằng điều kiện thực tế
+            // TODO: Thêm logic kiểm tra điều kiện cần đóng
+            return false;
         }
 
+        /// <summary>
+        /// Đóng các tiến trình ứng dụng chính
+        /// </summary>
         private static void CloseMainApplication()
         {
-            // Tìm và đóng process của ứng dụng chính
             foreach (var process in Process.GetProcessesByName("DoAnMonHocNT106"))
             {
                 process.Kill();

@@ -1,40 +1,63 @@
-﻿using System;
+﻿// FormSetting.cs
+// Form cài đặt tùy chọn người dùng: bật/tắt nhạc nền và âm thanh game,
+// điều chỉnh âm lượng, mở các form giới thiệu, thông tin người chơi và bảng xếp hạng.
+using System;
 using System.Windows.Forms;
 
 namespace DoAnMonHocNT106
 {
+    /// <summary>
+    /// FormSetting cho phép người dùng cấu hình:
+    /// - Nhạc nền (bật/tắt, điều chỉnh âm lượng)
+    /// - Âm thanh game (bật/tắt, điều chỉnh âm lượng)
+    /// - Hiển thị form giới thiệu, thông tin người chơi và bảng xếp hạng
+    /// Đồng thời hỗ trợ phím ESC để đóng form.
+    /// </summary>
     public partial class FormSetting : Form
     {
-        // thêm biến current user và được l
+        // Biến lưu username hiện tại để truyền vào các form con
         private readonly string currentUser;
 
+        /// <summary>
+        /// Khởi tạo FormSetting với username của người dùng
+        /// </summary>
         public FormSetting(string currentUser)
         {
             InitializeComponent();
             this.KeyPreview = true; // Cho phép form nhận sự kiện phím trước các control
-            this.KeyDown += FormSetting_KeyDown; // Gắn sự kiện KeyDown
+            this.KeyDown += FormSetting_KeyDown;
             this.currentUser = currentUser;
         }
 
+        /// <summary>
+        /// Thiết lập trạng thái của nút và thanh trượt khi form load
+        /// </summary>
         private void FormSetting_Load(object sender, EventArgs e)
         {
+            // Cập nhật nhãn nút dựa trên trạng thái hiện tại
             btnToggleMusic.Text = MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền";
             btnToggleSound.Text = MusicPlayer.IsSoundEnabled() ? "Tắt Âm Thanh Game" : "Bật Âm Thanh Game";
+
+            // Khởi tạo giá trị cho thanh trượt âm lượng
             trackBarMusicVolume.Value = Math.Min((int)(MusicPlayer.GetVolume() * 70), 70);
             trackBarSoundVolume.Value = Math.Min((int)(MusicPlayer.GetSoundVolume() * 70), 70);
-            // Đảm bảo nút Introducing được hiển thị
-
         }
 
+        /// <summary>
+        /// Nhấn ESC đóng form và phát âm thanh click
+        /// </summary>
         private void FormSetting_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                MusicPlayer.PlayClickSound(); // Phát âm thanh click
-                this.Close(); // Đóng form
+                MusicPlayer.PlayClickSound();
+                this.Close();
             }
         }
 
+        /// <summary>
+        /// Mở form giới thiệu (Introduce) dưới dạng dialog
+        /// </summary>
         private void btnIntroducing_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -42,14 +65,20 @@ namespace DoAnMonHocNT106
             introduceForm.ShowDialog();
         }
 
-        private void btnToggleMusic_Click(object sender, EventArgs e) // chỉnh nhạc nền 
+        /// <summary>
+        /// Bật/tắt nhạc nền, cập nhật nhãn và trạng thái thanh trượt
+        /// </summary>
+        private void btnToggleMusic_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
             MusicPlayer.ToggleMusic();
             btnToggleMusic.Text = MusicPlayer.IsMusicPlaying() ? "Tắt Nhạc Nền" : "Bật Nhạc Nền";
-            trackBarMusicVolume.Enabled = MusicPlayer.IsMusicPlaying(); // Làm mờ/mở thanh chỉnh âm lượng nhạc nền
+            trackBarMusicVolume.Enabled = MusicPlayer.IsMusicPlaying();
         }
 
+        /// <summary>
+        /// Mở form thông tin người chơi dưới dạng dialog
+        /// </summary>
         private void btnPlayerInfo_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -57,6 +86,9 @@ namespace DoAnMonHocNT106
             playerInfoForm.ShowDialog();
         }
 
+        /// <summary>
+        /// Mở form bảng xếp hạng dưới dạng dialog
+        /// </summary>
         private void btnLeaderboard_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -64,34 +96,36 @@ namespace DoAnMonHocNT106
             leaderboardForm.ShowDialog();
         }
 
-        private void btnToggleSound_Click(object sender, EventArgs e) // âm thanh chơi game
+        /// <summary>
+        /// Bật/tắt âm thanh game, cập nhật nhãn và trạng thái thanh trượt
+        /// </summary>
+        private void btnToggleSound_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
             MusicPlayer.SetSoundEnabled(!MusicPlayer.IsSoundEnabled());
             btnToggleSound.Text = MusicPlayer.IsSoundEnabled() ? "Tắt Âm Thanh Game" : "Bật Âm Thanh Game";
-            trackBarSoundVolume.Enabled = MusicPlayer.IsSoundEnabled(); // Làm mờ/mở thanh chỉnh âm lượng âm thanh game
+            trackBarSoundVolume.Enabled = MusicPlayer.IsSoundEnabled();
         }
 
+        /// <summary>
+        /// Xử lý thay đổi âm lượng nhạc nền khi thanh trượt được kéo
+        /// </summary>
         private void trackBarMusicVolume_Scroll(object sender, EventArgs e)
         {
-            // Làm tròn giá trị về nấc gần nhất
             int roundedValue = (int)Math.Round(trackBarMusicVolume.Value / 10.0) * 10;
-            trackBarMusicVolume.Value = roundedValue; // Đặt lại giá trị thanh trượt
+            trackBarMusicVolume.Value = roundedValue;
             MusicPlayer.SetVolume(roundedValue / 70f);
         }
 
+        /// <summary>
+        /// Xử lý thay đổi âm lượng âm thanh game khi thanh trượt được kéo
+        /// </summary>
         private void trackBarSoundVolume_Scroll(object sender, EventArgs e)
         {
-            // Làm tròn giá trị về nấc gần nhất
             int roundedValue = (int)Math.Round(trackBarSoundVolume.Value / 10.0) * 10;
-
-            // Chỉ phát âm thanh click nếu giá trị thay đổi sang một nấc mới
             if (trackBarSoundVolume.Value != roundedValue)
-            {
                 MusicPlayer.PlayClickSound();
-            }
-
-            trackBarSoundVolume.Value = roundedValue; // Đặt lại giá trị thanh trượt
+            trackBarSoundVolume.Value = roundedValue;
             MusicPlayer.SetSoundVolume(roundedValue / 70f);
         }
     }

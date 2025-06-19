@@ -1,4 +1,6 @@
-﻿using NAudio.Wave;
+﻿// MusicPlayer.cs
+// Lớp quản lý phát nhạc nền và âm thanh sự kiện trong game sử dụng NAudio
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,50 +9,64 @@ using System.Windows.Forms;
 
 namespace DoAnMonHocNT106
 {
+    /// <summary>
+    /// Lớp MusicPlayer cung cấp các chức năng phát nhạc nền,
+    /// chuyển bài, dừng nhạc và phát âm thanh hiệu ứng (click)
+    /// </summary>
     public static class MusicPlayer
     {
+        // Thiết bị phát âm thanh
         private static IWavePlayer waveOutDevice;
+        // Đối tượng đọc file âm thanh
         private static AudioFileReader audioFileReader;
+        // Danh sách đường dẫn các file nhạc nền
         private static List<string> playlist = new List<string>();
+        // Vị trí bài hát hiện tại trong playlist
         private static int currentIndex = 0;
+        // Cờ trạng thái đang phát nhạc
         private static bool isPlaying = false;
-        private static bool isSoundEnabled = true; // Biến để bật/tắt âm thanh game
-        private static float soundVolume = 0.15f; // Âm lượng âm thanh game
+        // Cờ bật/tắt âm thanh hiệu ứng
+        private static bool isSoundEnabled = true;
+        // Âm lượng phát âm thanh hiệu ứng (0.0f - 1.0f)
+        private static float soundVolume = 0.15f;
 
+        /// <summary>
+        /// Bật hoặc tắt âm thanh hiệu ứng click
+        /// </summary>
         public static void SetSoundEnabled(bool enabled)
         {
             isSoundEnabled = enabled;
         }
 
-        public static bool IsSoundEnabled()
-        {
-            return isSoundEnabled;
-        }
+        /// <summary>
+        /// Kiểm tra trạng thái âm thanh hiệu ứng có được bật hay không
+        /// </summary>
+        public static bool IsSoundEnabled() => isSoundEnabled;
 
-        public static void SetSoundVolume(float volume)
-        {
-            soundVolume = volume;
-        }
+        /// <summary>
+        /// Thiết lập âm lượng phát hiệu ứng click
+        /// </summary>
+        public static void SetSoundVolume(float volume) => soundVolume = volume;
 
-        public static float GetSoundVolume()
-        {
-            return soundVolume;
-        }
+        /// <summary>
+        /// Lấy giá trị âm lượng hiệu ứng click hiện tại
+        /// </summary>
+        public static float GetSoundVolume() => soundVolume;
 
+        /// <summary>
+        /// Bắt đầu phát nhạc nền theo playlist
+        /// </summary>
         public static void StartBackgroundMusic()
         {
             try
             {
                 if (isPlaying) return;
-
                 LoadPlaylist();
-
-                if (playlist.Count == 0)
+                if (!playlist.Any())
                 {
                     MessageBox.Show("Không tìm thấy file nhạc trong thư mục Music.");
                     return;
                 }
-
                 PlayCurrent();
                 isPlaying = true;
             }
@@ -60,32 +76,31 @@ namespace DoAnMonHocNT106
             }
         }
 
-        public static bool IsMusicPlaying()
-        {
-            return isPlaying;
-        }
+        /// <summary>
+        /// Kiểm tra có đang phát nhạc nền không
+        /// </summary>
+        public static bool IsMusicPlaying() => isPlaying;
 
+        /// <summary>
+        /// Tải danh sách file nhạc từ thư mục Resources/Music
+        /// </summary>
         private static void LoadPlaylist()
         {
-            // Thư mục Music nằm trong Resources của project (đi lên 2 cấp rồi vào Resources/Music)
-            string musicDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Resources", "Music"));
+            string musicDir = Path.GetFullPath(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Resources", "Music")
+            );
             if (!Directory.Exists(musicDir))
             {
                 MessageBox.Show($"Thư mục nhạc không tồn tại: {musicDir}");
                 return;
             }
-
-            var mp3Files = Directory.GetFiles(musicDir, "*.mp3").ToList();
-            if (mp3Files.Count == 0)
-            {
-                MessageBox.Show($"Không tìm thấy file .mp3 nào trong thư mục: {musicDir}");
-                return;
-            }
-
-            playlist = mp3Files;
+            playlist = Directory.GetFiles(musicDir, "*.mp3").ToList();
             currentIndex = 0;
         }
 
+        /// <summary>
+        /// Dừng phát và giải phóng tài nguyên
+        /// </summary>
         public static void DisposeAll()
         {
             StopCurrent();
@@ -93,58 +108,52 @@ namespace DoAnMonHocNT106
             isPlaying = false;
         }
 
+        /// <summary>
+        /// Phát bài hát hiện tại trong playlist, chọn ngẫu nhiên
+        /// </summary>
         private static void PlayCurrent()
         {
-            if (playlist.Count == 0) return;
-
+            if (!playlist.Any()) return;
             StopCurrent();
-
-            // Chọn ngẫu nhiên một file từ playlist
-            Random rand = new Random();
-            currentIndex = rand.Next(playlist.Count);
-
-            audioFileReader = new AudioFileReader(playlist[currentIndex]);
-            waveOutDevice = new DirectSoundOut();
+            // Chọn bài ngẫu nhiên
+            currentIndex = new Random().Next(playlist.Count);
+            audioFileReader = new AudioFileReader(playlist[currentIndex]) { Volume = GetSoundVolume() };
+            waveOutDevice = new WaveOutEvent();
             waveOutDevice.Init(audioFileReader);
             waveOutDevice.PlaybackStopped += OnPlaybackStopped;
             waveOutDevice.Play();
         }
 
+        /// <summary>
+        /// Xử lý sự kiện khi một bài hát kết thúc, tự động chuyển bài
+        /// </summary>
         private static void OnPlaybackStopped(object sender, StoppedEventArgs e)
         {
             if (!isPlaying) return;
-
-            currentIndex = (currentIndex + 1) % playlist.Count; // chuyển bài
+            currentIndex = (currentIndex + 1) % playlist.Count;
             PlayCurrent();
         }
 
+        /// <summary>
+        /// Dừng phát bài hiện tại và giải phóng tài nguyên liên quan
+        /// </summary>
         private static void StopCurrent()
         {
             waveOutDevice?.Stop();
             waveOutDevice?.Dispose();
             waveOutDevice = null;
-
             audioFileReader?.Dispose();
             audioFileReader = null;
         }
 
+        /// <summary>
+        /// Dừng nhạc nền
+        /// </summary>
         public static void StopBackgroundMusic()
         {
             try
             {
-                if (waveOutDevice != null && isPlaying)
-                {
-                    waveOutDevice.Stop();
-                    waveOutDevice.Dispose();
-                    waveOutDevice = null;
-                }
-
-                if (audioFileReader != null)
-                {
-                    audioFileReader.Dispose();
-                    audioFileReader = null;
-                }
-
+                StopCurrent();
                 isPlaying = false;
             }
             catch (Exception ex)
@@ -153,41 +162,51 @@ namespace DoAnMonHocNT106
             }
         }
 
+        /// <summary>
+        /// Bật/tắt nhạc nền dựa trên trạng thái hiện tại
+        /// </summary>
         public static void ToggleMusic()
         {
-            if (isPlaying)
-                StopBackgroundMusic();
-            else
-                StartBackgroundMusic();
+            if (isPlaying) StopBackgroundMusic(); else StartBackgroundMusic();
         }
 
-        public static float GetVolume()
-        {
-            return audioFileReader != null ? audioFileReader.Volume : 1.0f;
-        }
+        /// <summary>
+        /// Lấy âm lượng hiện tại của trình đọc file
+        /// </summary>
+        public static float GetVolume() => audioFileReader?.Volume ?? 1.0f;
 
+        /// <summary>
+        /// Chuyển sang bài kế tiếp
+        /// </summary>
         public static void NextTrack()
         {
-            if (!isPlaying || playlist.Count == 0) return;
-
+            if (!isPlaying || !playlist.Any()) return;
             currentIndex = (currentIndex + 1) % playlist.Count;
             PlayCurrent();
         }
 
+        /// <summary>
+        /// Quay về bài trước đó
+        /// </summary>
         public static void PreviousTrack()
         {
-            if (!isPlaying || playlist.Count == 0) return;
-
+            if (!isPlaying || !playlist.Any()) return;
             currentIndex = (currentIndex - 1 + playlist.Count) % playlist.Count;
             PlayCurrent();
         }
 
-        public static void SetVolume(float volume) 
+        /// <summary>
+        /// Thiết lập âm lượng nhạc nền
+        /// </summary>
+        public static void SetVolume(float volume)
         {
             if (audioFileReader != null)
                 audioFileReader.Volume = volume;
         }
 
+        /// <summary>
+        /// Phát hiệu ứng âm thanh click nếu được bật
+        /// </summary>
         public static void PlayClickSound()
         {
             if (!isSoundEnabled) return;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Program.cs
+// Điểm khởi đầu của ứng dụng, khởi tạo Firebase, chạy ứng dụng chính và tiến trình phụ
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -9,9 +11,13 @@ namespace DoAnMonHocNT106
 {
     static class Program
     {
+        /// <summary>
+        /// Entry point của ứng dụng
+        /// </summary>
         [STAThread]
         static void Main()
         {
+            // Đăng ký sự kiện khi ứng dụng thoát để cập nhật trạng thái online
             Application.ApplicationExit += async (s, e) =>
             {
                 // CurrentUsername do bạn lưu tĩnh trong FirebaseHelper
@@ -57,12 +63,11 @@ namespace DoAnMonHocNT106
             }
             catch (Exception ex)
             {
-                // MessageBox.Show($"Lỗi khi khởi động Firebase: {ex.Message}",
-                    //"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Bỏ qua lỗi để không làm gián đoạn ứng dụng chính
             }
 
             // Chạy form Login
             Application.Run(new Login());
         }
     }
-} 
+}

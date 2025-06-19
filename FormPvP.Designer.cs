@@ -1,16 +1,22 @@
-﻿namespace DoAnMonHocNT106
+﻿// FormPvP.cs
+// Xử lý giao diện và logic cho chế độ chơi đối kháng người với người (PvP) trong game Cờ Caro.
+// Bao gồm các thành phần: bàn cờ, nút thoát, nút chơi lại, thông tin người chơi và đối thủ, đồng hồ đếm ngược.
+// Cho phép người dùng tương tác và cập nhật giao diện trong suốt quá trình chơi.
+
+namespace DoAnMonHocNT106
 {
     partial class FormPvP
     {
+        // Khai báo thành phần giao diện của Form
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.Panel panelBoard;
-        private System.Windows.Forms.Button btnBack;
-        private System.Windows.Forms.Button btnRestart;
-        private System.Windows.Forms.Label lblYou;
-        private System.Windows.Forms.Label lblOpponent;
-        private System.Windows.Forms.Label lblCountdown;
+        private System.Windows.Forms.Panel panelBoard;           // Bàn cờ chính
+        private System.Windows.Forms.Button btnBack;             // Nút thoát trò chơi
+        private System.Windows.Forms.Button btnRestart;          // Nút chơi lại
+        private System.Windows.Forms.Label lblYou;               // Hiển thị người chơi (Bạn)
+        private System.Windows.Forms.Label lblOpponent;          // Hiển thị đối thủ
+        private System.Windows.Forms.Label lblCountdown;         // Hiển thị thời gian đếm ngược mỗi lượt
 
-
+        // Hàm hủy để giải phóng tài nguyên đang sử dụng
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -18,6 +24,7 @@
             base.Dispose(disposing);
         }
 
+        // Khởi tạo và cấu hình các thành phần giao diện của Form
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPvP));
@@ -28,8 +35,11 @@
             this.lblOpponent = new System.Windows.Forms.Label();
             this.lblCountdown = new System.Windows.Forms.Label();
             this.SuspendLayout();
+
             // 
             // panelBoard
+            // Cấu hình bàn cờ: nền màu tối, viền bao xung quanh, kích thước cố định
+            // Bắt sự kiện Paint để vẽ bàn cờ mỗi khi cập nhật
             // 
             this.panelBoard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.panelBoard.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -38,8 +48,11 @@
             this.panelBoard.Size = new System.Drawing.Size(500, 600);
             this.panelBoard.TabIndex = 0;
             this.panelBoard.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBoard_Paint);
+
             // 
             // btnBack
+            // Nút "Thoát" dùng để quay lại màn hình trước hoặc thoát game
+            // Có màu nền đậm, chữ đỏ để nổi bật
             // 
             this.btnBack.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
             this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -52,8 +65,11 @@
             this.btnBack.Text = "❌ Thoát";
             this.btnBack.UseVisualStyleBackColor = false;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+
             // 
             // btnRestart
+            // Nút "Chơi lại" để bắt đầu ván mới
+            // Màu xanh nổi bật, chữ trắng để tạo cảm giác tích cực
             // 
             this.btnRestart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(120)))), ((int)(((byte)(80)))));
             this.btnRestart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -66,8 +82,10 @@
             this.btnRestart.Text = "🔁 Chơi lại";
             this.btnRestart.UseVisualStyleBackColor = false;
             this.btnRestart.Click += new System.EventHandler(this.btnRestart_Click);
+
             // 
             // lblYou
+            // Hiển thị thông tin người chơi với ký hiệu 'X'
             // 
             this.lblYou.AutoSize = true;
             this.lblYou.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
@@ -77,8 +95,10 @@
             this.lblYou.Size = new System.Drawing.Size(51, 19);
             this.lblYou.TabIndex = 3;
             this.lblYou.Text = "Bạn: X";
+
             // 
             // lblOpponent
+            // Hiển thị thông tin đối thủ với ký hiệu 'O'
             // 
             this.lblOpponent.AutoSize = true;
             this.lblOpponent.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
@@ -88,8 +108,11 @@
             this.lblOpponent.Size = new System.Drawing.Size(76, 19);
             this.lblOpponent.TabIndex = 4;
             this.lblOpponent.Text = "Đối thủ: O";
+
             // 
             // lblCountdown
+            // Hiển thị thời gian đếm ngược mỗi lượt chơi
+            // Giúp người chơi biết còn bao nhiêu giây để đi
             // 
             this.lblCountdown.AutoSize = true;
             this.lblCountdown.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
@@ -99,8 +122,10 @@
             this.lblCountdown.Size = new System.Drawing.Size(101, 19);
             this.lblCountdown.TabIndex = 5;
             this.lblCountdown.Text = "Thời gian: 20s";
+
             // 
             // FormPvP
+            // Thiết lập thông số chính cho form: nền tối, cố định kích thước, biểu tượng, vị trí hiển thị
             // 
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(15)))), ((int)(((byte)(15)))));
             this.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.pngtree_retro_futuristic_gaming_desk_scene_image_16555312;
@@ -121,7 +146,6 @@
             this.Load += new System.EventHandler(this.FormPvP_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
     }
 }

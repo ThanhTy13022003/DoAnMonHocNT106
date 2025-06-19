@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿// Login.cs
+// Form xử lý đăng nhập người dùng, placeholder, xác thực Firebase và điều hướng đến form chính
+using System;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Firebase.Auth;
 
-
 namespace DoAnMonHocNT106
 {
+    /// <summary>
+    /// Form đăng nhập: xử lý placeholder, nhập liệu, xác thực bằng FirebaseAuth và điều hướng sau đăng nhập thành công.
+    /// </summary>
     public partial class Login : Form
     {
+        // Khóa API Firebase
         private string apiKey = "AIzaSyAtbgnNBlNDVe4tlvlXFf8lRVCeus8Dong";
         private FirebaseAuthProvider auth;
 
@@ -22,6 +23,10 @@ namespace DoAnMonHocNT106
             InitializeComponent();
             auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
         }
+
+        /// <summary>
+        /// Xử lý placeholder cho ô password
+        /// </summary>
         private void Password_Placeholder(object sender, EventArgs e)
         {
             TextBox tb = password; // Chỉ áp dụng cho password
@@ -45,6 +50,9 @@ namespace DoAnMonHocNT106
             }
         }
 
+        /// <summary>
+        /// Thiết lập placeholder và sự kiện cho username và password khi form load
+        /// </summary>
         private void Login_Load(object sender, EventArgs e)
         {
             username.Text = "User Name Or Email";
@@ -65,6 +73,9 @@ namespace DoAnMonHocNT106
             password.KeyDown += TextBox_KeyDown;
         }
 
+        /// <summary>
+        /// Gọi hàm đăng nhập khi nhấn Enter
+        /// </summary>
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -74,6 +85,9 @@ namespace DoAnMonHocNT106
             }
         }
 
+        /// <summary>
+        /// Xử lý placeholder cho ô username
+        /// </summary>
         private void Username_Placeholder(object sender, EventArgs e)
         {
             TextBox tb = username; // Chỉ áp dụng cho username
@@ -96,26 +110,28 @@ namespace DoAnMonHocNT106
             }
         }
 
+        /// <summary>
+        /// Hiển thị mật khẩu chữ thường hoặc dấu sao
+        /// </summary>
         private void show_CheckedChanged(object sender, EventArgs e)
         {
             password.UseSystemPasswordChar = !show.Checked;
         }
 
+        /// <summary>
+        /// Xử lý sự kiện click đăng nhập: xác thực Firebase, kiểm tra trạng thái online và chuyển form
+        /// </summary>
         private async void signin_Click(object sender, EventArgs e)
         {
-            // 1) Disable nút để chặn click chồng
-            signin.Enabled = false;
-
-            // 2) Phát âm thanh click
-            MusicPlayer.PlayClickSound();
+            signin.Enabled = false; // Disable nút để chặn click chồng
+            MusicPlayer.PlayClickSound(); // Phát âm thanh click
 
             try
             {
-                // 3) Lấy input và trim
                 string input = username.Text.Trim();
                 string passwordInput = password.Text.Trim();
 
-                // 4) Xác định email từ username hoặc email trực tiếp
+                // Xác định email từ username hoặc email trực tiếp
                 string email = IsValidEmail(input)
                     ? input
                     : await FirebaseHelper.GetEmailByUsername(input);
@@ -126,7 +142,7 @@ namespace DoAnMonHocNT106
                     return;
                 }
 
-                // 5) Lấy info user và kiểm tra xem đã online chưa
+                // Kiểm tra thông tin user và trạng thái online
                 var user = await FirebaseHelper.GetUserByUsername(input);
                 if (user == null)
                 {
@@ -139,16 +155,14 @@ namespace DoAnMonHocNT106
                     return;
                 }
 
-                // 6) Xác thực với FirebaseAuth
+                // Xác thực với FirebaseAuth
                 var authResult = await auth.SignInWithEmailAndPasswordAsync(email, passwordInput);
 
-                // 7) Đánh dấu online và cập nhật LastOnline
+                // Đánh dấu online và lưu username hiện tại
                 await FirebaseHelper.SetUserOnlineStatus(user.Username, true);
-
-                // 8) Lưu username hiện tại
                 FirebaseHelper.CurrentUsername = user.Username;
 
-                // 9) Mở form chính và ẩn Login
+                // Mở form chính và ẩn Login
                 var mainForm = new Form1(user.Username);
                 mainForm.Show();
                 this.Hide();
@@ -163,14 +177,14 @@ namespace DoAnMonHocNT106
             }
             finally
             {
-                // 10) Nếu Login form vẫn hiện (nghĩa là login không thành công), re-enable nút
                 if (this.Visible)
-                    signin.Enabled = true;
+                    signin.Enabled = true; // Re-enable nếu vẫn còn form
             }
         }
 
-
-
+        /// <summary>
+        /// Kiểm tra định dạng email hợp lệ
+        /// </summary>
         private bool IsValidEmail(string email)
         {
             try
@@ -184,27 +198,28 @@ namespace DoAnMonHocNT106
             }
         }
 
-
+        /// <summary>
+        /// Hiển thị thông báo tạm thời ngay trên form
+        /// </summary>
         private void ShowMessage(string message, Color color)
         {
-            usererro.Text = message; // Cập nhật nội dung
-            usererro.ForeColor = color; // Đổi màu chữ theo trạng thái
-            usererro.Visible = true; // Hiển thị label
+            usererro.Text = message;
+            usererro.ForeColor = color;
+            usererro.Visible = true;
 
             // Tự động ẩn sau 3 giây
             Task.Delay(3000).ContinueWith(_ =>
             {
                 if (usererro.InvokeRequired)
-                {
                     usererro.Invoke(new Action(() => usererro.Visible = false));
-                }
                 else
-                {
                     usererro.Visible = false;
-                }
             });
         }
 
+        /// <summary>
+        /// Chuyển đến form SignUp
+        /// </summary>
         private void BTsignup_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -213,6 +228,9 @@ namespace DoAnMonHocNT106
             form2.Show();
         }
 
+        /// <summary>
+        /// Xử lý quên mật khẩu: gửi email reset qua Firebase
+        /// </summary>
         private async void forgotpw_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
@@ -220,14 +238,13 @@ namespace DoAnMonHocNT106
             string input = username.Text.Trim();
             string email;
 
-            // 1) Xác định đây là email hay username
+            // Xác định email hoặc lấy từ username
             if (IsValidEmail(input))
             {
                 email = input;
             }
             else
             {
-                // Lấy email đã đăng ký theo username
                 email = await FirebaseHelper.GetEmailByUsername(input);
                 if (email == null)
                 {
@@ -236,13 +253,9 @@ namespace DoAnMonHocNT106
                 }
             }
 
-            // 2) Hiển thị thông báo đang xử lý, tự ẩn sau 3s
             ShowMessage("Đang gửi email đặt lại mật khẩu…", Color.Green);
+            await Task.Delay(3000); // Đợi người dùng đọc thông báo
 
-            // 3) Chờ 3 giây để người dùng đọc thông báo
-            await Task.Delay(3000);
-
-            // 4) Thực sự gọi Firebase để gửi mail reset
             try
             {
                 var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
@@ -254,6 +267,5 @@ namespace DoAnMonHocNT106
                 ShowMessage("Email không tồn tại trong hệ thống!", Color.Red);
             }
         }
-
     }
 }

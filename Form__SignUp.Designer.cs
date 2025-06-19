@@ -1,4 +1,9 @@
-﻿namespace DoAnMonHocNT106
+﻿// SignUp.Designer.cs
+// Thiết kế giao diện cho form đăng ký của ứng dụng:
+// Bao gồm các nút đăng ký Email/Password, Google, Facebook, Phone,
+// cùng các ô nhập Username, Email, Password, Re-password và hình ảnh minh họa.
+
+namespace DoAnMonHocNT106
 {
     partial class SignUp
     {
@@ -8,9 +13,9 @@
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// Clean up any resources being used.
+        /// Giải phóng tài nguyên đang được sử dụng.
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// <param name="disposing">true nếu dispose managed resources; ngược lại false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -23,8 +28,9 @@
         #region Windows Form Designer generated code
 
         /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
+        /// Phương thức do Designer sinh tự động:
+        /// Khởi tạo và cấu hình các control trên form.
+        /// Không sửa nội dung phương thức này trực tiếp để tránh lỗi tương thích.
         /// </summary>
         private void InitializeComponent()
         {
@@ -43,10 +49,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // gm
+            // gm (Login With Gmail)
             // 
             this.gm.BackColor = System.Drawing.Color.DarkRed;
-            this.gm.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gm.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold);
             this.gm.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.gm.Location = new System.Drawing.Point(43, 213);
             this.gm.Name = "gm";
@@ -56,10 +62,10 @@
             this.gm.UseVisualStyleBackColor = false;
             this.gm.Click += new System.EventHandler(this.gm_Click);
             // 
-            // sdt
+            // sdt (Login With PhoneNumber)
             // 
             this.sdt.BackColor = System.Drawing.Color.DarkGreen;
-            this.sdt.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sdt.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold);
             this.sdt.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.sdt.Location = new System.Drawing.Point(43, 274);
             this.sdt.Name = "sdt";
@@ -70,7 +76,7 @@
             // 
             // username
             // 
-            this.username.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.username.Font = new System.Drawing.Font("Times New Roman", 10.2F);
             this.username.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.username.Location = new System.Drawing.Point(398, 111);
             this.username.Name = "username";
@@ -80,7 +86,7 @@
             // 
             // mail
             // 
-            this.mail.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mail.Font = new System.Drawing.Font("Times New Roman", 10.2F);
             this.mail.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.mail.Location = new System.Drawing.Point(398, 164);
             this.mail.Name = "mail";
@@ -90,7 +96,7 @@
             // 
             // pw
             // 
-            this.pw.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pw.Font = new System.Drawing.Font("Times New Roman", 10.2F);
             this.pw.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.pw.Location = new System.Drawing.Point(398, 220);
             this.pw.Name = "pw";
@@ -101,7 +107,7 @@
             // 
             // repw
             // 
-            this.repw.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.repw.Font = new System.Drawing.Font("Times New Roman", 10.2F);
             this.repw.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.repw.Location = new System.Drawing.Point(398, 274);
             this.repw.Name = "repw";
@@ -110,17 +116,17 @@
             this.repw.Text = "Re-password";
             this.repw.UseSystemPasswordChar = true;
             // 
-            // label1
+            // label1 (Sign Up header)
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Times New Roman", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Times New Roman", 28.2F, System.Drawing.FontStyle.Bold);
             this.label1.Location = new System.Drawing.Point(426, 40);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(184, 53);
             this.label1.TabIndex = 8;
             this.label1.Text = "Sign Up";
             // 
-            // button1
+            // button1 (Confirm)
             // 
             this.button1.BackColor = System.Drawing.Color.LightSeaGreen;
             this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -132,7 +138,7 @@
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // pictureBox1
+            // pictureBox1 (Illustration)
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BackgroundImage = global::DoAnMonHocNT106.Properties.Resources.pngtree_a_neon_joystick_or_game_controller_for_a_gaming_console_set_against_a_blue_backdrop_vector_png_image_37786992;
@@ -144,7 +150,7 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // show
+            // show (Show password)
             // 
             this.show.AutoSize = true;
             this.show.BackColor = System.Drawing.Color.White;
@@ -157,10 +163,10 @@
             this.show.UseVisualStyleBackColor = false;
             this.show.CheckedChanged += new System.EventHandler(this.show_CheckedChanged);
             // 
-            // fb
+            // fb (Login With Facebook)
             // 
             this.fb.BackColor = System.Drawing.Color.Navy;
-            this.fb.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fb.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold);
             this.fb.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.fb.Location = new System.Drawing.Point(43, 157);
             this.fb.Name = "fb";
@@ -169,7 +175,7 @@
             this.fb.Text = "Login With Facebook";
             this.fb.UseVisualStyleBackColor = false;
             // 
-            // SignUp
+            // SignUp form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -187,17 +193,17 @@
             this.Controls.Add(this.gm);
             this.Controls.Add(this.fb);
             this.Controls.Add(this.pictureBox1);
-            this.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Times New Roman", 7.8F, System.Drawing.FontStyle.Bold);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SignUp";
             this.Text = "Sign Up";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
+
         private System.Windows.Forms.Button gm;
         private System.Windows.Forms.Button sdt;
         private System.Windows.Forms.PictureBox pictureBox1;
