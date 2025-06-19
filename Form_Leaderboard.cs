@@ -43,7 +43,7 @@ namespace DoAnMonHocNT106
                     item.SubItems.Add(player.Wins.ToString());
                     item.SubItems.Add(player.Losses.ToString());
                     item.SubItems.Add(player.Draws.ToString());
-                    //item.SubItems.Add(player.Timeouts.ToString()); // Sử dụng Timeouts từ tuple
+                    //item.SubItems.Add(player.Timeouts.ToString()); // Sử dụng Timeouts từ tuple // bỏ
                     lstLeaderboard.Items.Add(item);
                     rank++;
                 }
@@ -70,6 +70,11 @@ namespace DoAnMonHocNT106
         {
             MusicPlayer.PlayClickSound();
             this.Close();
+        }
+
+        private void lstLeaderboard_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

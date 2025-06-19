@@ -35,7 +35,7 @@ namespace DoAnMonHocNT106
             }
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)// button đăng kí
         {
             MusicPlayer.PlayClickSound();
             string Username = username.Text;
@@ -86,7 +86,7 @@ namespace DoAnMonHocNT106
             pw.UseSystemPasswordChar = !show.Checked;
             repw.UseSystemPasswordChar = !show.Checked;
         }
-        private async void gm_Click(object sender, EventArgs e)
+        private async void gm_Click(object sender, EventArgs e) // => chưa fix
         {
             MusicPlayer.PlayClickSound();
             try

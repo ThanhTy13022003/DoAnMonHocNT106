@@ -42,7 +42,7 @@ namespace DoAnMonHocNT106
             introduceForm.ShowDialog();
         }
 
-        private void btnToggleMusic_Click(object sender, EventArgs e)
+        private void btnToggleMusic_Click(object sender, EventArgs e) // chỉnh nhạc nền 
         {
             MusicPlayer.PlayClickSound();
             MusicPlayer.ToggleMusic();
@@ -64,7 +64,7 @@ namespace DoAnMonHocNT106
             leaderboardForm.ShowDialog();
         }
 
-        private void btnToggleSound_Click(object sender, EventArgs e)
+        private void btnToggleSound_Click(object sender, EventArgs e) // âm thanh chơi game
         {
             MusicPlayer.PlayClickSound();
             MusicPlayer.SetSoundEnabled(!MusicPlayer.IsSoundEnabled());
