@@ -24,7 +24,7 @@ namespace DoAnMonHocNT106
             // Lấy thư mục gốc của ứng dụng hiện tại (bin\Debug)
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            // Chạy DoAn_Anonymous.exe
+            // Chạy DoAn_Anonymous.exe => tắt chạy dưới nền
             try
             {
                 string anonymousExePath = Path.Combine(baseDirectory, @"..\..\Manager\bin\Debug\DoAn_Anonymous.exe");

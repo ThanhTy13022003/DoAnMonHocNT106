@@ -37,6 +37,7 @@
             this.panelBoard.Name = "panelBoard";
             this.panelBoard.Size = new System.Drawing.Size(500, 600);
             this.panelBoard.TabIndex = 0;
+            this.panelBoard.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBoard_Paint);
             // 
             // btnBack
             // 

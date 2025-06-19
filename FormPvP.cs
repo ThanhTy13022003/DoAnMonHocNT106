@@ -48,7 +48,7 @@ namespace DoAnMonHocNT106
             this.FormClosing += FormPvP_FormClosing;
         }
 
-        private void InitializeBoard()
+        private void InitializeBoard() // tạo bàn cờ
         {
             panelBoard.Controls.Clear();
             board = new Button[Rows, Cols];
@@ -100,7 +100,7 @@ namespace DoAnMonHocNT106
             _ = InitializeGameAsync();
         }
 
-        private async Task InitializeGameAsync()
+        private async Task InitializeGameAsync() 
         {
             ListenToMoves();
             ListenToOpponentStatus();
@@ -142,7 +142,7 @@ namespace DoAnMonHocNT106
             }
         }
 
-        private async void PlayerMove(object sender, EventArgs e)
+        private async void PlayerMove(object sender, EventArgs e) // đánh cờ
         {
             if (gameOver || !isMyTurn) return;
 
@@ -193,7 +193,7 @@ namespace DoAnMonHocNT106
             }
         }
 
-        private void ListenToMoves()
+        private void ListenToMoves() // chờ người kia đánh
         {
             firebase.Child("Rooms").Child(roomId).Child("Moves")
                 .AsObservable<Move>()
@@ -236,7 +236,7 @@ namespace DoAnMonHocNT106
                 });
         }
 
-        private void ListenToOpponentStatus()
+        private void ListenToOpponentStatus() // chờ đối thủ
         {
             firebase.Child("Users").Child(opponentUser).Child("online")
                 .AsObservable<bool>()
@@ -298,6 +298,11 @@ namespace DoAnMonHocNT106
             else if (CheckDirection(x, y, 1, 1, symbol)) HighlightDirection(x, y, 1, 1, symbol);
             else if (CheckDirection(x, y, 1, -1, symbol)) HighlightDirection(x, y, 1, -1, symbol);
         }
+
+        private void panelBoard_Paint(object sender, PaintEventArgs e)
+        {
+
+        } // bỏ
 
         private void HighlightDirection(int x, int y, int dx, int dy, string symbol)
         {
