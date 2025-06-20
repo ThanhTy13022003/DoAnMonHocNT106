@@ -64,7 +64,7 @@ namespace DoAnMonHocNT106
             this.FormClosing += FormPvP_FormClosing;
         }
 
-        // Khởi tạo bàn cờ với các ô là Button
+        // Khởi tạo bàn cờ với các ô là Button 
         private void InitializeBoard()
         {
             panelBoard.Controls.Clear();
@@ -401,7 +401,7 @@ namespace DoAnMonHocNT106
             if (!isReturningToLobby)
             {
                 // Cập nhật trạng thái offline nếu không quay về Lobby
-                await FirebaseHelper.SetUserOnlineStatus(currentUser, false);
+                await FirebaseHelper.SetUserOnlineStatus(currentUser, false); // đã xem
             }
         }
     }
