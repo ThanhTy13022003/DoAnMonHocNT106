@@ -61,7 +61,7 @@ namespace DoAnMonHocNT106
         private void btnIntroducing_Click(object sender, EventArgs e)
         {
             MusicPlayer.PlayClickSound();
-            Form_Introduce introduceForm = new Form_Introduce();
+            Form_Introduce introduceForm = new Form_Introduce(currentUser);
             introduceForm.ShowDialog();
         }
 

@@ -63,7 +63,7 @@ namespace DoAnMonHocNT106
 
             // Retrieve username from command-line arguments
             string[] args = Environment.GetCommandLineArgs();
-            currentUsername = args.Length > 1 ? args[1] : null;
+            currentUsername = args.Length > 1 ? args[0] : null;
 
             // If no username is provided via command-line, prompt for it
             if (string.IsNullOrEmpty(currentUsername))
