@@ -1,6 +1,7 @@
 ﻿// Form1.cs
 // Form chính của ứng dụng: quản lý điều hướng giữa các chế độ chơi, khởi động tiến trình phụ,
 // xử lý đăng xuất, thoát ứng dụng và cấu hình các thành phần như menu, âm thanh nền.
+
 using FirebaseAdmin;
 using System;
 using System.Linq;
@@ -29,7 +30,6 @@ namespace DoAnMonHocNT106
             InitializeComponent();
             currentUser = UserIdentifier.ExtractUsername(loginIdentifier);
             InitializeUser(loginIdentifier);
-            InitializeMenu();
             // Mở tự động file DoAn_Followonline.exe khi khởi động Form1
             Open_DoAn_Followonline();
         }
@@ -50,23 +50,6 @@ namespace DoAnMonHocNT106
             if (!MusicPlayer.IsMusicPlaying())
                 MusicPlayer.StartBackgroundMusic();
         }
-
-        /// <summary>
-        /// Thiết lập context menu cho nút PlayViaLan, PlayToBot, SettingInforPlayer
-        /// </summary>
-        private void InitializeMenu()
-        {
-            earlyAccessMenu = new ContextMenuStrip();
-            earlyAccessMenu.Items.Add("PlayViaLan").Click += (s, e) => OpenPlayViaLan();
-            earlyAccessMenu.Items.Add("PlayToBot").Click += (s, e) => OpenPlayToBot();
-            earlyAccessMenu.Items.Add("SettingInforPlayer").Click += (s, e) => OpenSettingInforPlayer();
-            button5.ContextMenuStrip = earlyAccessMenu;
-        }
-
-        // Các phương thức mở ứng dụng con qua LAN, PvE và cài đặt thông tin
-        private void OpenPlayViaLan() => LaunchExternalApp(@"..\..\EarlyAccess_PlayViaLan\bin\Debug", "DoAn_EarlyAccess_PlayViaLan.exe", currentUser);
-        private void OpenPlayToBot() => LaunchExternalApp(@"..\..\EarlyAccess_PlayToBot\bin\Debug", "DoAn_EarlyAccess_PlayToBot.exe", currentUser);
-        private void OpenSettingInforPlayer() => LaunchExternalApp(@"..\..\EarlyAccess_SettingInforPlayer\bin\Debug", "DoAn_EarlyAccess_SettingInforPlayer.exe", currentUser);
 
         // Mở tiến trình Followonline khi form khởi động
         private void Open_DoAn_Followonline() => LaunchExternalApp(@"..\..\Followonline\bin\Debug", "DoAn_Followonline.exe", currentUser);
@@ -157,15 +140,6 @@ namespace DoAnMonHocNT106
                 loginForm.Show();
                 this.Hide();
             }
-        }
-
-        /// <summary>
-        /// Hiển thị context menu khi click nút 5
-        /// </summary>
-        private void button5_Click(object sender, EventArgs e)
-        {
-            MusicPlayer.PlayClickSound();
-            earlyAccessMenu.Show(button5, new System.Drawing.Point(0, button5.Height));
         }
 
         /// <summary>

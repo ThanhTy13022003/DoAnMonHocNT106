@@ -1,5 +1,6 @@
 ﻿// Program.cs
 // Điểm khởi đầu của ứng dụng, khởi tạo Firebase, chạy ứng dụng chính và tiến trình phụ
+
 using System;
 using System.Diagnostics;
 using System.IO;

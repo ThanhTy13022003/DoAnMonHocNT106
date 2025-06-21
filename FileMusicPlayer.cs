@@ -1,5 +1,6 @@
 ﻿// MusicPlayer.cs
 // Lớp quản lý phát nhạc nền và âm thanh sự kiện trong game sử dụng NAudio
+
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;

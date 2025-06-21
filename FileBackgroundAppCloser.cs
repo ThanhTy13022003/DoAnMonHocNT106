@@ -1,5 +1,6 @@
 // BackgroundAppCloser.cs
 // Lớp giám sát và tự động đóng ứng dụng khi thỏa điều kiện nhất định
+
 using System;
 using System.Diagnostics;
 using System.Threading;

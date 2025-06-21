@@ -1,6 +1,7 @@
 ﻿// FormSetting.cs
 // Form cài đặt tùy chọn người dùng: bật/tắt nhạc nền và âm thanh game,
 // điều chỉnh âm lượng, mở các form giới thiệu, thông tin người chơi và bảng xếp hạng.
+
 using System;
 using System.Windows.Forms;
 
